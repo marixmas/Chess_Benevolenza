@@ -7,11 +7,11 @@
 #include "Chess_Piece_Pawn.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class CHESS_BENEVOLENZA_API AChess_Piece_Pawn : public AChess_Piece
 {
 	GENERATED_BODY()
-	
+
 };
