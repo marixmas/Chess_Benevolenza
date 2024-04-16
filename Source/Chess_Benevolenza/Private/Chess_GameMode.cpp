@@ -13,7 +13,7 @@ AChess_GameMode::AChess_GameMode()
 {
 	PlayerControllerClass = AChess_PlayerController::StaticClass();
 	DefaultPawnClass = AChess_HumanPlayer::StaticClass();
-	FieldSize = 3;
+	FieldSize = 8;
 }
 
 
