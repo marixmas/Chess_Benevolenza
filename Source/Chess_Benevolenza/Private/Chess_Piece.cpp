@@ -19,6 +19,33 @@ void AChess_Piece::SetGridPosition(const double InX, const double InY)
 	TileGridPosition.Set(InX, InY);
 
 }
+/*
+void AChess_Piece::SetTileStatus(ETileStatus TileStatus)
+{
+	//	ATile->Status = TileStatus;
+}
+*/
+void AChess_Piece::SetPieceType(EPieceType NewPieceType)
+{
+	PieceType = NewPieceType;
+}
+
+void AChess_Piece::SetPieceColor(EPieceColor NewPieceColor)
+{
+	PieceColor = NewPieceColor;
+}
+
+EPieceColor AChess_Piece::GetPieceColor()
+{
+	return PieceColor;
+}
+
+EPieceType AChess_Piece::GetPieceType()
+{
+	return PieceType;
+}
+
+
 
 // Called when the game starts or when spawned
 void AChess_Piece::BeginPlay()

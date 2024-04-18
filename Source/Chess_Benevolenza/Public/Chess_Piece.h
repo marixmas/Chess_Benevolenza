@@ -11,7 +11,6 @@ enum class EPieceColor : uint8
 {
 	WHITE,
 	BLACK,
-	EMPTY,
 };
 
 UENUM()
@@ -38,6 +37,16 @@ public:
 	// set the (x, y) position										//messa per essere usata in GenerateField() in GameField
 	void SetGridPosition(const double InX, const double InY);
 
+	//void SetTileStatus(ETileStatus TileStatus);
+
+	void SetPieceType(EPieceType NewPieceType);
+
+	void SetPieceColor(EPieceColor NewPieceColor);
+
+	EPieceColor GetPieceColor();
+
+	EPieceType GetPieceType();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -46,6 +55,13 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	FVector2D TileGridPosition;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	EPieceColor PieceColor;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	EPieceType PieceType;
+
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -53,4 +69,6 @@ public:
 	// destroy a Chess Piece actor
 	UFUNCTION()
 	void SelfDestroy();
+
+
 };
