@@ -69,35 +69,82 @@ void AGameField::GeneratePieces()
 	*/
 	// float TileSize = GField->TileSize;					// il debugger mi diceva che se dichiaro TileSize. il membro della classe verrà nascosto quindi boh provo a togliere
 
-	for (int32 x = 0; x < Size; x++) {
-		for (int32 y = 0; y < Size; y++) {
-			FVector SpawnPosition = FVector(TileSize * x, TileSize * y, 20);
+	for (int32 x = 0; x < Size; x++)
+	{
+		for (int32 y = 0; y < Size; y++)
+		{
 
-			if (x == 1 || x == 6) //
+			// dalle coordinate (x,y) ricavo la posizione nello spazio di unreal (x,y,z) in cui spawnerò il pezzo
+			//FVector SpawnPosition = FVector(TileSize * x, TileSize * y, 20);												mi sa che non lo uso
+
+			//dalle coordinate (x,y) ricavo la posizione nello spazio di unreal (x,y,z) in cui spawnerò il pezzo 
+			FVector Location = (AGameField::GetRelativeLocationByXYPosition(x, y)) + FVector(0, 0, 20);
+
+			// calcola rapporto in scala per dimensionare
+			const float TileScale = TileSize / 100;
+
+			// Spawn dei pezzi Pawn
+			if (x == 1 || x == 6)
 			{
-				// Spawn dei pezzi Pawn
 				//UClass* PawnClass = X == 1 ? WhitePawnClass : BlackPawnClass;
 				//GetWorld()->SpawnActor<AChess_Piece_Pawn>(PawnClass, GField->GetActorLocation() + SpawnPosition, FRotator::ZeroRotator);
-				FVector Location = AGameField::GetRelativeLocationByXYPosition(x, y);
+
+				//FVector Location = AGameField::GetRelativeLocationByXYPosition(x, y);					//metto fuori dall'if
+				//const float TileScale = TileSize / 100;												//metto fuori dall'if
 
 				if (x == 1)
 				{
+					int32 PlayerOwner = 0;
+
 					AChess_Piece* Obj = GetWorld()->SpawnActor<AChess_Piece>(ChessPiecePawnBpWhite, Location, FRotator::ZeroRotator);
-					const float TileScale = TileSize / 100;
+					//const float TileScale = TileSize / 100;
 					Obj->SetActorScale3D(FVector(TileScale, TileScale, 0.2));
 					Obj->SetGridPosition(x, y);
 					PiecesArray.Add(Obj);
 					PiecesMap.Add(FVector2D(x, y), Obj);
+
+					// ottengo il puntatore alla tile corrispondente
+					ATile* TargetTile = TileMap.FindRef(FVector2D(x, y));
+					// controllo puntatore
+					if (TargetTile)
+					{
+						// imposto stato e owner della tile
+						TargetTile->SetTileStatus(ETileStatus::OCCUPIED);
+						TargetTile->SetTileOwner(PlayerOwner);
+					}
+
+					// inizializzo il Pezzo Base (Chess_Piece) appena spawnato
+					Obj->SetPieceColor(EPieceColor::WHITE);
+					// imposto tipo della pedina che occupa la tile
+					Obj->SetPieceType(EPieceType::PAWN);
 				}
 
 				if (x == 6)
 				{
+					int32 PlayerOwner = 1;
+
 					AChess_Piece* Obj = GetWorld()->SpawnActor<AChess_Piece>(ChessPiecePawnBpBlack, Location, FRotator::ZeroRotator);
-					const float TileScale = TileSize / 100;
+					//const float TileScale = TileSize / 100;
 					Obj->SetActorScale3D(FVector(TileScale, TileScale, 0.2));
 					Obj->SetGridPosition(x, y);
 					PiecesArray.Add(Obj);
 					PiecesMap.Add(FVector2D(x, y), Obj);
+
+					// ottengo il puntatore alla tile corrispondente
+					ATile* TargetTile = TileMap.FindRef(FVector2D(x, y));
+					// controllo puntatore
+					if (TargetTile)
+					{
+						// imposto stato e owner della tile
+						TargetTile->SetTileStatus(ETileStatus::OCCUPIED);
+						TargetTile->SetTileOwner(PlayerOwner);
+					}
+
+					// inizializzo il Pezzo Base (Chess_Piece) appena spawnato
+					Obj->SetPieceColor(EPieceColor::BLACK);
+					// imposto tipo della pedina che occupa la tile
+					Obj->SetPieceType(EPieceType::PAWN);
+
 				}
 				/*																	//lo copio per ogni if wtf??
 				const float TileScale = TileSize / 100;
@@ -110,121 +157,269 @@ void AGameField::GeneratePieces()
 
 			}
 
-
+			// Spawn degli altri pezzi
 			else if (x == 0 || x == 7)
 			{
-				FVector Location = AGameField::GetRelativeLocationByXYPosition(x, y);
+				//FVector Location = AGameField::GetRelativeLocationByXYPosition(x, y);
 
 				if (x == 0)
 				{
+					int32 PlayerOwner = 0;
+
 					if (y == 0 || y == 7)
 					{
 						AChess_Piece* Obj = GetWorld()->SpawnActor<AChess_Piece>(ChessPieceRookBpWhite, Location, FRotator::ZeroRotator);
-						const float TileScale = TileSize / 100;
+						//const float TileScale = TileSize / 100;
 						Obj->SetActorScale3D(FVector(TileScale, TileScale, 0.2));
 						Obj->SetGridPosition(x, y);
 						PiecesArray.Add(Obj);
 						PiecesMap.Add(FVector2D(x, y), Obj);
+
+						// ottengo il puntatore alla tile corrispondente
+						ATile* TargetTile = TileMap.FindRef(FVector2D(x, y));
+						// controllo puntatore
+						if (TargetTile)
+						{
+							// imposto stato e owner della tile
+							TargetTile->SetTileStatus(ETileStatus::OCCUPIED);
+							TargetTile->SetTileOwner(PlayerOwner);
+						}
+
+						// inizializzo il Pezzo Base (Chess_Piece) appena spawnato
+						Obj->SetPieceColor(EPieceColor::WHITE);
+						// imposto tipo della pedina che occupa la tile
+						Obj->SetPieceType(EPieceType::ROOK);
 					}
 
-					if (y == 1 || y == 6)
+
+					else if (y == 1 || y == 6)
 					{
 						AChess_Piece* Obj = GetWorld()->SpawnActor<AChess_Piece>(ChessPieceKnightBpWhite, Location, FRotator::ZeroRotator);
-						const float TileScale = TileSize / 100;
+						//const float TileScale = TileSize / 100;
 						Obj->SetActorScale3D(FVector(TileScale, TileScale, 0.2));
 						Obj->SetGridPosition(x, y);
 						PiecesArray.Add(Obj);
 						PiecesMap.Add(FVector2D(x, y), Obj);
+
+						// ottengo il puntatore alla tile corrispondente
+						ATile* TargetTile = TileMap.FindRef(FVector2D(x, y));
+						// controllo puntatore
+						if (TargetTile)
+						{
+							// imposto stato e owner della tile
+							TargetTile->SetTileStatus(ETileStatus::OCCUPIED);
+							TargetTile->SetTileOwner(PlayerOwner);
+						}
+
+						// inizializzo il Pezzo Base (Chess_Piece) appena spawnato
+						Obj->SetPieceColor(EPieceColor::WHITE);
+						// imposto tipo della pedina che occupa la tile
+						Obj->SetPieceType(EPieceType::KNIGHT);
+
 					}
 
-					if (y == 2 || y == 5)
+					else if (y == 2 || y == 5)
 					{
 						AChess_Piece* Obj = GetWorld()->SpawnActor<AChess_Piece>(ChessPieceBishopBpWhite, Location, FRotator::ZeroRotator);
-						const float TileScale = TileSize / 100;
+						//const float TileScale = TileSize / 100;
 						Obj->SetActorScale3D(FVector(TileScale, TileScale, 0.2));
 						Obj->SetGridPosition(x, y);
 						PiecesArray.Add(Obj);
 						PiecesMap.Add(FVector2D(x, y), Obj);
+
+						// ottengo il puntatore alla tile corrispondente
+						ATile* TargetTile = TileMap.FindRef(FVector2D(x, y));
+						// controllo puntatore
+						if (TargetTile)
+						{
+							// imposto stato e owner della tile
+							TargetTile->SetTileStatus(ETileStatus::OCCUPIED);
+							TargetTile->SetTileOwner(PlayerOwner);
+						}
+
+						// inizializzo il Pezzo Base (Chess_Piece) appena spawnato
+						Obj->SetPieceColor(EPieceColor::WHITE);
+						// imposto tipo della pedina che occupa la tile
+						Obj->SetPieceType(EPieceType::BISHOP);
 					}
 
-					if (y == 3)
+					else if (y == 3)
 					{
 						AChess_Piece* Obj = GetWorld()->SpawnActor<AChess_Piece>(ChessPieceQueenBpWhite, Location, FRotator::ZeroRotator);
-						const float TileScale = TileSize / 100;
+						//const float TileScale = TileSize / 100;
 						Obj->SetActorScale3D(FVector(TileScale, TileScale, 0.2));
 						Obj->SetGridPosition(x, y);
 						PiecesArray.Add(Obj);
 						PiecesMap.Add(FVector2D(x, y), Obj);
+
+						// ottengo il puntatore alla tile corrispondente
+						ATile* TargetTile = TileMap.FindRef(FVector2D(x, y));
+						// controllo puntatore
+						if (TargetTile)
+						{
+							// imposto stato e owner della tile
+							TargetTile->SetTileStatus(ETileStatus::OCCUPIED);
+							TargetTile->SetTileOwner(PlayerOwner);
+						}
+
+						// inizializzo il Pezzo Base (Chess_Piece) appena spawnato
+						Obj->SetPieceColor(EPieceColor::WHITE);
+						// imposto tipo della pedina che occupa la tile
+						Obj->SetPieceType(EPieceType::QUEEN);
 					}
-					if (y == 4)
+
+					else if (y == 4)
 					{
 						AChess_Piece* Obj = GetWorld()->SpawnActor<AChess_Piece>(ChessPieceKingBpWhite, Location, FRotator::ZeroRotator);
-						const float TileScale = TileSize / 100;
+						//const float TileScale = TileSize / 100;
 						Obj->SetActorScale3D(FVector(TileScale, TileScale, 0.2));
 						Obj->SetGridPosition(x, y);
 						PiecesArray.Add(Obj);
 						PiecesMap.Add(FVector2D(x, y), Obj);
+
+						// ottengo il puntatore alla tile corrispondente
+						ATile* TargetTile = TileMap.FindRef(FVector2D(x, y));
+						// controllo puntatore
+						if (TargetTile)
+						{
+							// imposto stato e owner della tile
+							TargetTile->SetTileStatus(ETileStatus::OCCUPIED);
+							TargetTile->SetTileOwner(PlayerOwner);
+						}
+
+						// inizializzo il Pezzo Base (Chess_Piece) appena spawnato
+						Obj->SetPieceColor(EPieceColor::WHITE);
+						// imposto tipo della pedina che occupa la tile
+						Obj->SetPieceType(EPieceType::KING);
 					}
 				}
 
 				if (x == 7)
 				{
+					int32 PlayerOwner = 1;
+
 					if (y == 0 || y == 7)
 					{
 						AChess_Piece* Obj = GetWorld()->SpawnActor<AChess_Piece>(ChessPieceRookBpBlack, Location, FRotator::ZeroRotator);
-						const float TileScale = TileSize / 100;
+						//const float TileScale = TileSize / 100;
 						Obj->SetActorScale3D(FVector(TileScale, TileScale, 0.2));
 						Obj->SetGridPosition(x, y);
 						PiecesArray.Add(Obj);
 						PiecesMap.Add(FVector2D(x, y), Obj);
+
+						// ottengo il puntatore alla tile corrispondente
+						ATile* TargetTile = TileMap.FindRef(FVector2D(x, y));
+						// controllo puntatore
+						if (TargetTile)
+						{
+							// imposto stato e owner della tile
+							TargetTile->SetTileStatus(ETileStatus::OCCUPIED);
+							TargetTile->SetTileOwner(PlayerOwner);
+						}
+
+						// inizializzo il Pezzo Base (Chess_Piece) appena spawnato
+						Obj->SetPieceColor(EPieceColor::BLACK);
+						// imposto tipo della pedina che occupa la tile
+						Obj->SetPieceType(EPieceType::ROOK);
 					}
 
-					if (y == 1 || y == 6)
+					else if (y == 1 || y == 6)
 					{
 						AChess_Piece* Obj = GetWorld()->SpawnActor<AChess_Piece>(ChessPieceKnightBpBlack, Location, FRotator::ZeroRotator);
-						const float TileScale = TileSize / 100;
+						//const float TileScale = TileSize / 100;
 						Obj->SetActorScale3D(FVector(TileScale, TileScale, 0.2));
 						Obj->SetGridPosition(x, y);
 						PiecesArray.Add(Obj);
 						PiecesMap.Add(FVector2D(x, y), Obj);
+
+						// ottengo il puntatore alla tile corrispondente
+						ATile* TargetTile = TileMap.FindRef(FVector2D(x, y));
+						// controllo puntatore
+						if (TargetTile)
+						{
+							// imposto stato e owner della tile
+							TargetTile->SetTileStatus(ETileStatus::OCCUPIED);
+							TargetTile->SetTileOwner(PlayerOwner);
+						}
+
+						// inizializzo il Pezzo Base (Chess_Piece) appena spawnato
+						Obj->SetPieceColor(EPieceColor::BLACK);
+						// imposto tipo della pedina che occupa la tile
+						Obj->SetPieceType(EPieceType::KNIGHT);
 					}
 
-					if (y == 2 || y == 5)
+					else if (y == 2 || y == 5)
 					{
 						AChess_Piece* Obj = GetWorld()->SpawnActor<AChess_Piece>(ChessPieceBishopBpBlack, Location, FRotator::ZeroRotator);
-						const float TileScale = TileSize / 100;
+						//const float TileScale = TileSize / 100;
 						Obj->SetActorScale3D(FVector(TileScale, TileScale, 0.2));
 						Obj->SetGridPosition(x, y);
 						PiecesArray.Add(Obj);
 						PiecesMap.Add(FVector2D(x, y), Obj);
 
+						// ottengo il puntatore alla tile corrispondente
+						ATile* TargetTile = TileMap.FindRef(FVector2D(x, y));
+						// controllo puntatore
+						if (TargetTile)
+						{
+							// imposto stato e owner della tile
+							TargetTile->SetTileStatus(ETileStatus::OCCUPIED);
+							TargetTile->SetTileOwner(PlayerOwner);
+						}
 
-						Obj->SetTileStatus (ETileStatus::OCCUPIED);
-
-						// Imposta il tipo di pedina che occupa la tile
+						// inizializzo il Pezzo Base (Chess_Piece) appena spawnato
+						Obj->SetPieceColor(EPieceColor::BLACK);
+						// imposto tipo della pedina che occupa la tile
 						Obj->SetPieceType(EPieceType::BISHOP);
-
-						// Imposta il colore della pedina che occupa la tile
-						Obj->SetPieceColor (EPieceColor::BLACK);
 					}
 
-					if (y == 3)
+					else if (y == 3)
 					{
 						AChess_Piece* Obj = GetWorld()->SpawnActor<AChess_Piece>(ChessPieceQueenBpBlack, Location, FRotator::ZeroRotator);
-						const float TileScale = TileSize / 100;
+						//const float TileScale = TileSize / 100;
 						Obj->SetActorScale3D(FVector(TileScale, TileScale, 0.2));
 						Obj->SetGridPosition(x, y);
 						PiecesArray.Add(Obj);
 						PiecesMap.Add(FVector2D(x, y), Obj);
+
+						// ottengo il puntatore alla tile corrispondente
+						ATile* TargetTile = TileMap.FindRef(FVector2D(x, y));
+						// controllo puntatore
+						if (TargetTile)
+						{
+							// imposto stato e owner della tile
+							TargetTile->SetTileStatus(ETileStatus::OCCUPIED);
+							TargetTile->SetTileOwner(PlayerOwner);
+						}
+
+						// inizializzo il Pezzo Base (Chess_Piece) appena spawnato
+						Obj->SetPieceColor(EPieceColor::BLACK);
+						// imposto tipo della pedina che occupa la tile
+						Obj->SetPieceType(EPieceType::QUEEN);
 					}
-					if (y == 4)
+					else if (y == 4)
 					{
 						AChess_Piece* Obj = GetWorld()->SpawnActor<AChess_Piece>(ChessPieceKingBpBlack, Location, FRotator::ZeroRotator);
-						const float TileScale = TileSize / 100;
+						//const float TileScale = TileSize / 100;
 						Obj->SetActorScale3D(FVector(TileScale, TileScale, 0.2));
 						Obj->SetGridPosition(x, y);
 						PiecesArray.Add(Obj);
 						PiecesMap.Add(FVector2D(x, y), Obj);
+
+						// ottengo il puntatore alla tile corrispondente
+						ATile* TargetTile = TileMap.FindRef(FVector2D(x, y));
+						// controllo puntatore
+						if (TargetTile)
+						{
+							// imposto stato e owner della tile
+							TargetTile->SetTileStatus(ETileStatus::OCCUPIED);
+							TargetTile->SetTileOwner(PlayerOwner);
+						}
+
+						// inizializzo il Pezzo Base (Chess_Piece) appena spawnato
+						Obj->SetPieceColor(EPieceColor::BLACK);
+						// imposto tipo della pedina che occupa la tile
+						Obj->SetPieceType(EPieceType::KING);
 					}
 				}
 				/*																	//lo copio per ogni if wtf??
@@ -234,51 +429,53 @@ void AGameField::GeneratePieces()
 				PiecesArray.Add(Obj);
 				PiecesMap.Add(FVector2D(x, y), Obj);
 				*/
-			}
 
-			else
-			{
-			}
 
+				else
+				{
+				}
+
+			}
 		}
-	};
 
-	/*
-	FVector Location = AGameField::GetRelativeLocationByXYPosition(x, y);
+		/*
+		FVector Location = AGameField::GetRelativeLocationByXYPosition(x, y);
 
-	AChess_Piece_Pawn* Obj = GetWorld()->SpawnActor<AChess_Piece_Pawn>(ChessPiecePawnClassOrColorOrBP, Location, FRotator::ZeroRotator);
-	const float TileScale = TileSize / 100;
-	Obj->SetActorScale3D(FVector(TileScale, TileScale, 0.2));
-	Obj->SetGridPosition(x, y);
-	PiecesArray.Add(Obj);
-	PiecesMap.Add(FVector2D(x, y), Obj);
-	*/
+		AChess_Piece_Pawn* Obj = GetWorld()->SpawnActor<AChess_Piece_Pawn>(ChessPiecePawnClassOrColorOrBP, Location, FRotator::ZeroRotator);
+		const float TileScale = TileSize / 100;
+		Obj->SetActorScale3D(FVector(TileScale, TileScale, 0.2));
+		Obj->SetGridPosition(x, y);
+		PiecesArray.Add(Obj);
+		PiecesMap.Add(FVector2D(x, y), Obj);
+		*/
 
-	/*
-	{
-	for (int32 x = 0; x < Size; x++)
-	{
-		for (int32 y = 0; y < Size; y++)
+		/*
 		{
-			FVector Location = AGameField::GetRelativeLocationByXYPosition(x, y);
-			ATile* Obj = GetWorld()->SpawnActor<ATile>(TileClass, Location, FRotator::ZeroRotator);									da cambiareeeeee
-			const float TileScale = TileSize / 100;
-			Obj->SetActorScale3D(FVector(TileScale, TileScale, 0.2));
-			Obj->SetGridPosition(x, y);
-			TileArray.Add(Obj);
-			TileMap.Add(FVector2D(x, y), Obj);
+		for (int32 x = 0; x < Size; x++)
+		{
+			for (int32 y = 0; y < Size; y++)
+			{
+				FVector Location = AGameField::GetRelativeLocationByXYPosition(x, y);
+				ATile* Obj = GetWorld()->SpawnActor<ATile>(TileClass, Location, FRotator::ZeroRotator);									da cambiareeeeee
+				const float TileScale = TileSize / 100;
+				Obj->SetActorScale3D(FVector(TileScale, TileScale, 0.2));
+				Obj->SetGridPosition(x, y);
+				TileArray.Add(Obj);
+				TileMap.Add(FVector2D(x, y), Obj);
+			}
 		}
+		}*/
+
+
 	}
-	}*/
-
 }
-
 
 void AGameField::ResetField()
 {
 	for (ATile* Obj : TileArray)
 	{
-		Obj->SetTileStatus(NOT_ASSIGNED, ETileStatus::EMPTY);
+		Obj->SetTileStatus(ETileStatus::EMPTY);
+		Obj->SetTileOwner(NOT_ASSIGNED);
 	}
 
 	// send broadcast event to registered objects 
