@@ -6,6 +6,7 @@
 #include "GameFramework/Pawn.h"
 #include "Chess_GameInstance.h"
 #include "Chess_PlayerInterface.h"
+#include "Chess_Piece.h"						// mi serve per InfoOfClickedPiece 
 #include "Camera/CameraComponent.h"
 #include "Kismet/GameplayStatics.h"				// mi serve nel corrispettivo file cpp e forse anche in questo stesso file... vediamo
 #include "Chess_HumanPlayer.generated.h"
@@ -49,5 +50,7 @@ public:
 	UFUNCTION()
 	void OnClick();
 
+	// Stampa a screen un debug message con le info del pezzo selezionato
+	void InfoOfClickedPiece (AChess_Piece* CurrentPiece);
 
 };

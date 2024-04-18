@@ -108,16 +108,26 @@ void AChess_GameMode::BeginPlay()
 
 void AChess_GameMode::ChoosePlayerAndStartGame()
 {
-	CurrentPlayer = FMath::RandRange(0, Players.Num() - 1);
+	//CurrentPlayer = FMath::RandRange(0, Players.Num() - 1);
+	CurrentPlayer = 0;
 
-	for (int32 i = 0; i < Players.Num(); i++)
-	{
-		Players[i]->PlayerNumber = i;
-		Players[i]->Sign = i == CurrentPlayer ? ESign::X : ESign::O;
-	}
+	Players[0]->PlayerNumber = 0;
+	Players[0]->ColorOfPieces = EColorOfPieces::WHITE;
+	Players[1]->PlayerNumber = 1;
+	Players[1]->ColorOfPieces = EColorOfPieces::BLACK;
+
 	MoveCounter += 1;
 	Players[CurrentPlayer]->OnTurn();
+	FirstMove();
 }
+
+void AChess_GameMode::FirstMove()
+{
+
+
+	TurnNextPlayer();
+}
+
 
 void AChess_GameMode::SetCellSign(const int32 PlayerNumber, const FVector& SpawnPosition)
 {
@@ -126,9 +136,9 @@ void AChess_GameMode::SetCellSign(const int32 PlayerNumber, const FVector& Spawn
 		return;
 	}
 
-	UClass* SignActor = Players[CurrentPlayer]->Sign == ESign::X ? SignXActor : SignOActor;
-	FVector Location = GField->GetActorLocation() + SpawnPosition + FVector(0, 0, 10);
-	GetWorld()->SpawnActor(SignActor, &Location);
+	//UClass* SignActor = Players[CurrentPlayer]->Sign == ESign::X ? SignXActor : SignOActor;
+	//FVector Location = GField->GetActorLocation() + SpawnPosition + FVector(0, 0, 10);
+	//GetWorld()->SpawnActor(SignActor, &Location);
 
 	if (GField->IsWinPosition(GField->GetXYPositionByRelativeLocation(SpawnPosition)))
 	{
@@ -185,3 +195,4 @@ AGameField* AChess_GameMode::GetGField() const
 {
 	return GField;
 }
+

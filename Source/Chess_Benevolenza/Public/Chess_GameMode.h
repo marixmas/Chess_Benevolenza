@@ -70,4 +70,6 @@ public:
 	// metodo get per usare il puntatore GField ovunque nel codice (inizialmente creato per GameField)
 	AGameField* GetGField() const;
 
+	void FirstMove();
+
 };

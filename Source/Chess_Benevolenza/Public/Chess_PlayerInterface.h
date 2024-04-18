@@ -7,11 +7,11 @@
 #include "Chess_PlayerInterface.generated.h"
 
 UENUM()
-enum class ESign : uint8
+enum class EColorOfPieces : uint8
 {
-	X,
-	O,
-	E
+	WHITE,
+	BLACK,
+	NONE
 };
 
 // This class does not need to be modified.
@@ -31,9 +31,11 @@ class CHESS_BENEVOLENZA_API IChess_PlayerInterface
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	int32 PlayerNumber;
-	ESign Sign;
+	EColorOfPieces ColorOfPieces;
 
 	virtual void OnTurn() {};
 	virtual void OnWin() {};
 	virtual void OnLose() {};
+
+
 };

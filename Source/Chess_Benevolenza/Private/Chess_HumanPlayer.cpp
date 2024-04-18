@@ -38,9 +38,8 @@ AChess_HumanPlayer::AChess_HumanPlayer()
 	// get the game instance reference
 	GameInstance = Cast<UChess_GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	// default init values
-	//E = Empty
 	PlayerNumber = -1;
-	Sign = ESign::E;
+	ColorOfPieces = EColorOfPieces::NONE;
 
 }
 
@@ -93,7 +92,53 @@ void AChess_HumanPlayer::OnClick()
 	GetWorld()->GetFirstPlayerController()->GetHitResultUnderCursor(ECollisionChannel::ECC_Pawn, true, Hit);
 	if (Hit.bBlockingHit && IsMyTurn)
 	{
-	/*	if (ATile* CurrTile = Cast<ATile>(Hit.GetActor()))
+		AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
+		AGameField* GField = GameMode->GetGField();
+		if (AChess_Piece* CurrPiece = Cast<AChess_Piece>(Hit.GetActor()))
+		{
+			if (CurrPiece->GetPieceColor() == EPieceColor::WHITE)
+			{
+				InfoOfClickedPiece(CurrPiece);
+				
+
+
+
+
+				IsMyTurn = false;
+			
+			}
+		}
+
+			else if (CurrPiece->GetPieceColor() == EPieceColor::BLACK)
+			{
+				GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Blue, TEXT("Queste sono le pedine del tuo avversario!"));
+			}
+	}
+	else
+		{
+			GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Blue, TEXT("Per favore, aspetta il tuo turno"));
+		}
+}
+
+void AChess_HumanPlayer::InfoOfClickedPiece(AChess_Piece* CurrentPiece)
+{
+	EPieceType PieceType = CurrentPiece->GetPieceType();
+
+	FString TypeString = (PieceType == EPieceType::KING) ? TEXT("King") :
+		(PieceType == EPieceType::QUEEN) ? TEXT("Queen") :
+		(PieceType == EPieceType::ROOK) ? TEXT("Rook") :
+		(PieceType == EPieceType::BISHOP) ? TEXT("Bishop") :
+		(PieceType == EPieceType::KNIGHT) ? TEXT("Knight") :
+		(PieceType == EPieceType::PAWN) ? TEXT("Pawn") :
+		TEXT("Unknown");
+
+	FString Message = FString::Printf(TEXT("Piece Color: White, Piece Type: %s"), *TypeString);
+
+	GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Blue, Message);
+}
+
+	
+/*	if (ATile* CurrTile = Cast<ATile>(Hit.GetActor()))
 		{
 			if (CurrTile->GetTileStatus() == ETileStatus::EMPTY)
 			{
@@ -107,21 +152,4 @@ void AChess_HumanPlayer::OnClick()
 		}
 	*/
 
-
-		AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
-		AGameField* GField = GameMode->GetGField();
-		if (AChess_Piece* CurrPiece = Cast<AChess_Piece>(Hit.GetActor()))
-		{
-			if (CurrPiece->GetPieceColor() == EPieceColor::WHITE)
-			{
-				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("This Piece is White"));
-				//CurrTile->SetTileStatus(PlayerNumber, ETileStatus::OCCUPIED);
-				//FVector SpawnPosition = CurrTile->GetActorLocation();
-				
-				
-				IsMyTurn = false;
-			}
-		}
-	}
-}
 
