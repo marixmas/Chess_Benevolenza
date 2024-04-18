@@ -93,7 +93,7 @@ void AChess_HumanPlayer::OnClick()
 	GetWorld()->GetFirstPlayerController()->GetHitResultUnderCursor(ECollisionChannel::ECC_Pawn, true, Hit);
 	if (Hit.bBlockingHit && IsMyTurn)
 	{
-		if (ATile* CurrTile = Cast<ATile>(Hit.GetActor()))
+	/*	if (ATile* CurrTile = Cast<ATile>(Hit.GetActor()))
 		{
 			if (CurrTile->GetTileStatus() == ETileStatus::EMPTY)
 			{
@@ -102,6 +102,23 @@ void AChess_HumanPlayer::OnClick()
 				FVector SpawnPosition = CurrTile->GetActorLocation();
 				AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
 				GameMode->SetCellSign(PlayerNumber, SpawnPosition);
+				IsMyTurn = false;
+			}
+		}
+	*/
+
+
+		AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
+		AGameField* GField = GameMode->GetGField();
+		if (AChess_Piece* CurrPiece = Cast<AChess_Piece>(Hit.GetActor()))
+		{
+			if (CurrPiece->GetPieceColor() == EPieceColor::WHITE)
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("This Piece is White"));
+				//CurrTile->SetTileStatus(PlayerNumber, ETileStatus::OCCUPIED);
+				//FVector SpawnPosition = CurrTile->GetActorLocation();
+				
+				
 				IsMyTurn = false;
 			}
 		}
