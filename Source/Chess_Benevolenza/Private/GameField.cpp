@@ -82,7 +82,7 @@ void AGameField::GeneratePieces()
 
 				if (x == 1)
 				{
-					AChess_Piece_Pawn* Obj = GetWorld()->SpawnActor<AChess_Piece_Pawn>(ChessPiecePawnClassOrColorOrBpWhite, Location, FRotator::ZeroRotator);
+					AChess_Piece* Obj = GetWorld()->SpawnActor<AChess_Piece>(ChessPiecePawnBpWhite, Location, FRotator::ZeroRotator);
 					const float TileScale = TileSize / 100;
 					Obj->SetActorScale3D(FVector(TileScale, TileScale, 0.2));
 					Obj->SetGridPosition(x, y);
@@ -92,7 +92,7 @@ void AGameField::GeneratePieces()
 
 				if (x == 6)
 				{
-					AChess_Piece_Pawn* Obj = GetWorld()->SpawnActor<AChess_Piece_Pawn>(ChessPiecePawnClassOrColorOrBpBlack, Location, FRotator::ZeroRotator);
+					AChess_Piece* Obj = GetWorld()->SpawnActor<AChess_Piece>(ChessPiecePawnBpBlack, Location, FRotator::ZeroRotator);
 					const float TileScale = TileSize / 100;
 					Obj->SetActorScale3D(FVector(TileScale, TileScale, 0.2));
 					Obj->SetGridPosition(x, y);
@@ -119,7 +119,7 @@ void AGameField::GeneratePieces()
 				{
 					if (y == 0 || y == 7)
 					{
-						AChess_Piece_Rook* Obj = GetWorld()->SpawnActor<AChess_Piece_Rook>(ChessPieceRookClassOrColorOrBpWhite, Location, FRotator::ZeroRotator);
+						AChess_Piece* Obj = GetWorld()->SpawnActor<AChess_Piece>(ChessPieceRookBpWhite, Location, FRotator::ZeroRotator);
 						const float TileScale = TileSize / 100;
 						Obj->SetActorScale3D(FVector(TileScale, TileScale, 0.2));
 						Obj->SetGridPosition(x, y);
@@ -129,7 +129,7 @@ void AGameField::GeneratePieces()
 
 					if (y == 1 || y == 6)
 					{
-						AChess_Piece_Knight* Obj = GetWorld()->SpawnActor<AChess_Piece_Knight>(ChessPieceKnightClassOrColorOrBpWhite, Location, FRotator::ZeroRotator);
+						AChess_Piece* Obj = GetWorld()->SpawnActor<AChess_Piece>(ChessPieceKnightBpWhite, Location, FRotator::ZeroRotator);
 						const float TileScale = TileSize / 100;
 						Obj->SetActorScale3D(FVector(TileScale, TileScale, 0.2));
 						Obj->SetGridPosition(x, y);
@@ -139,7 +139,7 @@ void AGameField::GeneratePieces()
 
 					if (y == 2 || y == 5)
 					{
-						AChess_Piece_Bishop* Obj = GetWorld()->SpawnActor<AChess_Piece_Bishop>(ChessPieceBishopClassOrColorOrBpWhite, Location, FRotator::ZeroRotator);
+						AChess_Piece* Obj = GetWorld()->SpawnActor<AChess_Piece>(ChessPieceBishopBpWhite, Location, FRotator::ZeroRotator);
 						const float TileScale = TileSize / 100;
 						Obj->SetActorScale3D(FVector(TileScale, TileScale, 0.2));
 						Obj->SetGridPosition(x, y);
@@ -149,7 +149,7 @@ void AGameField::GeneratePieces()
 
 					if (y == 3)
 					{
-						AChess_Piece_Queen* Obj = GetWorld()->SpawnActor<AChess_Piece_Queen>(ChessPieceQueenClassOrColorOrBpWhite, Location, FRotator::ZeroRotator);
+						AChess_Piece* Obj = GetWorld()->SpawnActor<AChess_Piece>(ChessPieceQueenBpWhite, Location, FRotator::ZeroRotator);
 						const float TileScale = TileSize / 100;
 						Obj->SetActorScale3D(FVector(TileScale, TileScale, 0.2));
 						Obj->SetGridPosition(x, y);
@@ -158,7 +158,7 @@ void AGameField::GeneratePieces()
 					}
 					if (y == 4)
 					{
-						AChess_Piece_King* Obj = GetWorld()->SpawnActor<AChess_Piece_King>(ChessPieceKingClassOrColorOrBpWhite, Location, FRotator::ZeroRotator);
+						AChess_Piece* Obj = GetWorld()->SpawnActor<AChess_Piece>(ChessPieceKingBpWhite, Location, FRotator::ZeroRotator);
 						const float TileScale = TileSize / 100;
 						Obj->SetActorScale3D(FVector(TileScale, TileScale, 0.2));
 						Obj->SetGridPosition(x, y);
@@ -171,7 +171,7 @@ void AGameField::GeneratePieces()
 				{
 					if (y == 0 || y == 7)
 					{
-						AChess_Piece_Rook* Obj = GetWorld()->SpawnActor<AChess_Piece_Rook>(ChessPieceRookClassOrColorOrBpBlack, Location, FRotator::ZeroRotator);
+						AChess_Piece* Obj = GetWorld()->SpawnActor<AChess_Piece>(ChessPieceRookBpBlack, Location, FRotator::ZeroRotator);
 						const float TileScale = TileSize / 100;
 						Obj->SetActorScale3D(FVector(TileScale, TileScale, 0.2));
 						Obj->SetGridPosition(x, y);
@@ -181,7 +181,7 @@ void AGameField::GeneratePieces()
 
 					if (y == 1 || y == 6)
 					{
-						AChess_Piece_Knight* Obj = GetWorld()->SpawnActor<AChess_Piece_Knight>(ChessPieceKnightClassOrColorOrBpBlack, Location, FRotator::ZeroRotator);
+						AChess_Piece* Obj = GetWorld()->SpawnActor<AChess_Piece>(ChessPieceKnightBpBlack, Location, FRotator::ZeroRotator);
 						const float TileScale = TileSize / 100;
 						Obj->SetActorScale3D(FVector(TileScale, TileScale, 0.2));
 						Obj->SetGridPosition(x, y);
@@ -191,17 +191,26 @@ void AGameField::GeneratePieces()
 
 					if (y == 2 || y == 5)
 					{
-						AChess_Piece_Bishop* Obj = GetWorld()->SpawnActor<AChess_Piece_Bishop>(ChessPieceBishopClassOrColorOrBpBlack, Location, FRotator::ZeroRotator);
+						AChess_Piece* Obj = GetWorld()->SpawnActor<AChess_Piece>(ChessPieceBishopBpBlack, Location, FRotator::ZeroRotator);
 						const float TileScale = TileSize / 100;
 						Obj->SetActorScale3D(FVector(TileScale, TileScale, 0.2));
 						Obj->SetGridPosition(x, y);
 						PiecesArray.Add(Obj);
 						PiecesMap.Add(FVector2D(x, y), Obj);
+
+
+						Obj->SetTileStatus (ETileStatus::OCCUPIED);
+
+						// Imposta il tipo di pedina che occupa la tile
+						Obj->SetPieceType(EPieceType::BISHOP);
+
+						// Imposta il colore della pedina che occupa la tile
+						Obj->SetPieceColor (EPieceColor::BLACK);
 					}
 
 					if (y == 3)
 					{
-						AChess_Piece_Queen* Obj = GetWorld()->SpawnActor<AChess_Piece_Queen>(ChessPieceQueenClassOrColorOrBpBlack, Location, FRotator::ZeroRotator);
+						AChess_Piece* Obj = GetWorld()->SpawnActor<AChess_Piece>(ChessPieceQueenBpBlack, Location, FRotator::ZeroRotator);
 						const float TileScale = TileSize / 100;
 						Obj->SetActorScale3D(FVector(TileScale, TileScale, 0.2));
 						Obj->SetGridPosition(x, y);
@@ -210,7 +219,7 @@ void AGameField::GeneratePieces()
 					}
 					if (y == 4)
 					{
-						AChess_Piece_King* Obj = GetWorld()->SpawnActor<AChess_Piece_King>(ChessPieceKingClassOrColorOrBpBlack, Location, FRotator::ZeroRotator);
+						AChess_Piece* Obj = GetWorld()->SpawnActor<AChess_Piece>(ChessPieceKingBpBlack, Location, FRotator::ZeroRotator);
 						const float TileScale = TileSize / 100;
 						Obj->SetActorScale3D(FVector(TileScale, TileScale, 0.2));
 						Obj->SetGridPosition(x, y);

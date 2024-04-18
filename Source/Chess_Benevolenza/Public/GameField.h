@@ -86,41 +86,41 @@ public:
 
 	//identificatori per lo spawn delle pedine
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<AChess_Piece_Rook> ChessPieceRookClassOrColorOrBpWhite;
+	TSubclassOf<AChess_Piece> ChessPieceRookBpWhite;
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<AChess_Piece_Knight> ChessPieceKnightClassOrColorOrBpWhite;
+	TSubclassOf<AChess_Piece> ChessPieceKnightBpWhite;
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<AChess_Piece_Bishop> ChessPieceBishopClassOrColorOrBpWhite;
+	TSubclassOf<AChess_Piece> ChessPieceBishopBpWhite;
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<AChess_Piece_Queen> ChessPieceQueenClassOrColorOrBpWhite;
+	TSubclassOf<AChess_Piece> ChessPieceQueenBpWhite;
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<AChess_Piece_King> ChessPieceKingClassOrColorOrBpWhite;
+	TSubclassOf<AChess_Piece> ChessPieceKingBpWhite;
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<AChess_Piece_Pawn> ChessPiecePawnClassOrColorOrBpWhite;
+	TSubclassOf<AChess_Piece> ChessPiecePawnBpWhite;
 
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<AChess_Piece_Rook> ChessPieceRookClassOrColorOrBpBlack;
+	TSubclassOf<AChess_Piece> ChessPieceRookBpBlack;
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<AChess_Piece_Knight> ChessPieceKnightClassOrColorOrBpBlack;
+	TSubclassOf<AChess_Piece> ChessPieceKnightBpBlack;
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<AChess_Piece_Bishop> ChessPieceBishopClassOrColorOrBpBlack;
+	TSubclassOf<AChess_Piece> ChessPieceBishopBpBlack;
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<AChess_Piece_Queen> ChessPieceQueenClassOrColorOrBpBlack;
+	TSubclassOf<AChess_Piece> ChessPieceQueenBpBlack;
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<AChess_Piece_King> ChessPieceKingClassOrColorOrBpBlack;
+	TSubclassOf<AChess_Piece> ChessPieceKingBpBlack;
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<AChess_Piece_Pawn> ChessPiecePawnClassOrColorOrBpBlack;
+	TSubclassOf<AChess_Piece> ChessPiecePawnBpBlack;
 
 
 
