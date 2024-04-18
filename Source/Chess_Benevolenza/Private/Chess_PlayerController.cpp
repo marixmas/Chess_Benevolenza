@@ -5,7 +5,7 @@
 #include "Components/InputComponent.h"
 
 AChess_PlayerController::AChess_PlayerController()
-{
+{	//sono di APlayerController
 	bShowMouseCursor = true;
 	bEnableClickEvents = true;
 }
