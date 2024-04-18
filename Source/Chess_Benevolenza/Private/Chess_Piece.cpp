@@ -22,9 +22,11 @@ void AChess_Piece::SetGridPosition(const double InX, const double InY)
 /*
 void AChess_Piece::SetTileStatus(ETileStatus TileStatus)
 {
-	//	ATile->Status = TileStatus;
+	ATile->GetTileStatus();
+	ATile->Status = TileStatus;
 }
 */
+
 void AChess_Piece::SetPieceType(EPieceType NewPieceType)
 {
 	PieceType = NewPieceType;
@@ -52,7 +54,7 @@ void AChess_Piece::BeginPlay()
 {
 	Super::BeginPlay();
 	AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
-	//GameMode->GField->OnResetEvent.AddDynamic(this, &AChess_Piece::SelfDestroy);				//ho dovuto bc non mi andavba la AddDynamic
+	//GameMode->GField->OnResetEvent.AddDynamic(this, &AChess_Piece::SelfDestroy);				//ho dovuto bc non mi andava la AddDynamic
 }
 
 // Called every frame

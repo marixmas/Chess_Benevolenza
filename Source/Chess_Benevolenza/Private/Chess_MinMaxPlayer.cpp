@@ -201,7 +201,9 @@ int32 AChess_MinMaxPlayer::MinMax(TMap<FVector2D, ATile*>& Board, int32 Depth, b
 				if ((Board[FVector2D(i, j)])->GetTileStatus() == ETileStatus::EMPTY)
 				{
 					// Make the move (set the AI player owner)
-					(Board[FVector2D(i, j)])->SetTileStatus(1, ETileStatus::OCCUPIED);
+					//(Board[FVector2D(i, j)])->SetTileStatus(1, ETileStatus::OCCUPIED);     ho cambiato la funzione  SetTileStatus
+					(Board[FVector2D(i, j)])->SetTileStatus(ETileStatus::OCCUPIED);
+					(Board[FVector2D(i, j)])->SetTileOwner(-1);
 
 					// Call minimax recursively and choose
 					// the maximum value
@@ -209,7 +211,9 @@ int32 AChess_MinMaxPlayer::MinMax(TMap<FVector2D, ATile*>& Board, int32 Depth, b
 						MinMax(Board, Depth + 1, !IsMax));
 
 					// Undo the move
-					(Board[FVector2D(i, j)])->SetTileStatus(-1, ETileStatus::EMPTY);
+					//(Board[FVector2D(i, j)])->SetTileStatus(-1, ETileStatus::EMPTY);				ho cambiato la funzione  SetTileStatus
+					(Board[FVector2D(i, j)])->SetTileStatus(ETileStatus::EMPTY);
+					(Board[FVector2D(i, j)])->SetTileOwner(-1);
 				}
 			}
 		}
@@ -230,15 +234,19 @@ int32 AChess_MinMaxPlayer::MinMax(TMap<FVector2D, ATile*>& Board, int32 Depth, b
 				if ((Board[FVector2D(i, j)])->GetTileStatus() == ETileStatus::EMPTY)
 				{
 					// Make the move (set the Human player owner)
-					(Board[FVector2D(i, j)])->SetTileStatus(0, ETileStatus::OCCUPIED);
+					//(Board[FVector2D(i, j)])->SetTileStatus(0, ETileStatus::OCCUPIED);		 ho cambiato la funzione  SetTileStatus
 
+					(Board[FVector2D(i, j)])->SetTileStatus(ETileStatus::OCCUPIED);
+					(Board[FVector2D(i, j)])->SetTileOwner(0);
 					// Call minimax recursively and choose
 					// the minimum value
 					best = FMath::Min(best,
 						MinMax(Board, Depth + 1, !IsMax));
 
 					// Undo the move
-					(Board[FVector2D(i, j)])->SetTileStatus(-1, ETileStatus::EMPTY);
+					//(Board[FVector2D(i, j)])->SetTileStatus(-1, ETileStatus::EMPTY);			ho cambiato la funzione  SetTileStatus
+					(Board[FVector2D(i, j)])->SetTileStatus(ETileStatus::EMPTY);
+					(Board[FVector2D(i, j)])->SetTileOwner(-1);
 				}
 			}
 		}
@@ -264,14 +272,18 @@ FVector2D AChess_MinMaxPlayer::FindBestMove(TMap<FVector2D, ATile*>& Board)
 			if ((Board[FVector2D(i, j)])->GetTileStatus() == ETileStatus::EMPTY)
 			{
 				// Make the move (set the AI player owner)
-				(Board[FVector2D(i, j)])->SetTileStatus(1, ETileStatus::OCCUPIED);
+				//(Board[FVector2D(i, j)])->SetTileStatus(1, ETileStatus::OCCUPIED);					     ho cambiato la funzione  SetTileStatus
+				(Board[FVector2D(i, j)])->SetTileStatus(ETileStatus::OCCUPIED);
+				(Board[FVector2D(i, j)])->SetTileOwner(1);
 
 				// compute evaluation function for this
 				// move.
 				int32 moveVal = MinMax(Board, 0, false);
 
 				// Undo the move
-				(Board[FVector2D(i, j)])->SetTileStatus(-1, ETileStatus::EMPTY);
+				//(Board[FVector2D(i, j)])->SetTileStatus(-1, ETileStatus::EMPTY);			     ho cambiato la funzione  SetTileStatus
+				(Board[FVector2D(i, j)])->SetTileStatus(ETileStatus::EMPTY);
+				(Board[FVector2D(i, j)])->SetTileOwner(-1);
 
 				// If the value of the current move is
 				// more than the best value, then update

@@ -37,15 +37,17 @@ public:
 	// set the (x, y) position										//messa per essere usata in GenerateField() in GameField
 	void SetGridPosition(const double InX, const double InY);
 
-	//void SetTileStatus(ETileStatus TileStatus);
+	//void SetTileStatus(ETileStatus TileStatus);					//no?!
 
 	void SetPieceType(EPieceType NewPieceType);
+	EPieceType GetPieceType();
 
 	void SetPieceColor(EPieceColor NewPieceColor);
-
 	EPieceColor GetPieceColor();
 
-	EPieceType GetPieceType();
+	
+
+
 
 protected:
 	// Called when the game starts or when spawned

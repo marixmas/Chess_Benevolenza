@@ -25,18 +25,22 @@ ATile::ATile()
 
 }
 
-void ATile::SetTileStatus(const int32 TileOwner, const ETileStatus TileStatus)
+void ATile::SetTileStatus(const ETileStatus TileStatus)
 {
-	PlayerOwner = TileOwner;
 	Status = TileStatus;
 }
 
-ETileStatus ATile::GetTileStatus()
+void ATile::SetTileOwner(const int32 TileOwner)
+{
+	PlayerOwner = TileOwner;
+}
+
+ETileStatus ATile::GetTileStatus() const
 {
 	return Status;
 }
 
-int32 ATile::GetOwner()
+int32 ATile::GetOwner() const
 {
 	return PlayerOwner;
 }

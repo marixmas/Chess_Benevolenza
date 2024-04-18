@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Chess_Piece.h"						// messo per  fare settilestatus() nella chess_piece
 #include "Tile.generated.h"
 
 
@@ -25,14 +26,17 @@ public:
 	ATile();
 
 
-	// set the player owner and the status of a tile
-	void SetTileStatus(const int32 TileOwner, const ETileStatus TileStatus);
+	// imposta lo stato della tile
+	void SetTileStatus(const ETileStatus TileStatus);
+
+	// imposta l'owner della tile
+	void SetTileOwner (const int32 TileOwner);
 
 	// get the tile status
-	ETileStatus GetTileStatus();
+	ETileStatus GetTileStatus() const;
 
 	// get the tile owner
-	int32 GetOwner();
+	int32 GetOwner() const;
 
 	// set the (x, y) position
 	void SetGridPosition(const double InX, const double InY);
@@ -59,6 +63,16 @@ protected:
 	// (x, y) position of the tile
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	FVector2D TileGridPosition;
+
+
+	// Tipo di Pezzo occupante
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	//TSubclassOf<AChess_Piece> OccupyingPieceType;
+
+	// Colore di Pezzo occupante
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	//EChessPieceColor OccupyingPieceColor;
+
 
 	//public:	
 		// qui commento la tick perché non serve che aggiorni la tile poiché è ferma durante il gioco

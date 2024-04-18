@@ -11,8 +11,8 @@
 
 AChess_GameMode::AChess_GameMode()
 {
-	PlayerControllerClass = AChess_PlayerController::StaticClass();
-	DefaultPawnClass = AChess_HumanPlayer::StaticClass();
+	PlayerControllerClass = AChess_PlayerController::StaticClass();				//punta all'oggetto che rappresenta la classe AChess_Player controller
+	DefaultPawnClass = AChess_HumanPlayer::StaticClass();						//same
 	FieldSize = 8;
 }
 

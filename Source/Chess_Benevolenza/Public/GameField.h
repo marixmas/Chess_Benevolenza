@@ -170,6 +170,17 @@ public:
 	// check if a line contains all equal elements
 	bool AllEqual(const TArray<int32>& Array) const;
 
+
+	//.
+
+
+
+
+
+
+
+
+
 	/*
 	protected:																		no, c'è già sopra?
 		// Called when the game starts or when spawned
