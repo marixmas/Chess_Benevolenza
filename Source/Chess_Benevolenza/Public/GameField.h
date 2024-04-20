@@ -143,6 +143,13 @@ public:
 	//genera le pedine sulla scaccchiera
 	void GeneratePieces();
 
+	// spawna il pezzo
+	void SpawnChessPiece(int32 x, int32 y, EPieceColor PieceColor, EPieceType PieceType);
+
+	// prende il blue print del pezzo
+	UClass* GetChessPieceBP(EPieceColor PieceColor, EPieceType PieceType); 
+
+
 	// return a (x,y) position given a hit (click) on a field tile
 	FVector2D GetPosition(const FHitResult& Hit);
 
@@ -170,22 +177,11 @@ public:
 	// check if a line contains all equal elements
 	bool AllEqual(const TArray<int32>& Array) const;
 
-
-	//.
-
-
-
-
-
-
-
-
-
-	/*
-	protected:																		no, c'è già sopra?
-		// Called when the game starts or when spawned
-		virtual void BeginPlay() override;
-	*/
+	// flag per controllare che la gamefield non venga spawnata più di una volta
+	//bool bFieldGenerated;
+	
+	// flag per controllare che la gamefield non venga spawnata più di una volta
+	//bool bPiecesGenerated;
 
 	/*
 	public:
@@ -212,3 +208,4 @@ public:
 	GameMode->SetCellSign(PlayerNumber, Location);
 	*/
 };
+

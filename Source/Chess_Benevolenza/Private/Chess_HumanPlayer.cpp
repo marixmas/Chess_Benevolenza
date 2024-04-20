@@ -99,20 +99,23 @@ void AChess_HumanPlayer::OnClick()
 			if (CurrPiece->GetPieceColor() == EPieceColor::WHITE)
 			{
 				InfoOfClickedPiece(CurrPiece);
-				
+
+				//CurrPiece->SpecialAction();
+
+
 
 
 
 
 				IsMyTurn = false;
-			
+
 			}
-		}
 
 			else if (CurrPiece->GetPieceColor() == EPieceColor::BLACK)
 			{
 				GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Blue, TEXT("Queste sono le pedine del tuo avversario!"));
 			}
+		}
 	}
 	else
 		{

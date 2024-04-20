@@ -50,7 +50,10 @@ public:
 	UFUNCTION()
 	void OnClick();
 
-	// Stampa a screen un debug message con le info del pezzo selezionato
+	// stampa a screen un debug message con le info del pezzo selezionato
 	void InfoOfClickedPiece (AChess_Piece* CurrentPiece);
+
+	// va alla classe del pezzo selezionato
+	//void 
 
 };

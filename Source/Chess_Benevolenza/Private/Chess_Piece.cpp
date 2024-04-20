@@ -42,10 +42,18 @@ EPieceColor AChess_Piece::GetPieceColor()
 	return PieceColor;
 }
 
-EPieceType AChess_Piece::GetPieceType()
+EPieceType AChess_Piece::GetPieceType() const
 {
 	return PieceType;
 }
+
+/*
+EPieceType AChess_Piece::GetPieceType() const
+{
+	return PieceType;
+}
+*/
+
 
 
 

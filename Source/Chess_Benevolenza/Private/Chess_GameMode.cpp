@@ -14,6 +14,14 @@ AChess_GameMode::AChess_GameMode()
 	PlayerControllerClass = AChess_PlayerController::StaticClass();				//punta all'oggetto che rappresenta la classe AChess_Player controller
 	DefaultPawnClass = AChess_HumanPlayer::StaticClass();						//same
 	FieldSize = 8;
+
+	// bool per controllare che la gamefield venga spawnata una sola volta
+	bFieldGenerated = false;
+	// bool per controllare che i pezzi vengano spawnati una sola volta
+	bPiecesGenerated = false;
+
+	GField = nullptr;
+
 }
 
 
@@ -22,17 +30,66 @@ void AChess_GameMode::BeginPlay()
 	Super::BeginPlay();
 
 	IsGameOver = false;
-
 	MoveCounter = 0;
 
 	AChess_HumanPlayer* HumanPlayer = Cast<AChess_HumanPlayer>(*TActorIterator<AChess_HumanPlayer>(GetWorld()));
 
-	if (GameFieldClass != nullptr)
+	// Spawn di AGameField solo se non è già stato fatto
+	if (GameFieldClass != nullptr && !bFieldGenerated && !bPiecesGenerated)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Game Field is NOT NULL    OK"));
+		
 		GField = GetWorld()->SpawnActor<AGameField>(GameFieldClass);
-		GField->Size = FieldSize;
+		GField->Size = FieldSize;	
+
+
+		bFieldGenerated = true;
+		bPiecesGenerated = true;
+
+
+		//bFieldGenerated = true;
+
+
+		// Check if the field has already been generated
+		//if (!GField->bFieldGenerated && !GField->bPiecesGenerated)
+		//{
+
+			
+			
+			 
+		//	if (!GField->bFieldGenerated) 
+		//	{
+				//GField->Size = FieldSize;
+				
+				
+				// Generazione del campo di gioco
+		//		GField->GenerateField();
+
+				// bool per controllare che la gamefield venga spawnata una sola volta
+		//		bFieldGenerated = true;
+
+				// Impostazione del flag di generazione del campo di gioco su true
+				//GField->
+			//	GField->bFieldGenerated = true;
+
+				// Generazione dei pezzi solo se non sono già stati generati
+		//		if (!GField->bPiecesGenerated)
+		//		{
+		//			GField->GeneratePieces();
+
+					// bool per controllare che i pezzi vengano spawnati una sola volta
+		//			GField->bPiecesGenerated = true;
+
+					// Impostazione del flag di generazione dei pezzi su true
+					//GField->
+		//			bPiecesGenerated = true;
+		//		}
+				//GField->GeneratePieces();											// grande passo per maria, piccolo passo per l'umanità
+			//}
+		//	}
 	}
+
+		
 	else
 	{
 		UE_LOG(LogTemp, Error, TEXT("Game Field is null"));
@@ -118,12 +175,12 @@ void AChess_GameMode::ChoosePlayerAndStartGame()
 
 	MoveCounter += 1;
 	Players[CurrentPlayer]->OnTurn();
-	FirstMove();
+	//MakeMove();
 }
 
-void AChess_GameMode::FirstMove()
+void AChess_GameMode::MakeMove()
 {
-
+	////????
 
 	TurnNextPlayer();
 }

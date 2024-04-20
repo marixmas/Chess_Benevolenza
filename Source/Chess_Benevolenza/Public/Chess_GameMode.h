@@ -44,11 +44,11 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	AGameField* GField;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSubclassOf<AActor> SignXActor;
+	//UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	//TSubclassOf<AActor> SignXActor;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSubclassOf<AActor> SignOActor;
+	//UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	//TSubclassOf<AActor> SignOActor;
 
 	AChess_GameMode();
 
@@ -70,6 +70,13 @@ public:
 	// metodo get per usare il puntatore GField ovunque nel codice (inizialmente creato per GameField)
 	AGameField* GetGField() const;
 
-	void FirstMove();
+	void MakeMove();
+
+	// flag per controllare che la gamefield non venga spawnata più di una volta
+	bool bFieldGenerated;
+
+	// flag per controllare che la gamefield non venga spawnata più di una volta
+	bool bPiecesGenerated;
+
 
 };

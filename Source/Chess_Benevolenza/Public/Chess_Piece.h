@@ -40,12 +40,17 @@ public:
 	//void SetTileStatus(ETileStatus TileStatus);					//no?!
 
 	void SetPieceType(EPieceType NewPieceType);
-	EPieceType GetPieceType();
+	//EPieceType GetPieceType();
 
 	void SetPieceColor(EPieceColor NewPieceColor);
 	EPieceColor GetPieceColor();
 
-	
+	// per usare le classi derivate
+	virtual EPieceType GetPieceType() const;
+
+	// Dichiarazione della funzione virtuale pura
+    virtual void SpecialAction() const PURE_VIRTUAL(AChess_Piece::SpecialAction, );
+
 
 
 
@@ -67,6 +72,7 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
 
 	// destroy a Chess Piece actor
 	UFUNCTION()

@@ -13,5 +13,12 @@ UCLASS()
 class CHESS_BENEVOLENZA_API AChess_Piece_Rook : public AChess_Piece
 {
 	GENERATED_BODY()
+
+public:
+	// Sovrascrivi la funzione GetPieceType() per restituire il tipo corretto
+	virtual EPieceType GetPieceType() const override;
+
+	// Implementazione della funzione virtuale
+	virtual void SpecialAction() const override;
 	
 };
