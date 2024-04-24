@@ -65,11 +65,11 @@ public:
 
 	TArray<FVector2D> PossibleMoves;
 
-	FVector TransformTileToWorld(const FVector2D& TilePosition);
+	//FVector TransformTileToWorld(const FVector2D& TilePosition);
 
 protected:
 	// ottiene le coordinate della casella dalla hit result
-	FVector2D GetTileCoordinatesFromHit(const FHitResult& Hit);
+	//FVector2D GetTileCoordinatesFromHit(const FHitResult& Hit);
 
 	// muove il pezzo selezionato alla nuova posizione
 	void MoveSelectedPiece(const FVector2D& NewPosition);

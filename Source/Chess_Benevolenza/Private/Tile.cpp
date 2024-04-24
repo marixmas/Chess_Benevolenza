@@ -25,6 +25,18 @@ ATile::ATile()
 
 }
 
+void ATile::SetTileMaterial(UMaterialInterface* Material)
+{
+	if (StaticMeshComponent && Material)
+	{
+		StaticMeshComponent->SetMaterial(0, Material);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Componente StaticMeshComponent o materiale non validi (per fare SetTileMaterial)."));
+	}
+}
+
 void ATile::SetTileStatus(const ETileStatus TileStatus)
 {
 	Status = TileStatus;

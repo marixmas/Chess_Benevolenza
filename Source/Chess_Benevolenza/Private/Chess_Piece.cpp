@@ -50,6 +50,11 @@ EPieceType AChess_Piece::GetPieceType() const
 	return PieceType;
 }
 
+void AChess_Piece::MovePieceToPosition(const FVector2D& NewPosition)
+{
+	SetGridPosition(NewPosition.X,NewPosition.Y);
+}
+
 /*
 EPieceType AChess_Piece::GetPieceType() const
 {

@@ -52,6 +52,8 @@ public:
 	// per usare le classi derivate
 	virtual EPieceType GetPieceType() const;
 
+	virtual void MovePieceToPosition(const FVector2D& NewPosition);
+
 	// Dichiarazione della funzione virtuale pura
     virtual void SpecialAction() const PURE_VIRTUAL(AChess_Piece::SpecialAction, );
 

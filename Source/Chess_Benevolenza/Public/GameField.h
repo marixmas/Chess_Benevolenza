@@ -69,6 +69,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 WinSize;
 
+	
 	// TSubclassOf template class that provides UClass type safety
 	// colore 1
 	UPROPERTY(EditDefaultsOnly)
@@ -82,6 +83,21 @@ public:
 	// colore per Highlight nel suggerimento mosse
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<ATile> TileHighlight;
+
+	
+
+	// Materiale per il colore 1
+	UPROPERTY(EditDefaultsOnly)
+	UMaterialInterface* TileMaterial1;
+
+	// Materiale per il colore 2
+	UPROPERTY(EditDefaultsOnly)
+	UMaterialInterface* TileMaterial2;
+
+	// Materiale per l'evidenziazione delle mosse
+	UPROPERTY(EditDefaultsOnly)
+	UMaterialInterface* TileHighlightMaterial;
+
 
 
 	// tile padding dimension

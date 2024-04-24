@@ -25,6 +25,9 @@ class CHESS_BENEVOLENZA_API ATile : public AActor
 public:
 	// Sets default values for this actor's properties
 	ATile();
+	
+	// imposta il materiale della tile
+	void SetTileMaterial(UMaterialInterface* Material);
 
 
 	// imposta lo stato della tile
@@ -52,8 +55,11 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	USceneComponent* Scene;
 
+public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UStaticMeshComponent* StaticMeshComponent;
+
+protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	ETileStatus Status;

@@ -284,6 +284,7 @@ void AGameField::GenerateField()
 				if ((x + y) % 2 == 0)
 				{
 					ATile* Obj = GetWorld()->SpawnActor<ATile>(TileClass1, Location, FRotator::ZeroRotator);
+					Obj->SetTileMaterial(TileMaterial1);
 					const float TileScale = TileSize / 100;
 					Obj->SetActorScale3D(FVector(TileScale, TileScale, 0.2));
 					Obj->SetGridPosition(x, y);
@@ -294,6 +295,7 @@ void AGameField::GenerateField()
 				else
 				{
 					ATile* Obj = GetWorld()->SpawnActor<ATile>(TileClass2, Location, FRotator::ZeroRotator);
+					Obj->SetTileMaterial(TileMaterial2);
 					const float TileScale = TileSize / 100;
 					Obj->SetActorScale3D(FVector(TileScale, TileScale, 0.2));
 					Obj->SetGridPosition(x, y);
