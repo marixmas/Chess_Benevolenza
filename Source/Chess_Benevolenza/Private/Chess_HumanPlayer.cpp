@@ -153,6 +153,8 @@ void AChess_HumanPlayer::OnClick()
 
 						MoveSelectedPiece(BlackPieceLocation);
 						
+						TurnOffHighlightedTiles(PossibleMoves);
+
 						GameMode->TurnNextPlayer();
 
 
@@ -172,6 +174,11 @@ void AChess_HumanPlayer::OnClick()
 				// Resetta lo stato di selezione
 				bPieceSelected = false;
 				CurrPiece = nullptr;
+
+				TurnOffHighlightedTiles(PossibleMoves);
+
+				GameMode->TurnNextPlayer();
+
 
 			}
 			// se un pezzo era già stato cliccato e la tile NON è nelle mosse possibili, no si può
@@ -226,6 +233,51 @@ void AChess_HumanPlayer::OnClick()
 	}
 }
 
+ void AChess_HumanPlayer::TurnOffHighlightedTiles(const TArray<FVector2D>& HighlightedPositions)
+ {
+	AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
+	AGameField* GField = GameMode->GetGField();
+	// Verifica se GField è valido
+	if (!GameMode || !GameMode->GField)							//la condizione era !GameMode || !GameMode->GField
+	{
+		UE_LOG(LogTemp, Error, TEXT("GField o GameMode non valido per fare TurnOffHighlightedTiles!"));
+	}
+
+	// Loop attraverso le posizioni delle caselle
+	for (const FVector2D& TilePosition : HighlightedPositions)
+	{
+		// Trasforma le coordinate della casella in coordinate del mondo
+		//FVector WorldLocation = TransformTileToWorld(TilePosition);											//inutile mi sa??
+
+		// Illumina la casella utilizzando un materiale o un effetto di luce
+		// Ad esempio, puoi cambiare il colore del materiale o aggiungere una luce sopra la casella
+
+		ATile* Tile = GField->TileMap.FindRef(TilePosition);
+		if (Tile)
+		{
+			int32 CurrentX = (Tile->GetGridPosition()).X;
+			int32 CurrentY = (Tile->GetGridPosition()).Y;
+
+			// Applica il materiale originale alla tile in base alla posizione sulla scacchiera
+			if ((CurrentX + CurrentY % 2) == 0)
+			{
+				Tile->SetTileMaterial(GField->TileMaterial1);
+			}
+			else 
+			{
+				Tile->SetTileMaterial(GField->TileMaterial2);
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("Materiale di TurnOffHighlight non valido."));
+		}
+	}
+}
+
+
+
+
  /*
 FVector AChess_HumanPlayer::TransformTileToWorld(const FVector2D& TilePosition)
 {
@@ -249,6 +301,7 @@ FVector2D AChess_HumanPlayer::GetTileCoordinatesFromHit(const FHitResult& Hit)
 	return TileCoordinates;
 }
 */
+
 void AChess_HumanPlayer::MoveSelectedPiece(const FVector2D& NewPosition)
 {
 

@@ -53,7 +53,11 @@ public:
 	// stampa a screen un debug message con le info del pezzo selezionato
 	void InfoOfClickedPiece (AChess_Piece* CurrentPiece);
 
+	// Accende le tile dei suggerimenti
 	void HighlightGameFieldTiles(const TArray<FVector2D>& TilePositions);						// prima c'era anche un secondo argomento AChess_GameMode* GameMode, AGameField* GField
+
+	// Spegne le tile illuminate dei suggerimenti
+	void TurnOffHighlightedTiles(const TArray<FVector2D>& HighlightedPositions);
 
 	AChess_Piece* SelectedWhitePiece;
 

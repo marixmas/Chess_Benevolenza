@@ -83,6 +83,12 @@ void AChess_Piece::Tick(float DeltaTime)
 TArray<FVector2D> AChess_Piece::CalculatePossibleMoves()
 {
 	// TArray<FVector2D> PossibleMoves; così mi da errore di sovrascrizione della PossibleMoves variabile di classe dichiarata in Chess_Piece
+
+	FVector2D CurrentPosition = GetGridPosition();
+
+	int XCoordinate = CurrentPosition.X;
+	int YCoordinate = CurrentPosition.Y;
+
 	return PossibleMoves;
 }
 
