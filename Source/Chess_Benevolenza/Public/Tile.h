@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Chess_Piece.h"						// messo per  fare settilestatus() nella chess_piece
+#include "Components/StaticMeshComponent.h"		// per cambiare materiale alla tile nella highlight
 #include "Tile.generated.h"
 
 

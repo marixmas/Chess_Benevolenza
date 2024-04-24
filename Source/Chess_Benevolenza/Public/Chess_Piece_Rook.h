@@ -20,5 +20,7 @@ public:
 
 	// Implementazione della funzione virtuale
 	virtual void SpecialAction() const override;
-	
+
+public:
+	virtual TArray<FVector2D> CalculatePossibleMoves() override;
 };

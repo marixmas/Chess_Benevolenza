@@ -4,6 +4,7 @@
 
 #include "Chess_HumanPlayer.h"
 #include "GameField.h"
+#include "Tile.h"
 #include "Chess_GameMode.h"
 #include "Components/InputComponent.h"
 #include "EnhancedInputComponent.h"
@@ -90,38 +91,179 @@ void AChess_HumanPlayer::OnClick()
 	FHitResult Hit = FHitResult(ForceInit);
 	// GetHitResultUnderCursor function sends a ray from the mouse position and gives the corresponding hit results
 	GetWorld()->GetFirstPlayerController()->GetHitResultUnderCursor(ECollisionChannel::ECC_Pawn, true, Hit);
+	// se qualcosa è stato cliccato durante il mio turno
 	if (Hit.bBlockingHit && IsMyTurn)
 	{
 		AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
 		AGameField* GField = GameMode->GetGField();
+		// se un pezzo è stato cliccato
 		if (AChess_Piece* CurrPiece = Cast<AChess_Piece>(Hit.GetActor()))
 		{
 			if (CurrPiece->GetPieceColor() == EPieceColor::WHITE)
 			{
+				// imposto il pezzo selezionato come pezzo attuale del giocatore umano
+				SelectedWhitePiece = CurrPiece;
+
+				// indico che è stato selezionato un pezzo
+				bPieceSelected = true;
+
 				InfoOfClickedPiece(CurrPiece);
 
-				//CurrPiece->SpecialAction();
+				// chiedo alla classe del singolo pezzo di calcolarmi le mosse possibili
+				PossibleMoves = CurrPiece->CalculatePossibleMoves();
 
-
-
-
-
-
-				IsMyTurn = false;
-
+				// illumino le tile che sono le possibili nuove posizioni del pezzo sulla scacchiera
+				HighlightGameFieldTiles(PossibleMoves);						//HighlightGameFieldTiles(PossibleMoves, GField);
 			}
 
 			else if (CurrPiece->GetPieceColor() == EPieceColor::BLACK)
 			{
-				GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Blue, TEXT("Queste sono le pedine del tuo avversario!"));
+				SelectedBlackPiece = CurrPiece;
+
+				if (bPieceSelected = false)
+				{
+					GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Blue, TEXT("Queste sono le pedine del tuo avversario!"));
+				}
+
+				else if (bPieceSelected = true)
+				{
+					BlackPieceLocation = SelectedBlackPiece->GetGridPosition();
+					
+					if (PossibleMoves.Contains(BlackPieceLocation))
+					{
+						SelectedBlackPiece->Destroy();
+
+						MoveSelectedPiece(BlackPieceLocation);
+						
+						GameMode->TurnNextPlayer();
+
+
+					}
+				}
 			}
 		}
+
+		else if (ATile* SelectedTile = Cast<ATile>(Hit.GetActor()))
+		{
+			// se un pezzo era già stato cliccato e la tile è nelle mosse possibili...
+			if (bPieceSelected == 1 && PossibleMoves.Contains(SelectedTile))
+			{
+				//....allora muovere pedina nella tile selezionata
+				MoveSelectedPiece(SelectedTile->GetGridPosition());
+
+				// Resetta lo stato di selezione
+				bPieceSelected = false;
+				CurrPiece = nullptr;
+
+			}
+			// se un pezzo era già stato cliccato e la tile NON è nelle mosse possibili, no si può
+			else if (bPieceSelected == 1 && !PossibleMoves.Contains(SelectedTile))
+			{
+				GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Blue, TEXT("La pedina selezionata non può andare in questa casella."));
+				// non cambio bSelectedPiece e nemmeno SelectedPiece
+			}
+
+		}
+		
+		
+			
+
+
+
 	}
 	else
 		{
 			GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Blue, TEXT("Per favore, aspetta il tuo turno"));
 		}
 }
+
+
+ void AChess_HumanPlayer::HighlightGameFieldTiles(const TArray<FVector2D>& TilePositions)				//c'era anche AChess_GameMode* GameMode, AGameField* GField
+{
+	 AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
+	 AGameField* GField = GameMode->GetGField();
+	 // Verifica se GField è valido
+	 if (!GameMode || !GameMode->GField)							//la condizione era !GameMode || !GameMode->GField
+	 {
+		 UE_LOG(LogTemp, Error, TEXT("GField o GameMode non valido per fare HighlightGameFieldTiles!"));
+		 
+	 }
+
+	// Loop attraverso le posizioni delle caselle
+	for (const FVector2D& TilePosition : TilePositions)
+	{
+		// Trasforma le coordinate della casella in coordinate del mondo
+		FVector WorldLocation = TransformTileToWorld(TilePosition);
+
+		// Illumina la casella utilizzando un materiale o un effetto di luce
+		// Ad esempio, puoi cambiare il colore del materiale o aggiungere una luce sopra la casella
+	
+		ATile* Tile = GField->TileMap.FindRef(TilePosition);
+		if (Tile)
+		{
+			// Creazione del nuovo materiale con il colore desiderato
+			UMaterialInstanceDynamic* DynMaterial = UMaterialInstanceDynamic::Create(StaticMeshComponent->GetMaterial(0), this); 
+			DynMaterial->SetVectorParameterValue(TEXT("Color"), FLinearColor(1.0f, 1.0f, 0.0f));						// colore giallo
+
+			// Assegna il nuovo materiale al componente mesh statico
+			StaticMeshComponent->SetMaterial(0, DynMaterial);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("Una o più delle tile su cui fare la Highlight non è stata trovata nella mappa"));
+			
+		}
+
+		 // Ottieni il riferimento alla casella nella posizione specificata
+		AChess_Tile* Tile = GameMode->GField->GetTileAtPosition(TilePosition);
+		if (Tile)
+		{
+			// Applica l'effetto di highlight sulla casella
+			Tile->Highlight();
+		}
+	}
+}
+
+FVector AChess_HumanPlayer::TransformTileToWorld(const FVector2D& TilePosition)
+{
+	// Implementa la logica per trasformare le coordinate della casella nella posizione del mondo
+	// Ad esempio, puoi mappare le coordinate della scacchiera 2D a coordinate 3D nel mondo di gioco
+	// ...
+}
+
+FVector2D AChess_HumanPlayer::GetTileCoordinatesFromHit(const FHitResult& Hit)
+{
+	// Implementa la logica per ottenere le coordinate della casella dalla hit result
+	// Ad esempio, potresti usare le informazioni della hit result per trovare la casella più vicina
+
+	// Esempio di implementazione di base:
+	FVector HitLocation = Hit.ImpactPoint;
+	// Converti la posizione del colpo in coordinate locali del campo di gioco
+	FVector LocalHitLocation = GField->GetActorTransform().InverseTransformPosition(HitLocation);
+	// Calcola le coordinate della casella (arrotondate)
+	FVector2D TileCoordinates(FMath::RoundToInt(LocalHitLocation.X), FMath::RoundToInt(LocalHitLocation.Y));
+	return TileCoordinates;
+}
+
+void AChess_HumanPlayer::MoveSelectedPiece(const FVector2D& NewPosition)
+{
+
+	// Assicurati che ci sia un pezzo selezionato
+	if (SelectedPiece)
+	{
+		// Effettua il movimento del pezzo selezionato alla nuova posizione
+		// Ad esempio, potresti chiamare una funzione nel pezzo stesso per eseguire il movimento
+		SelectedPiece->MovePieceToPosition(NewPosition);
+
+		// Dopo il movimento, reimposta le variabili di stato
+		SelectedPiece = nullptr;
+		bPieceSelected = false;
+		IsMyTurn = false; // Probabilmente dovrai gestire meglio il cambio di turno
+	}
+}
+
+
+
 
 void AChess_HumanPlayer::InfoOfClickedPiece(AChess_Piece* CurrentPiece)
 {

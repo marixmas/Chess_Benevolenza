@@ -6,6 +6,7 @@
 #include "UObject/Interface.h"
 #include "Chess_PlayerInterface.generated.h"
 
+															//non mi sembra utile qui, c'è già altrove, nel ttt c'è
 UENUM()
 enum class EColorOfPieces : uint8
 {
@@ -13,6 +14,8 @@ enum class EColorOfPieces : uint8
 	BLACK,
 	NONE
 };
+
+
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
@@ -31,7 +34,7 @@ class CHESS_BENEVOLENZA_API IChess_PlayerInterface
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	int32 PlayerNumber;
-	EColorOfPieces ColorOfPieces;
+	EColorOfPieces ColorOfPieces;						// no??
 
 	virtual void OnTurn() {};
 	virtual void OnWin() {};

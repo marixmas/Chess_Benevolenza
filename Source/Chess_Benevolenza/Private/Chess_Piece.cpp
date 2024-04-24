@@ -17,7 +17,10 @@ AChess_Piece::AChess_Piece()
 void AChess_Piece::SetGridPosition(const double InX, const double InY)
 {
 	TileGridPosition.Set(InX, InY);
-
+}
+FVector2D AChess_Piece::GetGridPosition()							// avevo messo come argomento AChess_Piece* Piece ma non credo sia necessario basta fare puntatoreAoggettoPiece->GetGridPosition()
+{
+	return TileGridPosition;
 }
 /*
 void AChess_Piece::SetTileStatus(ETileStatus TileStatus)
@@ -70,6 +73,12 @@ void AChess_Piece::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+TArray<FVector2D> AChess_Piece::CalculatePossibleMoves()
+{
+	// TArray<FVector2D> PossibleMoves; così mi da errore di sovrascrizione della PossibleMoves variabile di classe dichiarata in Chess_Piece
+	return PossibleMoves;
 }
 
 void  AChess_Piece::SelfDestroy()

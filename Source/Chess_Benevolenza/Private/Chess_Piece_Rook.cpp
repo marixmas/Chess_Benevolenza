@@ -13,3 +13,12 @@ void AChess_Piece_Rook::SpecialAction() const
 {
     // Implementazione delle azioni specifiche per la torre
 }
+
+TArray<FVector2D> AChess_Piece_Rook::CalculatePossibleMoves()
+{
+    // TArray<FVector2D> PossibleMoves; così mi da errore di sovrascrizione della PossibleMoves variabile di classe dichiarata in Chess_Piece
+
+    // Implementazione specifica per il pezzo Pawn
+
+    return PossibleMoves;
+}

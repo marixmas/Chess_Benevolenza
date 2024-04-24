@@ -20,7 +20,7 @@ public:
 	// Sets default values for this pawn's properties
 	AChess_HumanPlayer();
 
-	// camera component attacched to player pawn
+	// camera component attached to player pawn
 	UCameraComponent* Camera;
 
 	// game instance reference
@@ -52,6 +52,31 @@ public:
 
 	// stampa a screen un debug message con le info del pezzo selezionato
 	void InfoOfClickedPiece (AChess_Piece* CurrentPiece);
+
+	void HighlightGameFieldTiles(const TArray<FVector2D>& TilePositions);						// prima c'era anche un secondo argomento AChess_GameMode* GameMode, AGameField* GField
+
+	AChess_Piece* SelectedWhitePiece;
+
+	bool bPieceSelected;
+
+	AChess_Piece* SelectedBlackPiece;
+
+	FVector2D BlackPieceLocation;
+
+	TArray<FVector2D> PossibleMoves;
+
+	FVector TransformTileToWorld(const FVector2D& TilePosition);
+
+protected:
+	// ottiene le coordinate della casella dalla hit result
+	FVector2D GetTileCoordinatesFromHit(const FHitResult& Hit);
+
+	// muove il pezzo selezionato alla nuova posizione
+	void MoveSelectedPiece(const FVector2D& NewPosition);
+
+public:
+	
+
 
 	// va alla classe del pezzo selezionato
 	//void 

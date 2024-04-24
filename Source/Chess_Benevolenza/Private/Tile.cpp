@@ -55,6 +55,7 @@ FVector2D ATile::GetGridPosition()
 	return TileGridPosition;
 }
 
+
 // Called when the game starts or when spawned
 void ATile::BeginPlay()
 {

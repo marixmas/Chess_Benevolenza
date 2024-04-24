@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Chess_PlayerInterface.h"
 #include "GameFramework/PlayerController.h"
 #include "Chess_HumanPlayer.h"
 #include "InputActionValue.h"

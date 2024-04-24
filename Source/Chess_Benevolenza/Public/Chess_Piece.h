@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Chess_PlayerInterface.h"
 #include "Chess_Piece.generated.h"
 
 UENUM()
@@ -36,6 +37,9 @@ public:
 
 	// set the (x, y) position										//messa per essere usata in GenerateField() in GameField
 	void SetGridPosition(const double InX, const double InY);
+
+	// get the (x, y) position
+	FVector2D GetGridPosition();					// avevo messo come argomento AChess_Piece* Piece ma non credo sia necessario basta fare puntatoreAoggettoPiece->GetGridPosition()
 
 	//void SetTileStatus(ETileStatus TileStatus);					//no?!
 
@@ -73,10 +77,16 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	// calcola possibili mosse per ogni tipo di pezzo
+	virtual TArray<FVector2D> CalculatePossibleMoves();
+
+	// nuove posizioni possibili delle pedine
+	TArray<FVector2D> PossibleMoves;
 
 	// destroy a Chess Piece actor
 	UFUNCTION()
 	void SelfDestroy();
+
 
 
 };

@@ -175,6 +175,7 @@ void AGameField::SpawnChessPiece(int32 x, int32 y, EPieceColor PieceColor, EPiec
 	Obj->SetGridPosition(x, y);
 	PiecesArray.Add(Obj);
 	PiecesMap.Add(FVector2D(x, y), Obj);
+	ReversePiecesMap.Add(Obj, FVector2D(x, y));								/// no???? nel dubbio
 
 	// ottengo il puntatore alla tile corrispondente
 	ATile* TargetTile = TileMap.FindRef(FVector2D(x, y));
@@ -195,6 +196,19 @@ void AGameField::SpawnChessPiece(int32 x, int32 y, EPieceColor PieceColor, EPiec
 	Obj->SetPieceColor(PieceColor);
 	// imposto il tipo della pedina che occupa la tile
 	Obj->SetPieceType(PieceType);
+}
+
+void AGameField::SpawnTile(int32 x, int32 y)														// necessaria insieme ad altre cose che devo ancora fare SE NON FUNZINOA SET MATERIAL PER HIGHLIGHT DELLE TILE DEI SUGGERIMENTI MOSSE
+{
+	FVector Location = AGameField::GetRelativeLocationByXYPosition(x, y);
+	
+		ATile* Obj = GetWorld()->SpawnActor<ATile>(TileClass1, Location, FRotator::ZeroRotator);
+		const float TileScale = TileSize / 100;
+		Obj->SetActorScale3D(FVector(TileScale, TileScale, 0.2));
+		Obj->SetGridPosition(x, y);
+		TileArray.Add(Obj);
+		TileMap.Add(FVector2D(x, y), Obj);
+
 }
 
 

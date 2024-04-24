@@ -13,5 +13,7 @@ UCLASS()
 class CHESS_BENEVOLENZA_API AChess_Piece_Queen : public AChess_Piece
 {
 	GENERATED_BODY()
-	
+
+public:
+	virtual TArray<FVector2D> CalculatePossibleMoves() override;
 };

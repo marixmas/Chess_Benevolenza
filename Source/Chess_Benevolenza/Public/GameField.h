@@ -44,6 +44,10 @@ public:
 	UPROPERTY(Transient)
 	TMap<FVector2D, AChess_Piece*> PiecesMap;
 
+	//given a pieces returns a position																		// messo io per trovare la posizione del pezzo nero selezionato in OnClick di HumanPlayer
+	UPROPERTY(Transient)
+	TMap<AChess_Piece*, FVector2D> ReversePiecesMap;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	float NormalizedCellPadding;
 	static const int32 NOT_ASSIGNED = -1;
@@ -74,6 +78,10 @@ public:
 	// colore 2
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<ATile> TileClass2;
+
+	// colore per Highlight nel suggerimento mosse
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<ATile> TileHighlight;
 
 
 	// tile padding dimension
@@ -140,11 +148,14 @@ public:
 	// generate an empty game field
 	void GenerateField();
 
-	//genera le pedine sulla scaccchiera
+	//genera le pedine sulla scacchiera
 	void GeneratePieces();
 
 	// spawna il pezzo
 	void SpawnChessPiece(int32 x, int32 y, EPieceColor PieceColor, EPieceType PieceType);
+
+	// spawna una tile
+	void SpawnTile(int32 x, int32 y);
 
 	// prende il blue print del pezzo
 	UClass* GetChessPieceBP(EPieceColor PieceColor, EPieceType PieceType); 
