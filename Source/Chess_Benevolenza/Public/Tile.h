@@ -29,9 +29,11 @@ public:
 	// imposta il materiale della tile
 	void SetTileMaterial(UMaterialInterface* Material);
 
-
 	// imposta lo stato della tile
 	void SetTileStatus(const ETileStatus TileStatus);
+
+	// Returns true if the tile is occupied by a piece
+	bool IsOccupied() const;
 
 	// imposta l'owner della tile
 	void SetTileOwner (const int32 TileOwner);
@@ -47,6 +49,9 @@ public:
 
 	// get the (x, y) position
 	FVector2D GetGridPosition();
+
+	// rende vuota una tile
+	void EmptyTile();
 
 protected:
 	// Called when the game starts or when spawned

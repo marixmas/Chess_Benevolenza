@@ -3,6 +3,7 @@
 
 #include "Chess_Piece.h"
 #include "GameField.h"
+#include "Tile.h"
 #include "Chess_GameMode.h"
 
 // Sets default values
@@ -14,13 +15,14 @@ AChess_Piece::AChess_Piece()
 
 }
 
-void AChess_Piece::SetGridPosition(const double InX, const double InY)
+void AChess_Piece::SetGridPosition(const int32 InX, const int32 InY)
 {
-	TileGridPosition.Set(InX, InY);
+	PieceGridPosition.Set(InX, InY);
+
 }
 FVector2D AChess_Piece::GetGridPosition()							// avevo messo come argomento AChess_Piece* Piece ma non credo sia necessario basta fare puntatoreAoggettoPiece->GetGridPosition()
 {
-	return TileGridPosition;
+	return PieceGridPosition;
 }
 /*
 void AChess_Piece::SetTileStatus(ETileStatus TileStatus)
@@ -50,19 +52,56 @@ EPieceType AChess_Piece::GetPieceType() const
 	return PieceType;
 }
 
-void AChess_Piece::MovePieceToPosition(const FVector2D& NewPosition)
+void AChess_Piece::MovePieceFromToPosition(const FVector2D& OldPosition, const FVector2D& NewPosition)
 {
-	SetGridPosition(NewPosition.X,NewPosition.Y);
+	SetGridPosition(NewPosition.X, NewPosition.Y);
+
+
+	AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
+	if (!GameMode)
+	{
+		UE_LOG(LogTemp, Error, TEXT("GameMode non valido per fare IsAttackValid"));
+		return;
+	}
+	AGameField* GField = GameMode->GetGField();
+
+	if (!GField)
+	{
+		UE_LOG(LogTemp, Error, TEXT("GField non valido per fare IsAttackValid")); 
+		return;
+	}
+	
+	// svuoto la tile della OldPosition
+	ATile* OldPositionTile = GField->TileMap[OldPosition];
+
+	OldPositionTile->EmptyTile();
+	
+	// aggiorno PiecesMap 
+	//GField->PiecesMap[FVector2D(NewPosition.X, NewPosition.Y)] = this;				 non funziona bc se nessun pezoz ] mai stato li c'e un puntatore nullo
+
+	if (GField->PiecesMap.Contains(NewPosition))
+	{
+		// Se la nuova posizione è già presente nella mappa, aggiorna il suo valore
+		GField->PiecesMap[NewPosition] = this;
+	}
+	else
+	{
+		// Se la nuova posizione non è presente nella mappa, aggiungi una nuova voce
+		GField->PiecesMap.Add(NewPosition, this);
+	}
+
+	
+	// aggiorno ReversePiecesMap 
+	GField->ReversePiecesMap[this] = FVector2D(NewPosition.X, NewPosition.Y);
+
+	FVector NewLocation = FVector(GField->AGameField::GetRelativeLocationByXYPosition(NewPosition.X, NewPosition.Y) + FVector(0, 0, 20));
+	SetActorLocation(NewLocation);
+
+
+	
+
+
 }
-
-/*
-EPieceType AChess_Piece::GetPieceType() const
-{
-	return PieceType;
-}
-*/
-
-
 
 
 // Called when the game starts or when spawned
@@ -80,16 +119,12 @@ void AChess_Piece::Tick(float DeltaTime)
 
 }
 
+//TArray<FVector2D> AChess_Piece::CalculatePossibleMoves()
 TArray<FVector2D> AChess_Piece::CalculatePossibleMoves()
+
 {
-	// TArray<FVector2D> PossibleMoves; così mi da errore di sovrascrizione della PossibleMoves variabile di classe dichiarata in Chess_Piece
-
-	FVector2D CurrentPosition = GetGridPosition();
-
-	int XCoordinate = CurrentPosition.X;
-	int YCoordinate = CurrentPosition.Y;
-
-	return PossibleMoves;
+	// Restituisce un array vuoto di default
+	return TArray<FVector2D>();
 }
 
 void  AChess_Piece::SelfDestroy()

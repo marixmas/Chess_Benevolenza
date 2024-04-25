@@ -2,6 +2,7 @@
 
 
 #include "Chess_Piece_Rook.h"
+#include "Chess_GameMode.h"
 
 EPieceType AChess_Piece_Rook::GetPieceType() const
 {

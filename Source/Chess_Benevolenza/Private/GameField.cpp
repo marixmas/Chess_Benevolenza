@@ -34,7 +34,7 @@ AGameField::AGameField()
 void AGameField::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
-	//normalized tilepadding
+	//normalized tile padding
 	NormalizedCellPadding = FMath::RoundToDouble(((TileSize + CellPadding) / TileSize) * 100) / 100;
 }
 
@@ -198,11 +198,12 @@ void AGameField::SpawnChessPiece(int32 x, int32 y, EPieceColor PieceColor, EPiec
 	Obj->SetPieceType(PieceType);
 }
 
+/*
 void AGameField::SpawnTile(int32 x, int32 y)														// necessaria insieme ad altre cose che devo ancora fare SE NON FUNZINOA SET MATERIAL PER HIGHLIGHT DELLE TILE DEI SUGGERIMENTI MOSSE
 {
 	FVector Location = AGameField::GetRelativeLocationByXYPosition(x, y);
 	
-		ATile* Obj = GetWorld()->SpawnActor<ATile>(TileClass1, Location, FRotator::ZeroRotator);
+		ATile* Obj = GetWorld()->SpawnActor<ATile>(TileClass, Location, FRotator::ZeroRotator);
 		const float TileScale = TileSize / 100;
 		Obj->SetActorScale3D(FVector(TileScale, TileScale, 0.2));
 		Obj->SetGridPosition(x, y);
@@ -210,6 +211,7 @@ void AGameField::SpawnTile(int32 x, int32 y)														// necessaria insieme 
 		TileMap.Add(FVector2D(x, y), Obj);
 
 }
+*/
 
 
 
@@ -283,7 +285,7 @@ void AGameField::GenerateField()
 				FVector Location = AGameField::GetRelativeLocationByXYPosition(x, y);
 				if ((x + y) % 2 == 0)
 				{
-					ATile* Obj = GetWorld()->SpawnActor<ATile>(TileClass1, Location, FRotator::ZeroRotator);
+					ATile* Obj = GetWorld()->SpawnActor<ATile>(TileClass, Location, FRotator::ZeroRotator);
 					Obj->SetTileMaterial(TileMaterial1);
 					const float TileScale = TileSize / 100;
 					Obj->SetActorScale3D(FVector(TileScale, TileScale, 0.2));
@@ -294,7 +296,7 @@ void AGameField::GenerateField()
 				}
 				else
 				{
-					ATile* Obj = GetWorld()->SpawnActor<ATile>(TileClass2, Location, FRotator::ZeroRotator);
+					ATile* Obj = GetWorld()->SpawnActor<ATile>(TileClass, Location, FRotator::ZeroRotator);					
 					Obj->SetTileMaterial(TileMaterial2);
 					const float TileScale = TileSize / 100;
 					Obj->SetActorScale3D(FVector(TileScale, TileScale, 0.2));

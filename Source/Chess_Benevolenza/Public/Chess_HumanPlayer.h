@@ -57,9 +57,11 @@ public:
 	void HighlightGameFieldTiles(const TArray<FVector2D>& TilePositions);						// prima c'era anche un secondo argomento AChess_GameMode* GameMode, AGameField* GField
 
 	// Spegne le tile illuminate dei suggerimenti
-	void TurnOffHighlightedTiles(const TArray<FVector2D>& HighlightedPositions);
+	void TurnOffHighlightedTiles(/*const TArray<FVector2D>& HighlightedPositions*/);
 
 	AChess_Piece* SelectedWhitePiece;
+
+	FVector2D WhitePieceLocation;
 
 	bool bPieceSelected;
 
@@ -76,7 +78,7 @@ protected:
 	//FVector2D GetTileCoordinatesFromHit(const FHitResult& Hit);
 
 	// muove il pezzo selezionato alla nuova posizione
-	void MoveSelectedPiece(const FVector2D& NewPosition);
+	void MoveSelectedPiece(const FVector2D& OldPosition, const FVector2D& NewPosition);
 
 public:
 	

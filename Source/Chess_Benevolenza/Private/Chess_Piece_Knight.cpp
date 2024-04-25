@@ -2,6 +2,7 @@
 
 
 #include "Chess_Piece_Knight.h"
+#include "Chess_GameMode.h"
 
 TArray<FVector2D> AChess_Piece_Knight::CalculatePossibleMoves()
 {

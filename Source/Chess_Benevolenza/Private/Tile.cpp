@@ -42,6 +42,11 @@ void ATile::SetTileStatus(const ETileStatus TileStatus)
 	Status = TileStatus;
 }
 
+bool ATile::IsOccupied() const
+{
+	return Status == ETileStatus::OCCUPIED;
+}
+
 void ATile::SetTileOwner(const int32 TileOwner)
 {
 	PlayerOwner = TileOwner;
@@ -65,6 +70,12 @@ void ATile::SetGridPosition(const double InX, const double InY)
 FVector2D ATile::GetGridPosition()
 {
 	return TileGridPosition;
+}
+
+void ATile::EmptyTile()
+{
+	SetTileStatus(ETileStatus::EMPTY);
+	SetTileOwner(-1);
 }
 
 

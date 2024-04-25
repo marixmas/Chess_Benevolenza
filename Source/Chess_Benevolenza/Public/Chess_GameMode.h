@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameField.h"
 #include "Chess_PlayerInterface.h"
-#include "GameFramework/GameModeBase.h"         //prima era /GameModeBase.h
+#include "GameFramework/GameModeBase.h"								  //prima era /GameModeBase.h
 #include "Chess_GameMode.generated.h"
 
 

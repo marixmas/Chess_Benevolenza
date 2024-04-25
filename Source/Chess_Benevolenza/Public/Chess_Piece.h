@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Chess_PlayerInterface.h"
+//#include "Tile.h"																				non si puoooooo
 #include "Chess_Piece.generated.h"
 
 UENUM()
@@ -36,7 +37,7 @@ public:
 	AChess_Piece();
 
 	// set the (x, y) position										//messa per essere usata in GenerateField() in GameField
-	void SetGridPosition(const double InX, const double InY);
+	void SetGridPosition(const int32 InX, const int32 InY);
 
 	// get the (x, y) position
 	FVector2D GetGridPosition();					// avevo messo come argomento AChess_Piece* Piece ma non credo sia necessario basta fare puntatoreAoggettoPiece->GetGridPosition()
@@ -52,7 +53,7 @@ public:
 	// per usare le classi derivate
 	virtual EPieceType GetPieceType() const;
 
-	virtual void MovePieceToPosition(const FVector2D& NewPosition);
+	virtual void MovePieceFromToPosition(const FVector2D& OldPosition, const FVector2D& NewPosition);
 
 	// Dichiarazione della funzione virtuale pura
     virtual void SpecialAction() const PURE_VIRTUAL(AChess_Piece::SpecialAction, );
@@ -66,7 +67,7 @@ protected:
 
 	// (x, y) position of the tile									//messa per essere usata in GenerateField() in GameField
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	FVector2D TileGridPosition;
+	FVector2D PieceGridPosition;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	EPieceColor PieceColor;
@@ -80,7 +81,10 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	// calcola possibili mosse per ogni tipo di pezzo
+	//virtual TArray<FVector2D> CalculatePossibleMoves();
+
 	virtual TArray<FVector2D> CalculatePossibleMoves();
+
 
 	// nuove posizioni possibili delle pedine
 	TArray<FVector2D> PossibleMoves;

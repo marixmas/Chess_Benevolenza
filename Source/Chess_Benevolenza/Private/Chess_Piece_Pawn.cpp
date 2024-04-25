@@ -2,53 +2,127 @@
 
 
 #include "Chess_Piece_Pawn.h"
+#include "Chess_GameMode.h"
 
 TArray<FVector2D> AChess_Piece_Pawn::CalculatePossibleMoves()
 {
-    /*
-    // TArray<FVector2D> PossibleMoves; così mi da errore di sovrascrizione della PossibleMoves variabile di classe dichiarata in Chess_Piece
-
-    // Implementazione specifica per il pezzo Pawn
-
     PossibleMoves.Empty();
 
-    // Direzione del movimento in base al colore del pedone
-    int32 ForwardDirection = (PieceColor == EPieceColor::WHITE) ? 1 : -1;
+    // Ottieni la posizione corrente del pedone
+    FVector2D CurrentPosition = GetGridPosition();
+    int32 CurrentX = CurrentPosition.X;
+    int32 CurrentY = CurrentPosition.Y;
 
-    // Calcola la posizione attuale del pedone
-    int32 CurrentX = FMath::RoundToInt(TileGridPosition.X);
-    int32 CurrentY = FMath::RoundToInt(TileGridPosition.Y);
+    // Direzione del movimento del pedone basata sul colore
+    int32 Direction = (PieceColor == EPieceColor::WHITE) ? 1 : -1;
 
-    // Mossa normale in avanti
-    FVector2D ForwardMove = FVector2D(CurrentX, CurrentY + ForwardDirection);
-    if (!GameMode->IsTileOccupied(ForwardMove))
+    // Mossa di avanzamento di una casella
+    FVector2D ForwardMove = FVector2D(CurrentX + Direction, CurrentY);
+    if (IsMoveValid(ForwardMove))
     {
         PossibleMoves.Add(ForwardMove);
+    }
 
-        // Se il pedone non si è ancora mosso, può fare una mossa doppia
-        if ((PieceColor == EPieceColor::WHITE && CurrentY == 1) || (PieceColor == EPieceColor::BLACK && CurrentY == 6))
+    // Prima mossa speciale di avanzamento di due caselle per il pedone
+    if ((PieceColor == EPieceColor::WHITE && CurrentX == 1) || (PieceColor == EPieceColor::BLACK && CurrentX == 6))
+    {
+        FVector2D DoubleForwardMove = FVector2D(CurrentX + 2 * Direction, CurrentY);
+        if (IsMoveValid(DoubleForwardMove))
         {
-            FVector2D DoubleForwardMove = FVector2D(CurrentX, CurrentY + (2 * ForwardDirection));
-            if (!GameMode->IsTileOccupied(DoubleForwardMove))
-            {
-                PossibleMoves.Add(DoubleForwardMove);
-            }
+            PossibleMoves.Add(DoubleForwardMove);
         }
     }
 
-    // Mosse di cattura diagonali
-    FVector2D CaptureMoveLeft = FVector2D(CurrentX - 1, CurrentY + ForwardDirection);
-    FVector2D CaptureMoveRight = FVector2D(CurrentX + 1, CurrentY + ForwardDirection);
-    if (GameMode->IsTileOccupiedByOpponent(CaptureMoveLeft, PieceColor))
+    // Mossa di attacco diagonale destro
+    FVector2D DiagonalRightMove = FVector2D(CurrentX + Direction, CurrentY + 1);
+    if (IsAttackValid(DiagonalRightMove))
     {
-        PossibleMoves.Add(CaptureMoveLeft);
+        PossibleMoves.Add(DiagonalRightMove);
     }
-    if (GameMode->IsTileOccupiedByOpponent(CaptureMoveRight, PieceColor))
+
+    // Mossa di attacco diagonale sinistro
+    FVector2D DiagonalLeftMove = FVector2D(CurrentX + Direction, CurrentY - 1);
+    if (IsAttackValid(DiagonalLeftMove))
     {
-        PossibleMoves.Add(CaptureMoveRight);
+        PossibleMoves.Add(DiagonalLeftMove);
     }
 
     return PossibleMoves;
-    */
-    return PossibleMoves;
 }
+
+bool AChess_Piece_Pawn::IsMoveValid(const FVector2D& Move) const
+{
+    // Verifica se il movimento è all'interno della scacchiera
+    if (Move.X < 0 || Move.X >= 8 || Move.Y < 0 || Move.Y >= 8)
+    {
+        return false;
+    }
+    
+    //  ATile* DestinationTile = TileMap.FindRef(Move);
+
+    AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
+    if (GameMode)
+    {
+        AGameField* GField = GameMode->GetGField();
+        if (GField)
+        {
+            ATile* DestinationTile = GField->TileMap.FindRef(FVector2D(Move.X, Move.Y));
+
+            if (!DestinationTile || DestinationTile->IsOccupied())
+            {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+bool AChess_Piece_Pawn::IsAttackValid(const FVector2D& Attack) const
+{
+    // Verifica se l'attacco è all'interno della scacchiera
+    if (Attack.X < 0 || Attack.X >= 8 || Attack.Y < 0 || Attack.Y >= 8)
+    {
+        return false;
+    }
+
+    AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
+    if (!GameMode)
+    {
+        UE_LOG(LogTemp, Error, TEXT("GameMode non valido per fare IsAttackValid"));
+        return false;
+    }
+
+    AGameField* GField = GameMode->GetGField();
+
+    if (!GField)
+    {
+        UE_LOG(LogTemp, Error, TEXT("GField non valido per fare IsAttackValid"));
+        return false;
+    }
+
+    ATile* DestinationTile = GField->TileMap.FindRef(FVector2D(Attack.X, Attack.Y));
+
+    if (!DestinationTile)
+    {
+        UE_LOG(LogTemp, Error, TEXT("puntatore a DestinationTile non valido per fare IsAttackValid"));
+        return false;
+    }
+
+    if (DestinationTile->IsOccupied())
+    {
+        if ((PieceColor == EPieceColor::WHITE && DestinationTile->GetOwner() == 0) || (PieceColor == EPieceColor::BLACK && DestinationTile->GetOwner() == 1))
+        {
+            return false;
+        }
+
+        else if ((PieceColor == EPieceColor::WHITE && DestinationTile->GetOwner() == 1) || (PieceColor == EPieceColor::BLACK && DestinationTile->GetOwner() == 0))
+        {
+            return true;
+        }
+    }
+    return false;
+    
+ }
+
+    
+

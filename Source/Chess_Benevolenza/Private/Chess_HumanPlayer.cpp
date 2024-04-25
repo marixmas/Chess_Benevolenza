@@ -94,9 +94,6 @@ void AChess_HumanPlayer::OnClick()
 	// se qualcosa è stato cliccato durante il mio turno
 	if (Hit.bBlockingHit && IsMyTurn)
 	{
-		//AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
-		//AGameField* GField = GameMode->GetGField();
-
 		// Verifica se GameMode è valido
 		AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
 		if (!GameMode)
@@ -113,12 +110,23 @@ void AChess_HumanPlayer::OnClick()
 			return;
 		}
 
-
 		// se un pezzo è stato cliccato
 		if (AChess_Piece* CurrPiece = Cast<AChess_Piece>(Hit.GetActor()))
 		{
 			if (CurrPiece->GetPieceColor() == EPieceColor::WHITE)
 			{
+				// Se è già selezionato un altro pezzo bianco, deseleziona quello corrente e imposta il nuovo pezzo selezionato
+				if (SelectedWhitePiece != nullptr)
+				{
+					// Deseleziona il pezzo bianco attualmente selezionato
+					//DeselectWhitePiece();
+					SelectedWhitePiece = nullptr;
+					bPieceSelected = false;
+
+					TurnOffHighlightedTiles();
+
+				}
+
 				// imposto il pezzo selezionato come pezzo attuale del giocatore umano
 				SelectedWhitePiece = CurrPiece;
 
@@ -151,9 +159,9 @@ void AChess_HumanPlayer::OnClick()
 					{
 						SelectedBlackPiece->Destroy();
 
-						MoveSelectedPiece(BlackPieceLocation);
+						MoveSelectedPiece(WhitePieceLocation, BlackPieceLocation);
 						
-						TurnOffHighlightedTiles(PossibleMoves);
+						TurnOffHighlightedTiles();
 
 						GameMode->TurnNextPlayer();
 
@@ -169,13 +177,13 @@ void AChess_HumanPlayer::OnClick()
 			if (bPieceSelected == true && PossibleMoves.Contains(SelectedTile->GetGridPosition()))
 			{
 				//....allora muovere pedina nella tile selezionata
-				MoveSelectedPiece(SelectedTile->GetGridPosition());
+				MoveSelectedPiece(WhitePieceLocation, SelectedTile->GetGridPosition());
 
 				// Resetta lo stato di selezione
 				bPieceSelected = false;
 				CurrPiece = nullptr;
 
-				TurnOffHighlightedTiles(PossibleMoves);
+				TurnOffHighlightedTiles();
 
 				GameMode->TurnNextPlayer();
 
@@ -233,7 +241,7 @@ void AChess_HumanPlayer::OnClick()
 	}
 }
 
- void AChess_HumanPlayer::TurnOffHighlightedTiles(const TArray<FVector2D>& HighlightedPositions)
+ void AChess_HumanPlayer::TurnOffHighlightedTiles(/*const TArray<FVector2D>& HighlightedPositions*/)
  {
 	AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
 	AGameField* GField = GameMode->GetGField();
@@ -243,39 +251,44 @@ void AChess_HumanPlayer::OnClick()
 		UE_LOG(LogTemp, Error, TEXT("GField o GameMode non valido per fare TurnOffHighlightedTiles!"));
 	}
 
-	// Loop attraverso le posizioni delle caselle
-	for (const FVector2D& TilePosition : HighlightedPositions)
+
+	for (int32 x = 0; x < GField->Size; x++)
 	{
-		// Trasforma le coordinate della casella in coordinate del mondo
-		//FVector WorldLocation = TransformTileToWorld(TilePosition);											//inutile mi sa??
-
-		// Illumina la casella utilizzando un materiale o un effetto di luce
-		// Ad esempio, puoi cambiare il colore del materiale o aggiungere una luce sopra la casella
-
-		ATile* Tile = GField->TileMap.FindRef(TilePosition);
-		if (Tile)
+		for (int32 y = 0; y < GField->Size; y++)
 		{
-			int32 CurrentX = (Tile->GetGridPosition()).X;
-			int32 CurrentY = (Tile->GetGridPosition()).Y;
+			// Loop attraverso le posizioni delle caselle
+			//for (const FVector2D& TilePosition : HighlightedPositions)
+			//{
+				// Trasforma le coordinate della casella in coordinate del mondo
+				//FVector WorldLocation = TransformTileToWorld(TilePosition);											//inutile mi sa??
 
-			// Applica il materiale originale alla tile in base alla posizione sulla scacchiera
-			if ((CurrentX + CurrentY % 2) == 0)
+				// Illumina la casella utilizzando un materiale o un effetto di luce
+				// Ad esempio, puoi cambiare il colore del materiale o aggiungere una luce sopra la casella
+
+			ATile* Tile = GField->TileMap.FindRef(FVector2D(x, y)/*TilePosition*/);
+			if (Tile)
 			{
-				Tile->SetTileMaterial(GField->TileMaterial1);
+				//int32 CurrentX = (Tile->GetGridPosition()).X;
+				//int32 CurrentY = (Tile->GetGridPosition()).Y;
+
+				// Applica il materiale originale alla tile in base alla posizione sulla scacchiera
+				if ((x + y) % 2 == 0)
+				{
+					Tile->SetTileMaterial(GField->TileMaterial1);
+				}
+				else
+				{
+					Tile->SetTileMaterial(GField->TileMaterial2);
+				}
 			}
-			else 
+			else
 			{
-				Tile->SetTileMaterial(GField->TileMaterial2);
+				UE_LOG(LogTemp, Error, TEXT("Materiale di TurnOffHighlight non valido."));
 			}
-		}
-		else
-		{
-			UE_LOG(LogTemp, Error, TEXT("Materiale di TurnOffHighlight non valido."));
+			//}
 		}
 	}
 }
-
-
 
 
  /*
@@ -302,7 +315,7 @@ FVector2D AChess_HumanPlayer::GetTileCoordinatesFromHit(const FHitResult& Hit)
 }
 */
 
-void AChess_HumanPlayer::MoveSelectedPiece(const FVector2D& NewPosition)
+void AChess_HumanPlayer::MoveSelectedPiece(const FVector2D& OldPosition, const FVector2D& NewPosition)
 {
 
 	// Assicurati che ci sia un pezzo selezionato
@@ -310,7 +323,7 @@ void AChess_HumanPlayer::MoveSelectedPiece(const FVector2D& NewPosition)
 	{
 		// Effettua il movimento del pezzo selezionato alla nuova posizione
 		// Ad esempio, potresti chiamare una funzione nel pezzo stesso per eseguire il movimento
-		SelectedWhitePiece->MovePieceToPosition(NewPosition);
+		SelectedWhitePiece->MovePieceFromToPosition(OldPosition, NewPosition);
 
 		// Dopo il movimento, reimposta le variabili di stato
 		SelectedWhitePiece = nullptr;
@@ -322,8 +335,6 @@ void AChess_HumanPlayer::MoveSelectedPiece(const FVector2D& NewPosition)
 		UE_LOG(LogTemp, Error, TEXT("è stata chiamata la MoveSelectedPiece su un pezzo non bianco."));
 	}
 }
-
-
 
 
 void AChess_HumanPlayer::InfoOfClickedPiece(AChess_Piece* CurrentPiece)
@@ -344,18 +355,3 @@ void AChess_HumanPlayer::InfoOfClickedPiece(AChess_Piece* CurrentPiece)
 }
 
 	
-/*	if (ATile* CurrTile = Cast<ATile>(Hit.GetActor()))
-		{
-			if (CurrTile->GetTileStatus() == ETileStatus::EMPTY)
-			{
-				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("clicked"));
-				CurrTile->SetTileStatus(PlayerNumber, ETileStatus::OCCUPIED);
-				FVector SpawnPosition = CurrTile->GetActorLocation();
-				AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
-				GameMode->SetCellSign(PlayerNumber, SpawnPosition);
-				IsMyTurn = false;
-			}
-		}
-	*/
-
-
