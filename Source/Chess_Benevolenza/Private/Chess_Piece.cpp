@@ -10,9 +10,10 @@
 AChess_Piece::AChess_Piece()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	//metto false
+	// metto false perché non mi serve
 	PrimaryActorTick.bCanEverTick = false;
-
+	PieceColor = EPieceColor::NOCOLOR;
+	PieceType = EPieceType::NOTYPE;
 }
 
 void AChess_Piece::SetGridPosition(const int32 InX, const int32 InY)
@@ -24,6 +25,7 @@ FVector2D AChess_Piece::GetGridPosition()							// avevo messo come argomento AC
 {
 	return PieceGridPosition;
 }
+
 /*
 void AChess_Piece::SetTileStatus(ETileStatus TileStatus)
 {
@@ -56,7 +58,6 @@ void AChess_Piece::MovePieceFromToPosition(const FVector2D& OldPosition, const F
 {
 	SetGridPosition(NewPosition.X, NewPosition.Y);
 
-
 	AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
 	if (!GameMode)
 	{
@@ -73,8 +74,20 @@ void AChess_Piece::MovePieceFromToPosition(const FVector2D& OldPosition, const F
 	
 	// svuoto la tile della OldPosition
 	ATile* OldPositionTile = GField->TileMap[OldPosition];
-
 	OldPositionTile->EmptyTile();
+
+	// riempio la tile della newPosition
+	ATile* NewPositionTile = GField->TileMap[NewPosition];
+	NewPositionTile->SetTileStatus(ETileStatus::OCCUPIED);
+	if(GetPieceColor() == EPieceColor::WHITE)
+	{
+		NewPositionTile->SetTileOwner(0);
+	}
+	if (GetPieceColor() == EPieceColor::BLACK)
+	{
+		NewPositionTile->SetTileOwner(1);
+	}
+
 
 	if (GField->PiecesMap.Contains(OldPosition))
 	{
@@ -83,14 +96,10 @@ void AChess_Piece::MovePieceFromToPosition(const FVector2D& OldPosition, const F
 	}
 	else
 	{
-		// Se la vecchia posizione non è presente nella mappa impossibile
+		// Se la vecchia posizione non è presente nella mappa impossibile teoricamente
 		//GField->PiecesMap.Add(OldPosition, nullptr);
 		UE_LOG(LogTemp, Error, TEXT("OldPosition non esisteva nella PiecesMap, in MovePieceFromToPosition"));
 	}
-
-	
-	// aggiorno PiecesMap 
-	//GField->PiecesMap[FVector2D(NewPosition.X, NewPosition.Y)] = this;				 non funziona bc se nessun pezoz ] mai stato li c'e un puntatore nullo
 
 	if (GField->PiecesMap.Contains(NewPosition))
 	{
@@ -107,12 +116,9 @@ void AChess_Piece::MovePieceFromToPosition(const FVector2D& OldPosition, const F
 	// aggiorno ReversePiecesMap 
 	GField->ReversePiecesMap[this] = FVector2D(NewPosition.X, NewPosition.Y);
 
+	// sposto il blueprint del Piece
 	FVector NewLocation = FVector(GField->AGameField::GetRelativeLocationByXYPosition(NewPosition.X, NewPosition.Y) + FVector(0, 0, 20));
 	SetActorLocation(NewLocation);
-
-
-	
-
 
 }
 
@@ -150,13 +156,43 @@ bool AChess_Piece::IsMoveValid(const FVector2D& Move)
 	return true;
 }
 
+
+// mi sa che deve esistere solo per Pawn
+/*
 bool AChess_Piece::IsAttackValid(const FVector2D& Attack)
 {
 	return true;
 }
+*/
 
 void  AChess_Piece::SelfDestroy()
 {
 	Destroy();
+}
+
+void AChess_Piece::PieceIsEaten(FVector2D& EatenPiecePosition, AChess_Piece* EatenPiece)
+{
+
+	AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
+	if (!GameMode)
+	{
+		UE_LOG(LogTemp, Error, TEXT("GameMode non valido per fare IsAttackValid"));
+		return;
+	}
+	AGameField* GField = GameMode->GetGField();
+
+	if (!GField)
+	{
+		UE_LOG(LogTemp, Error, TEXT("GField non valido per fare IsAttackValid"));
+		return;
+	}
+
+	ATile* Tile = GField->TileMap.FindRef(EatenPiecePosition);
+	Tile->EmptyTile();
+
+	GField->PiecesMap[EatenPiecePosition] = nullptr;
+
+
+	SelfDestroy();
 }
 

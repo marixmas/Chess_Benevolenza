@@ -56,6 +56,23 @@ bool AChess_Piece_King::IsMoveValid(const FVector2D& Move)
     {
         return false;
     }
+
+
+    AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
+    if (GameMode)
+    {
+        AGameField* GField = GameMode->GetGField();
+        if (GField)
+        {
+            ATile* DestinationTile = GField->TileMap.FindRef(FVector2D(Move.X, Move.Y));
+
+            if (!DestinationTile || DestinationTile->IsOccupied())
+            {
+                return false;
+            }
+        }
+    }
+
     /*
     // Il movimento è valido se la distanza tra le coordinate è <= 1
     FVector2D CurrentPosition = GetGridPosition();                                  //  mi sa che e una ca.volata

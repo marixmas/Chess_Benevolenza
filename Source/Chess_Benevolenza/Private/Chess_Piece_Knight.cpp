@@ -43,7 +43,7 @@ TArray<FVector2D> AChess_Piece_Knight::CalculatePossibleMoves()
             AChess_Piece* PieceAtPosition = GField->PiecesMap.FindRef(NewPosition);
 
             // Se non c'è un pezzo sulla nuova posizione o se c'è un pezzo avversario, aggiungi la mossa alla lista delle possibili mosse
-            if (!PieceAtPosition || PieceAtPosition->GetPieceColor() != GetPieceColor())
+            if (!PieceAtPosition || PieceAtPosition->GetPieceColor() != GetPieceColor() )
             {
                 PossibleMoves.Add(NewPosition);
             }

@@ -30,13 +30,13 @@ public:
 	void SetTileMaterial(UMaterialInterface* Material);
 
 	// imposta lo stato della tile
-	void SetTileStatus(const ETileStatus TileStatus);
+	void SetTileStatus(ETileStatus TileStatus);
 
 	// Returns true if the tile is occupied by a piece
 	bool IsOccupied() const;
 
 	// imposta l'owner della tile
-	void SetTileOwner (const int32 TileOwner);
+	void SetTileOwner (int32 TileOwner);
 
 	// get the tile status
 	ETileStatus GetTileStatus() const;

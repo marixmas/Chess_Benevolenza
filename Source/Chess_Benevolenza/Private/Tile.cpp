@@ -37,17 +37,27 @@ void ATile::SetTileMaterial(UMaterialInterface* Material)
 	}
 }
 
-void ATile::SetTileStatus(const ETileStatus TileStatus)
+void ATile::SetTileStatus(ETileStatus TileStatus)
 {
 	Status = TileStatus;
 }
 
 bool ATile::IsOccupied() const
 {
-	return Status == ETileStatus::OCCUPIED;
+	if (Status == ETileStatus::OCCUPIED)
+	{
+		return true;
+	}
+
+	else
+	{
+		return false;
+	}
+	
+
 }
 
-void ATile::SetTileOwner(const int32 TileOwner)
+void ATile::SetTileOwner( int32 TileOwner)
 {
 	PlayerOwner = TileOwner;
 }

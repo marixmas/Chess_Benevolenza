@@ -14,7 +14,6 @@ AGameField::AGameField()
 	// è uno spreco di risorse tickare una scacchiera
 	PrimaryActorTick.bCanEverTick = false;
 
-	WinSize = 3;
 	// size of the field (3x3)
 	Size = 8;
 

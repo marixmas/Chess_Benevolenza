@@ -13,6 +13,8 @@ enum class EPieceColor : uint8
 {
 	WHITE,
 	BLACK,
+	NOCOLOR,
+
 };
 
 UENUM()
@@ -24,6 +26,8 @@ enum class EPieceType : uint8
 	QUEEN       UMETA(DisplayName = "Queen"),
 	KING        UMETA(DisplayName = "King"),
 	PAWN        UMETA(DisplayName = "Pawn"),
+
+	NOTYPE,
 };
 
 
@@ -85,11 +89,14 @@ public:
 
 	virtual TArray<FVector2D> CalculatePossibleMoves();
 	virtual bool IsMoveValid(const FVector2D& Move);
-	virtual bool IsAttackValid(const FVector2D& Attack);
+	//virtual bool IsAttackValid(const FVector2D& Attack);
 
 
 	// nuove posizioni possibili delle pedine
 	TArray<FVector2D> PossibleMoves;
+
+	// chiamata quando un pezzo viene mangiato
+	void PieceIsEaten(FVector2D& EatenPiecePosition, AChess_Piece* EatenPiece);
 
 	// destroy a Chess Piece actor
 	UFUNCTION()

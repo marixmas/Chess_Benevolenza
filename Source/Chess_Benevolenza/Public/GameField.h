@@ -44,7 +44,7 @@ public:
 	UPROPERTY(Transient)
 	TMap<FVector2D, AChess_Piece*> PiecesMap;
 
-	//given a pieces returns a position																		// messo io per trovare la posizione del pezzo nero selezionato in OnClick di HumanPlayer
+	//given a pieces returns a position									// messo io per trovare la posizione del pezzo nero selezionato in OnClick di HumanPlayer
 	UPROPERTY(Transient)
 	TMap<AChess_Piece*, FVector2D> ReversePiecesMap;
 
@@ -65,20 +65,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 Size;
 
+	/*
 	// size of winning line
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 WinSize;
-
+	*/
 	
 	// TSubclassOf template class that provides UClass type safety
 	// non-colore
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<ATile> TileClass;
-
-
-	// colore per Highlight nel suggerimento mosse
-	//UPROPERTY(EditDefaultsOnly)
-	//TSubclassOf<ATile> TileHighlight;
 
 	
 

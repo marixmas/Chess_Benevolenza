@@ -74,11 +74,12 @@ void AChess_HumanPlayer::OnLose()
 
 void AChess_HumanPlayer::OnClick()
 {
-	//Structure containing information about one hit of a trace, such as point of impact and surface normal at that point
+	// Structure containing information about one hit of a trace, such as point of impact and surface normal at that point
 	FHitResult Hit = FHitResult(ForceInit);
 	// GetHitResultUnderCursor function sends a ray from the mouse position and gives the corresponding hit results
 	GetWorld()->GetFirstPlayerController()->GetHitResultUnderCursor(ECollisionChannel::ECC_Pawn, true, Hit);
-	// se qualcosa è stato cliccato durante il mio turno
+
+	// controllo di aver cliccato qualcosa durante il mio turno
 	if (Hit.bBlockingHit && IsMyTurn)
 	{
 		// Verifica se GameMode è valido
@@ -97,54 +98,65 @@ void AChess_HumanPlayer::OnClick()
 			return;
 		}
 
-		// se un pezzo è stato cliccato
+		// se è stato cliccato un Piece
 		if (AChess_Piece* CurrPiece = Cast<AChess_Piece>(Hit.GetActor()))
-		{
+		{	
+			// il Piece è White
 			if (CurrPiece->GetPieceColor() == EPieceColor::WHITE)
 			{
-				// Se è già selezionato un altro pezzo bianco, deseleziona quello corrente e imposta il nuovo pezzo selezionato
+				// se era già stato selezionato un altro White Piece nel Click precedente,
+				// deselezionalo e imposta il nuovo pezzo selezionato come Current Piece
 				if (SelectedWhitePiece != nullptr)
 				{
-					// Deseleziona il pezzo bianco attualmente selezionato
-					//DeselectWhitePiece();
+					// deseleziono il White Piece
 					SelectedWhitePiece = nullptr;
 					bPieceSelected = false;
 
+					// Spengo i suggerimenti
 					TurnOffHighlightedTiles();
-
 				}
 
 				// imposto il pezzo selezionato come pezzo attuale del giocatore umano
 				SelectedWhitePiece = CurrPiece;
 
+				// imposto la sua posizione
+				WhitePieceLocation = SelectedWhitePiece->GetGridPosition();
+
 				// indico che è stato selezionato un pezzo
 				bPieceSelected = true;
 
+				// mostro in screen le info del pezzo cliccato
 				InfoOfClickedPiece(CurrPiece);
 
 				// chiedo alla classe del singolo pezzo di calcolarmi le mosse possibili
 				PossibleMoves = CurrPiece->CalculatePossibleMoves();
 
 				// illumino le tile che sono le possibili nuove posizioni del pezzo sulla scacchiera
-				HighlightGameFieldTiles(PossibleMoves);						//HighlightGameFieldTiles(PossibleMoves, GField);
+				HighlightGameFieldTiles(PossibleMoves);
 			}
 
 			else if (CurrPiece->GetPieceColor() == EPieceColor::BLACK)
 			{
 				SelectedBlackPiece = CurrPiece;
 
+				// se è il primo click dello human player ed è su un pezzo nero do il messaggio
 				if (bPieceSelected == false)
 				{
 					GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Blue, TEXT("Queste sono le pedine del tuo avversario!"));
 				}
 
+				// se lo human player aveva selezionato una White Piece
 				else if (bPieceSelected == true)
 				{
+					// prendo la posizione sulla GameField del Black Piece
 					BlackPieceLocation = SelectedBlackPiece->GetGridPosition();
 					
+					// se la Posizione del Black Piece appartiene alla mosse possibili del White Piece
 					if (PossibleMoves.Contains(BlackPieceLocation))
 					{
-						SelectedBlackPiece->Destroy();
+						// mangio il Black Piece
+						SelectedBlackPiece->PieceIsEaten(BlackPieceLocation, SelectedBlackPiece);
+
 
 						MoveSelectedPiece(WhitePieceLocation, BlackPieceLocation);
 						
