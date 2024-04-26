@@ -16,4 +16,7 @@ class CHESS_BENEVOLENZA_API AChess_Piece_King : public AChess_Piece
 
 public:
 	virtual TArray<FVector2D> CalculatePossibleMoves() override;
+	virtual bool IsMoveValid(const FVector2D& Move) override;
+	//bool IsAttackValid(const FVector2D& Attack) override;
+
 };

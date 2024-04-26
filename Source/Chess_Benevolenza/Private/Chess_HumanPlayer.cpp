@@ -23,19 +23,6 @@ AChess_HumanPlayer::AChess_HumanPlayer()
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	//set the camera as RootComponent
 	SetRootComponent(Camera);
-
-	//metto la camera al di sopra della scacchiera e puntata verso il basso ortogonalmente				messe in gamemode.cpp!!
-	//FRotator CameraRotation = Camera->GetComponentRotation();
-	//la pitch va settata a -90 gradi
-	//CameraRotation.Pitch = -90.0f;
-	//imposto la nuova rotazione per la fotocamera
-	//Camera->SetWorldRotation(CameraRotation);
-
-	//float CameraPosX = ((GField->TileSize * (FieldSize + ((FieldSize - 1) * GField->NormalizedCellPadding) - (FieldSize - 1))) / 2) - (GField->TileSize / 2);
-	//FVector CameraPos(CameraPosX, CameraPosX, 1000.0f);
-	//HumanPlayer->SetActorLocationAndRotation(CameraPos, FRotationMatrix::MakeFromX(FVector(0, 0, -1)).Rotator());
-
-
 	// get the game instance reference
 	GameInstance = Cast<UChess_GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	// default init values
@@ -162,8 +149,10 @@ void AChess_HumanPlayer::OnClick()
 						MoveSelectedPiece(WhitePieceLocation, BlackPieceLocation);
 						
 						TurnOffHighlightedTiles();
+						
+						GameMode->CheckIfKingIsEaten();
 
-						GameMode->TurnNextPlayer();
+						//GameMode->TurnNextPlayer();													///// DA RIMETTEREEEEE
 
 
 					}
@@ -185,7 +174,7 @@ void AChess_HumanPlayer::OnClick()
 
 				TurnOffHighlightedTiles();
 
-				GameMode->TurnNextPlayer();
+				//GameMode->TurnNextPlayer();														///// DA RIMETTEREEEEE
 
 
 			}
@@ -197,14 +186,11 @@ void AChess_HumanPlayer::OnClick()
 			}
 
 		}
-		
-		
-
 	}
 	else
-		{
-			GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Blue, TEXT("Per favore, aspetta il tuo turno"));
-		}
+	{
+		GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Blue, TEXT("Per favore, aspetta il tuo turno"));
+	}
 }
 
 
@@ -291,14 +277,7 @@ void AChess_HumanPlayer::OnClick()
 }
 
 
- /*
-FVector AChess_HumanPlayer::TransformTileToWorld(const FVector2D& TilePosition)
-{
-	// Implementa la logica per trasformare le coordinate della casella nella posizione del mondo
-	// Ad esempio, puoi mappare le coordinate della scacchiera 2D a coordinate 3D nel mondo di gioco
-	// ...
-}
-*/
+
 /*
 FVector2D AChess_HumanPlayer::GetTileCoordinatesFromHit(const FHitResult& Hit)
 {
@@ -328,7 +307,7 @@ void AChess_HumanPlayer::MoveSelectedPiece(const FVector2D& OldPosition, const F
 		// Dopo il movimento, reimposta le variabili di stato
 		SelectedWhitePiece = nullptr;
 		bPieceSelected = false;
-		IsMyTurn = false; // Probabilmente dovrai gestire meglio il cambio di turno
+		//IsMyTurn = false; // Probabilmente dovrai gestire meglio il cambio di turno				// da rimettere forseeeee
 	}
 	else
 	{

@@ -80,11 +80,6 @@ protected:
 	// muove il pezzo selezionato alla nuova posizione
 	void MoveSelectedPiece(const FVector2D& OldPosition, const FVector2D& NewPosition);
 
-public:
-	
 
-
-	// va alla classe del pezzo selezionato
-	//void 
 
 };

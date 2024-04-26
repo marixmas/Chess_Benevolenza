@@ -16,4 +16,6 @@ class CHESS_BENEVOLENZA_API AChess_Piece_Bishop : public AChess_Piece
 	
 public:
 	virtual TArray<FVector2D> CalculatePossibleMoves() override;
+	//virtual bool IsMoveValid(const FVector2D& Move) override;
+	//virtual bool IsAttackValid(const FVector2D& Attack) override;
 };

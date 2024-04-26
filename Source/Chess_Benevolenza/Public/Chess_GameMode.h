@@ -58,8 +58,8 @@ public:
 	// called at the start of the game
 	void ChoosePlayerAndStartGame();
 
-	// set the cell sign and the position 
-	void SetCellSign(const int32 PlayerNumber, const FVector& SpawnPosition);
+	// get the current player
+	int32 GetCurrentPlayer();
 
 	// get the next player index
 	int32 GetNextPlayer(int32 Player);
@@ -67,10 +67,17 @@ public:
 	// called at the end of the game turn
 	void TurnNextPlayer();
 
+	// controlla se un re e`stato mangiato
+	//bool IsKingEaten;
+
+	// chiamata quando il re viene mangiato
+	//void EatenKing(bool IsKingEaten);
+
+	// controlla se un re e`stato mangiato
+	void CheckIfKingIsEaten();
+
 	// metodo get per usare il puntatore GField ovunque nel codice (inizialmente creato per GameField)
 	AGameField* GetGField() const;
-
-	void MakeMove();
 
 	// flag per controllare che la gamefield non venga spawnata più di una volta
 	bool bFieldGenerated;

@@ -16,11 +16,14 @@ class CHESS_BENEVOLENZA_API AChess_Piece_Rook : public AChess_Piece
 
 public:
 	// Sovrascrivi la funzione GetPieceType() per restituire il tipo corretto
-	virtual EPieceType GetPieceType() const override;
+	//virtual EPieceType GetPieceType() const override;
 
 	// Implementazione della funzione virtuale
-	virtual void SpecialAction() const override;
+	//virtual void SpecialAction() const override;
 
-public:
 	virtual TArray<FVector2D> CalculatePossibleMoves() override;
+	//virtual bool IsMoveValid(const FVector2D& Move) override;
+	//bool IsAttackValid(const FVector2D& Attack) override;
+
 };
+

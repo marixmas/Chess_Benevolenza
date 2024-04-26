@@ -47,46 +47,6 @@ void AChess_GameMode::BeginPlay()
 		bPiecesGenerated = true;
 
 
-		//bFieldGenerated = true;
-
-
-		// Check if the field has already been generated
-		//if (!GField->bFieldGenerated && !GField->bPiecesGenerated)
-		//{
-
-			
-			
-			 
-		//	if (!GField->bFieldGenerated) 
-		//	{
-				//GField->Size = FieldSize;
-				
-				
-				// Generazione del campo di gioco
-		//		GField->GenerateField();
-
-				// bool per controllare che la gamefield venga spawnata una sola volta
-		//		bFieldGenerated = true;
-
-				// Impostazione del flag di generazione del campo di gioco su true
-				//GField->
-			//	GField->bFieldGenerated = true;
-
-				// Generazione dei pezzi solo se non sono già stati generati
-		//		if (!GField->bPiecesGenerated)
-		//		{
-		//			GField->GeneratePieces();
-
-					// bool per controllare che i pezzi vengano spawnati una sola volta
-		//			GField->bPiecesGenerated = true;
-
-					// Impostazione del flag di generazione dei pezzi su true
-					//GField->
-		//			bPiecesGenerated = true;
-		//		}
-				//GField->GeneratePieces();											// grande passo per maria, piccolo passo per l'umanità
-			//}
-		//	}
 	}
 
 		
@@ -124,29 +84,6 @@ void AChess_GameMode::BeginPlay()
 	FVector CameraPos(CameraPosX, CameraPosX, 1600.0f);
 	HumanPlayer->SetActorLocationAndRotation(CameraPos, FRotationMatrix::MakeFromX(FVector(0, 0, -1)).Rotator());
 
-	//non uso ma tengo per ora
-	//metto la camera al di sopra della scacchiera e puntata verso il basso ortogonalmente
-	/*
-	UCameraComponent* Camera = HumanPlayer->Camera;
-	if (Camera != nullptr)
-	{
-		FRotator CameraRotation = Camera->GetComponentRotation();
-		//la pitch va settata a -90 gradi
-		CameraRotation.Pitch = -90.0f;
-		//imposto la nuova rotazione per la fotocamera
-		Camera->SetWorldRotation(CameraRotation);
-
-		float CameraPosX = ((GField->TileSize * (FieldSize + ((FieldSize - 1) * GField->NormalizedCellPadding) - (FieldSize - 1))) / 2) - (GField->TileSize / 2);
-		FVector CameraPos(CameraPosX, CameraPosX, 1000.0f);
-		HumanPlayer->SetActorLocationAndRotation(CameraPos, FRotationMatrix::MakeFromX(FVector(0, 0, -1)).Rotator());
-	}
-
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("Camera pointer is null! Check the configuration."));
-
-	}
-	*/
 
 
 	// Human player = 0
@@ -175,56 +112,13 @@ void AChess_GameMode::ChoosePlayerAndStartGame()
 
 	MoveCounter += 1;
 	Players[CurrentPlayer]->OnTurn();
-	//MakeMove();
 }
 
-void AChess_GameMode::MakeMove()
+int32 AChess_GameMode::GetCurrentPlayer()
 {
-	////????
-
-	TurnNextPlayer();
+	return CurrentPlayer;
 }
 
-
-void AChess_GameMode::SetCellSign(const int32 PlayerNumber, const FVector& SpawnPosition)
-{
-	if (IsGameOver || PlayerNumber != CurrentPlayer)
-	{
-		return;
-	}
-
-	//UClass* SignActor = Players[CurrentPlayer]->Sign == ESign::X ? SignXActor : SignOActor;
-	//FVector Location = GField->GetActorLocation() + SpawnPosition + FVector(0, 0, 10);
-	//GetWorld()->SpawnActor(SignActor, &Location);
-
-	if (GField->IsWinPosition(GField->GetXYPositionByRelativeLocation(SpawnPosition)))
-	{
-		IsGameOver = true;
-		Players[CurrentPlayer]->OnWin();
-		for (int32 i = 0; i < Players.Num(); i++)
-		{
-			if (i != CurrentPlayer)
-			{
-				Players[i]->OnLose();
-			}
-		}
-	}
-	else if (MoveCounter == (FieldSize * FieldSize))
-	{
-		// add a timer (3 seconds)
-		FTimerHandle TimerHandle;
-
-		GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]()
-			{
-				// function to delay
-				GField->ResetField();
-			}, 3, false);
-	}
-	else
-	{
-		TurnNextPlayer();
-	}
-}
 
 int32 AChess_GameMode::GetNextPlayer(int32 Player)
 {
@@ -245,6 +139,67 @@ void AChess_GameMode::TurnNextPlayer()
 	CurrentPlayer = GetNextPlayer(CurrentPlayer);
 	Players[CurrentPlayer]->OnTurn();
 
+}
+
+/*
+void AChess_GameMode::EatenKing(bool IsKingEaten)
+{
+	
+}
+*/
+
+void AChess_GameMode::CheckIfKingIsEaten()
+{
+	AGameField* GameField = GetGField();
+	if (!GameField)
+	{
+		UE_LOG(LogTemp, Error, TEXT("GField non valido in CheckIfKingIsEaten"));
+		return;
+	}
+
+	bool IsWhiteKingEaten = false;
+	bool IsBlackKingEaten = false;
+
+	// Scansiona la mappa dei pezzi per verificare se il re bianco o nero è stato mangiato
+	for (auto& PieceEntry : GameField->PiecesMap)
+	{
+		AChess_Piece* Piece = PieceEntry.Value;
+		if (!Piece)
+		{
+			continue;
+		}
+
+		if (Piece->GetPieceType() == EPieceType::KING)
+		{
+			if (Piece->GetPieceColor() == EPieceColor::WHITE)
+			{
+				IsWhiteKingEaten = true;
+			}
+			else if (Piece->GetPieceColor() == EPieceColor::BLACK)
+			{
+				IsBlackKingEaten = true;
+			}
+		}
+	}
+
+
+
+	// Esegui le azioni appropriate in base a se il re bianco o nero è stato mangiato
+	if (IsWhiteKingEaten)
+	{
+		
+		Players[0]->OnLose();
+		Players[1]->OnWin();
+
+
+		
+	}
+
+	if (IsBlackKingEaten)
+	{
+		Players[1]->OnLose();
+		Players[0]->OnWin();
+	}
 }
 
 

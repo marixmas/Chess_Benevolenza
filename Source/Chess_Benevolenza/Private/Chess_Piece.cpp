@@ -75,6 +75,19 @@ void AChess_Piece::MovePieceFromToPosition(const FVector2D& OldPosition, const F
 	ATile* OldPositionTile = GField->TileMap[OldPosition];
 
 	OldPositionTile->EmptyTile();
+
+	if (GField->PiecesMap.Contains(OldPosition))
+	{
+		// Se la vecchia posizione è già presente nella mappa, aggiorna il suo valore
+		GField->PiecesMap[OldPosition] = nullptr;
+	}
+	else
+	{
+		// Se la vecchia posizione non è presente nella mappa impossibile
+		//GField->PiecesMap.Add(OldPosition, nullptr);
+		UE_LOG(LogTemp, Error, TEXT("OldPosition non esisteva nella PiecesMap, in MovePieceFromToPosition"));
+	}
+
 	
 	// aggiorno PiecesMap 
 	//GField->PiecesMap[FVector2D(NewPosition.X, NewPosition.Y)] = this;				 non funziona bc se nessun pezoz ] mai stato li c'e un puntatore nullo
@@ -125,6 +138,21 @@ TArray<FVector2D> AChess_Piece::CalculatePossibleMoves()
 {
 	// Restituisce un array vuoto di default
 	return TArray<FVector2D>();
+}
+
+bool AChess_Piece::IsMoveValid(const FVector2D& Move)
+{
+	// Verifica se il movimento è all'interno della scacchiera
+	if (Move.X < 0 || Move.X >= 8 || Move.Y < 0 || Move.Y >= 8)
+	{
+		return false;
+	}
+	return true;
+}
+
+bool AChess_Piece::IsAttackValid(const FVector2D& Attack)
+{
+	return true;
 }
 
 void  AChess_Piece::SelfDestroy()

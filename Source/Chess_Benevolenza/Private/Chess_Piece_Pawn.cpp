@@ -50,15 +50,13 @@ TArray<FVector2D> AChess_Piece_Pawn::CalculatePossibleMoves()
     return PossibleMoves;
 }
 
-bool AChess_Piece_Pawn::IsMoveValid(const FVector2D& Move) const
+bool AChess_Piece_Pawn::IsMoveValid(const FVector2D& Move) 
 {
     // Verifica se il movimento è all'interno della scacchiera
     if (Move.X < 0 || Move.X >= 8 || Move.Y < 0 || Move.Y >= 8)
     {
         return false;
     }
-    
-    //  ATile* DestinationTile = TileMap.FindRef(Move);
 
     AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
     if (GameMode)
@@ -77,7 +75,7 @@ bool AChess_Piece_Pawn::IsMoveValid(const FVector2D& Move) const
     return true;
 }
 
-bool AChess_Piece_Pawn::IsAttackValid(const FVector2D& Attack) const
+bool AChess_Piece_Pawn::IsAttackValid(const FVector2D& Attack) 
 {
     // Verifica se l'attacco è all'interno della scacchiera
     if (Attack.X < 0 || Attack.X >= 8 || Attack.Y < 0 || Attack.Y >= 8)
@@ -88,7 +86,7 @@ bool AChess_Piece_Pawn::IsAttackValid(const FVector2D& Attack) const
     AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
     if (!GameMode)
     {
-        UE_LOG(LogTemp, Error, TEXT("GameMode non valido per fare IsAttackValid"));
+        UE_LOG(LogTemp, Error, TEXT("GameMode non valido per fare IsAttackValid di Pawn"));
         return false;
     }
 
@@ -96,7 +94,7 @@ bool AChess_Piece_Pawn::IsAttackValid(const FVector2D& Attack) const
 
     if (!GField)
     {
-        UE_LOG(LogTemp, Error, TEXT("GField non valido per fare IsAttackValid"));
+        UE_LOG(LogTemp, Error, TEXT("GField non valido per fare IsAttackValid di Pawn"));
         return false;
     }
 
@@ -104,7 +102,7 @@ bool AChess_Piece_Pawn::IsAttackValid(const FVector2D& Attack) const
 
     if (!DestinationTile)
     {
-        UE_LOG(LogTemp, Error, TEXT("puntatore a DestinationTile non valido per fare IsAttackValid"));
+        UE_LOG(LogTemp, Error, TEXT("puntatore a DestinationTile non valido per fare IsAttackValid di Pawn"));
         return false;
     }
 

@@ -84,6 +84,8 @@ public:
 	//virtual TArray<FVector2D> CalculatePossibleMoves();
 
 	virtual TArray<FVector2D> CalculatePossibleMoves();
+	virtual bool IsMoveValid(const FVector2D& Move);
+	virtual bool IsAttackValid(const FVector2D& Attack);
 
 
 	// nuove posizioni possibili delle pedine
