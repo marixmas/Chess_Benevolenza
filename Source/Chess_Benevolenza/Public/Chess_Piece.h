@@ -40,13 +40,11 @@ public:
 	// Sets default values for this actor's properties
 	AChess_Piece();
 
-	// set the (x, y) position										//messa per essere usata in GenerateField() in GameField
+	// set the (x, y) position
 	void SetGridPosition(const int32 InX, const int32 InY);
 
 	// get the (x, y) position
-	FVector2D GetGridPosition();					// avevo messo come argomento AChess_Piece* Piece ma non credo sia necessario basta fare puntatoreAoggettoPiece->GetGridPosition()
-
-	//void SetTileStatus(ETileStatus TileStatus);					//no?!
+	FVector2D GetGridPosition();					
 
 	void SetPieceType(EPieceType NewPieceType);
 	//EPieceType GetPieceType();
@@ -69,7 +67,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	// (x, y) position of the tile									//messa per essere usata in GenerateField() in GameField
+	// (x, y) position of the tile
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	FVector2D PieceGridPosition;
 
@@ -85,8 +83,6 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	// calcola possibili mosse per ogni tipo di pezzo
-	//virtual TArray<FVector2D> CalculatePossibleMoves();
-
 	virtual TArray<FVector2D> CalculatePossibleMoves();
 	virtual bool IsMoveValid(const FVector2D& Move);
 	//virtual bool IsAttackValid(const FVector2D& Attack);

@@ -16,6 +16,20 @@ AChess_Piece::AChess_Piece()
 	PieceType = EPieceType::NOTYPE;
 }
 
+// Called when the game starts or when spawned
+void AChess_Piece::BeginPlay()
+{
+	Super::BeginPlay();
+	AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
+	GameMode->GField->OnResetEvent.AddDynamic(this, &AChess_Piece::SelfDestroy);
+}
+
+// Called every frame
+void AChess_Piece::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+}
 void AChess_Piece::SetGridPosition(const int32 InX, const int32 InY)
 {
 	PieceGridPosition.Set(InX, InY);
@@ -116,45 +130,6 @@ void AChess_Piece::MovePieceFromToPosition(const FVector2D& OldPosition, const F
 }
 
 
-// Called when the game starts or when spawned
-void AChess_Piece::BeginPlay()
-{
-	Super::BeginPlay();
-	AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
-	AGameField* GameField = GameMode->GetGField();
-	GameField->OnResetEvent.AddDynamic(this, &AChess_Piece::SelfDestroy);				//ho dovuto commentare bc non mi andava la AddDynamic
-}
-
-
-/*
-// Called when the game starts or when spawned
-void AChess_Piece::BeginPlay()
-{
-	Super::BeginPlay();
-	AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
-	GameMode->GField->OnResetEvent.AddDynamic(this, &AChess_Piece::SelfDestroy);				//ho dovuto commentare bc non mi andava la AddDynamic
-}
-*/
-
-
-/*
-// Called when the game starts or when spawned
-void AChess_Piece::BeginPlay()
-{
-	Super::BeginPlay();
-	AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
-
-	AGameField* GField = GameMode->GetGField();
-	//GField->OnResetEvent.AddDynamic(this, &AChess_Piece::SelfDestroy);				//ho dovuto commentare bc non mi andava la AddDynamic
-}
-*/
-
-// Called every frame
-void AChess_Piece::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
 
 //TArray<FVector2D> AChess_Piece::CalculatePossibleMoves()
 TArray<FVector2D> AChess_Piece::CalculatePossibleMoves()
@@ -183,10 +158,6 @@ bool AChess_Piece::IsAttackValid(const FVector2D& Attack)
 }
 */
 
-void  AChess_Piece::SelfDestroy()
-{
-	Destroy();
-}
 
 void AChess_Piece::PieceIsEaten(FVector2D& EatenPiecePosition, AChess_Piece* EatenPiece)
 {
@@ -214,3 +185,8 @@ void AChess_Piece::PieceIsEaten(FVector2D& EatenPiecePosition, AChess_Piece* Eat
 	SelfDestroy();
 }
 
+
+void  AChess_Piece::SelfDestroy()
+{
+	Destroy();
+}

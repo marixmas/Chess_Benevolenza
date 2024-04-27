@@ -33,7 +33,7 @@ void AChess_GameMode::BeginPlay()
 
 	AChess_HumanPlayer* HumanPlayer = Cast<AChess_HumanPlayer>(*TActorIterator<AChess_HumanPlayer>(GetWorld()));
 
-	// Spawn di AGameField solo se non è già stato fatto
+	// Spawn di AGameField e dei Pezzi solo se non è già stato fatto
 	if (GameFieldClass != nullptr && !bFieldGenerated && !bPiecesGenerated)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Game Field is NOT NULL    OK"));
@@ -41,10 +41,10 @@ void AChess_GameMode::BeginPlay()
 		GField = GetWorld()->SpawnActor<AGameField>(GameFieldClass);
 		GField->Size = FieldSize;	
 
-
 		bFieldGenerated = true;
 		bPiecesGenerated = true;
 
+		GField->GeneratePieces();
 
 	}
 

@@ -37,7 +37,7 @@ void AGameField::BeginPlay()
 	Super::BeginPlay();
 
 	GenerateField();
-	GeneratePieces();
+	//GeneratePieces();												// meglio farlo da GameMode () per fare la AddDynamic Destroy dei Chess_Piece
 
 }
 
