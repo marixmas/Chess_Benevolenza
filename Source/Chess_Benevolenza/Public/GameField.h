@@ -4,8 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Tile.h"
-#include "Chess_Piece.h"			//messo per mettere i puntatori a oggetto AChess_Piece
-//#include "Chess_GameMode.h"			// messo per usare il puntatore GField anche da GameField(.cpp)
+#include "Chess_Piece.h"
 #include "Chess_Piece_Queen.h"	
 #include "Chess_Piece_King.h"	
 #include "Chess_Piece_Pawn.h"	
@@ -52,10 +51,6 @@ public:
 	float NormalizedCellPadding;
 	static const int32 NOT_ASSIGNED = -1;
 
-	// reference to a GameField object				NON PIù	spostato da Chess_GameMode.h a qui per poterlo usare anche in GameField
-	//UPROPERTY(VisibleAnywhere)						// GLI HO CAMBIATO DI NOMEEEEE, MA VORREI PUNTASSERO ALLA STESSA COSA
-	//AGameField* GFGField;							//provo a toglierlo per usarlo solo da gamemode
-
 	// BlueprintAssignable Usable with Multicast Delegates only. Exposes the property for assigning in Blueprints.
 	// declare a variable of type FOnReset (delegate)
 	UPROPERTY(BlueprintAssignable)
@@ -64,12 +59,6 @@ public:
 	// size of field
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 Size;
-
-	/*
-	// size of winning line
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	int32 WinSize;
-	*/
 	
 	// TSubclassOf template class that provides UClass type safety
 	// non-colore

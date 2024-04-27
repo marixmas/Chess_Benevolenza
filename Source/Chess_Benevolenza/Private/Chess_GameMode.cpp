@@ -5,7 +5,6 @@
 #include "Chess_PlayerController.h"
 #include "Chess_HumanPlayer.h"
 #include "Chess_RandomPlayer.h"
-#include "Chess_MinMaxPlayer.h"
 #include "EngineUtils.h"
 
 
@@ -91,18 +90,14 @@ void AChess_GameMode::BeginPlay()
 	// Random Player
 	auto* AI = GetWorld()->SpawnActor<AChess_RandomPlayer>(FVector(), FRotator());
 
-	// MiniMax Player
-	//auto* AI = GetWorld()->SpawnActor<AChess_MinMaxPlayer>(FVector(), FRotator());
-
 	// AI player = 1
 	Players.Add(AI);
 
-	this->ChoosePlayerAndStartGame();
+	this->ChooseHumanPlayerAndStartGame();
 }
 
-void AChess_GameMode::ChoosePlayerAndStartGame()
+void AChess_GameMode::ChooseHumanPlayerAndStartGame()
 {
-	//CurrentPlayer = FMath::RandRange(0, Players.Num() - 1);
 	CurrentPlayer = 0;
 
 	Players[0]->PlayerNumber = 0;

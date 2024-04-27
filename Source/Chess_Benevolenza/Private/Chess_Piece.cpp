@@ -26,13 +26,6 @@ FVector2D AChess_Piece::GetGridPosition()							// avevo messo come argomento AC
 	return PieceGridPosition;
 }
 
-/*
-void AChess_Piece::SetTileStatus(ETileStatus TileStatus)
-{
-	ATile->GetTileStatus();
-	ATile->Status = TileStatus;
-}
-*/
 
 void AChess_Piece::SetPieceType(EPieceType NewPieceType)
 {
@@ -128,8 +121,33 @@ void AChess_Piece::BeginPlay()
 {
 	Super::BeginPlay();
 	AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
-	//GameMode->GField->OnResetEvent.AddDynamic(this, &AChess_Piece::SelfDestroy);				//ho dovuto bc non mi andava la AddDynamic
+	AGameField* GameField = GameMode->GetGField();
+	GameField->OnResetEvent.AddDynamic(this, &AChess_Piece::SelfDestroy);				//ho dovuto commentare bc non mi andava la AddDynamic
 }
+
+
+/*
+// Called when the game starts or when spawned
+void AChess_Piece::BeginPlay()
+{
+	Super::BeginPlay();
+	AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
+	GameMode->GField->OnResetEvent.AddDynamic(this, &AChess_Piece::SelfDestroy);				//ho dovuto commentare bc non mi andava la AddDynamic
+}
+*/
+
+
+/*
+// Called when the game starts or when spawned
+void AChess_Piece::BeginPlay()
+{
+	Super::BeginPlay();
+	AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
+
+	AGameField* GField = GameMode->GetGField();
+	//GField->OnResetEvent.AddDynamic(this, &AChess_Piece::SelfDestroy);				//ho dovuto commentare bc non mi andava la AddDynamic
+}
+*/
 
 // Called every frame
 void AChess_Piece::Tick(float DeltaTime)

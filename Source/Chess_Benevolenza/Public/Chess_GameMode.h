@@ -56,7 +56,7 @@ public:
 	virtual void BeginPlay() override;
 
 	// called at the start of the game
-	void ChoosePlayerAndStartGame();
+	void ChooseHumanPlayerAndStartGame();
 
 	// get the current player
 	int32 GetCurrentPlayer();

@@ -184,7 +184,7 @@ void AGameField::ResetField()
     {
         GameMode->IsGameOver = false;
         GameMode->MoveCounter = 0;
-        GameMode->ChoosePlayerAndStartGame();
+        GameMode->ChooseHumanPlayerAndStartGame();
     }
 }
 
