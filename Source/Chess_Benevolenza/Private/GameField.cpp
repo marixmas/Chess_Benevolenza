@@ -290,7 +290,7 @@ AGameField* AGameField::CloneGameField()
 }
 */
 
-
+/*
 AGameField* AGameField::CloneGameField()
 {
 	AGameField* ClonedNewGameField = CloneEmptyGameField();
@@ -317,7 +317,9 @@ AGameField* AGameField::CloneGameField()
 	}
 	return ClonedNewGameField;
 }
+*/
 
+/*
 TArray<AChess_Piece*> AGameField::ClonePiecesArray(EPieceColor Color = EPieceColor::NONE)
 {
 	TArray<AChess_Piece*> CopiedPiecesArray;
@@ -333,7 +335,9 @@ TArray<AChess_Piece*> AGameField::ClonePiecesArray(EPieceColor Color = EPieceCol
 	return CopiedPiecesArray;
 }
 
-AGameField* AGameField::CloneEmptyGameField()
+*/
+
+AGameField* AGameField::CloneEmptyGameField()																					/// HA SENSO
 {
 	AGameField* ClonedNewGameField = GetWorld()->SpawnActor<AGameField>(AGameField::StaticClass());
 	if (ClonedNewGameField)
@@ -350,7 +354,7 @@ AGameField* AGameField::CloneEmptyGameField()
 	return ClonedNewGameField;
 }
 
-void AGameField::CloneAllPiecesToField(AGameField* TargetField)
+void AGameField::CloneAllPiecesToField(AGameField* TargetField)																// MESSA PER ULTIMA, HA SENSO
 {
 	// Clona tutti i pezzi bianchi
 	for (AChess_Piece* OriginalPiece : WhitePiecesArray)
@@ -361,7 +365,7 @@ void AGameField::CloneAllPiecesToField(AGameField* TargetField)
 			TargetField->WhitePiecesArray.Add(ClonedPiece);
 			TargetField->PiecesArray.Add(ClonedPiece);
 			TargetField->PiecesMap.Add(ClonedPiece->GetGridPosition(), ClonedPiece);
-			// Aggiungi altre operazioni se necessario
+			TargetField->ReversePiecesMap.Add(ClonedPiece, ClonedPiece->GetGridPosition());
 		}
 	}
 
@@ -374,14 +378,14 @@ void AGameField::CloneAllPiecesToField(AGameField* TargetField)
 			TargetField->BlackPiecesArray.Add(ClonedPiece);
 			TargetField->PiecesArray.Add(ClonedPiece);
 			TargetField->PiecesMap.Add(ClonedPiece->GetGridPosition(), ClonedPiece);
-			// Aggiungi altre operazioni se necessario
+			TargetField->ReversePiecesMap.Add(ClonedPiece, ClonedPiece->GetGridPosition()); 
 		}
 	}
 }
 
+/*
 
-
-TArray<AChess_Piece*> AGameField::ClonePiecesArray()
+TArray<AChess_Piece*> AGameField::ClonePiecesArray()																//CREDO SIA DA TOGLIERE
 {
 	TArray<AChess_Piece*> CopiedPiecesArray;
 	for (AChess_Piece* Piece : PiecesArray)
@@ -392,6 +396,8 @@ TArray<AChess_Piece*> AGameField::ClonePiecesArray()
 	}
 	return CopiedPiecesArray;
 }
+*/
+
 
 
 

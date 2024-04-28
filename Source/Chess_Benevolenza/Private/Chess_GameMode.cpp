@@ -225,6 +225,8 @@ bool AChess_GameMode::IsKingInCheck(int32 Player)
 
 bool AChess_GameMode::IsCheckmate(int32 Player)
 {
+	/*
+
 	// ottengo l'array dei pezzi del colore del giocatore di cui voglio controllare lo Scacco Matto
 	//AGameField* GField = GetGField();
 
@@ -262,7 +264,7 @@ bool AChess_GameMode::IsCheckmate(int32 Player)
 
 	// Ottieni la posizione del re
 	KingPosition = King->GetGridPosition();
-
+	*/
 
 	// Controlla se il re del giocatore è in scacco
 	if (!IsKingInCheck(Player))

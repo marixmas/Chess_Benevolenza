@@ -154,10 +154,14 @@ public:
 	// crea una copia della scacchiera nello stato attuale
 	//AGameField* CloneGameField();
 
+	// clona il Game Field originale
+	AGameField* CloneEmptyGameField();
+
+	// clona i pezzi sul game field clonato
 	void CloneAllPiecesToField(AGameField* TargetField);
 
 	// Crea una copia dell'array dei pezzi
-	TArray<AChess_Piece*> ClonePiecesArray();
+	//TArray<AChess_Piece*> ClonePiecesArray();
 
 	// generate an empty game field
 	void GenerateField();
