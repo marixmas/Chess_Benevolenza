@@ -10,8 +10,8 @@
 
 AChess_GameMode::AChess_GameMode()
 {
-	PlayerControllerClass = AChess_PlayerController::StaticClass();				//punta all'oggetto che rappresenta la classe AChess_Player controller
-	DefaultPawnClass = AChess_HumanPlayer::StaticClass();						//same
+	PlayerControllerClass = AChess_PlayerController::StaticClass();
+	DefaultPawnClass = AChess_HumanPlayer::StaticClass();
 	FieldSize = 8;
 
 	// bool per controllare che la gamefield venga spawnata una sola volta
@@ -19,6 +19,7 @@ AChess_GameMode::AChess_GameMode()
 	// bool per controllare che i pezzi vengano spawnati una sola volta
 	bPiecesGenerated = false;
 
+	// inizializzo il puntatore alla GameField a null
 	GField = nullptr;
 
 }
@@ -28,6 +29,7 @@ void AChess_GameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// inizializzo alcuni valori
 	IsGameOver = false;
 	MoveCounter = 0;
 
@@ -45,22 +47,18 @@ void AChess_GameMode::BeginPlay()
 		bPiecesGenerated = true;
 
 		GField->GeneratePieces();
-
 	}
-
-		
 	else
 	{
 		UE_LOG(LogTemp, Error, TEXT("Game Field is null"));
 	}
 
-	//NON useremo NormalizedPadding
-	//float CameraPosX = ((GField->TileSize * (FieldSize + ((FieldSize - 1) * GField->NormalizedCellPadding) - (FieldSize - 1))) / 2) - (GField->TileSize / 2);
-
-	//alcune righe per il debug
 	if (GField != nullptr && GField->TileSize > 0 && FieldSize > 0)
 	{
-		float CameraPosX = (GField->TileSize * FieldSize) / 2;
+		//float CameraPosX = (GField->TileSize * FieldSize) / 2;
+		float CameraPosX = ((GField->TileSize * (FieldSize)) / 2);
+		FVector CameraPos(CameraPosX, CameraPosX, 1600.0f);
+		HumanPlayer->SetActorLocationAndRotation(CameraPos, FRotationMatrix::MakeFromX(FVector(0, 0, -1)).Rotator());
 	}
 	else
 	{
@@ -77,16 +75,19 @@ void AChess_GameMode::BeginPlay()
 			UE_LOG(LogTemp, Error, TEXT("FieldSize is not valid"));
 		}
 	}
-	//fino a qui
 
-	float CameraPosX = ((GField->TileSize * (FieldSize)) / 2);
+	/*
+	float CameraPosX = ((GField->TileSize * (FieldSize)) / 2);																			// metto dentro su dove ho fatto i controlli
 	FVector CameraPos(CameraPosX, CameraPosX, 1600.0f);
 	HumanPlayer->SetActorLocationAndRotation(CameraPos, FRotationMatrix::MakeFromX(FVector(0, 0, -1)).Rotator());
 
+	*/
+	
 
-
+	// aggiungo all'array dei giocatori i due player
 	// Human player = 0
 	Players.Add(HumanPlayer);
+
 	// Random Player
 	auto* AI = GetWorld()->SpawnActor<AChess_RandomPlayer>(FVector(), FRotator());
 
@@ -106,6 +107,8 @@ void AChess_GameMode::ChooseHumanPlayerAndStartGame()
 	Players[1]->ColorOfPieces = EColorOfPieces::BLACK;
 
 	MoveCounter += 1;
+
+	// il  primo turno è del giocatore umano
 	Players[CurrentPlayer]->OnTurn();
 }
 

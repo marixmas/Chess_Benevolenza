@@ -179,8 +179,14 @@ void AChess_Piece::PieceIsEaten(FVector2D& EatenPiecePosition, AChess_Piece* Eat
 	ATile* Tile = GField->TileMap.FindRef(EatenPiecePosition);
 	Tile->EmptyTile();
 
+	// rimuovi la pedina dalla mappa della scacchiera
 	GField->PiecesMap[EatenPiecePosition] = nullptr;
 
+	// rimuovi la pedina dall'array delle pedine
+	GField->PiecesArray.Remove(EatenPiece);
+
+	// rimuovi dalla mappa puntatore-posizione sulla griglia
+	GField->PiecesArray.Remove(EatenPiece);
 
 	SelfDestroy();
 }

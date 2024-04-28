@@ -40,30 +40,85 @@ void AChess_RandomPlayer::OnTurn()
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("AI (Random) Turn"));
 	GameInstance->SetTurnMessage(TEXT("AI (Random) Turn"));
 
+	// prendo puntatori a GameMode e a GField e controllo che siano validi
+	AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
+	AGameField* GField = GameMode->GetGField();
+	if (!GameMode || !GameMode->GField)
+	{
+		UE_LOG(LogTemp, Error, TEXT("GField o GameMode non valido per fare TurnOffHighlightedTiles!"));
+	}
+
 	FTimerHandle TimerHandle;
 
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]()
 		{
-			TArray<ATile*> FreeCells;
-			AChess_GameMode* GameMode = (AChess_GameMode*)(GetWorld()->GetAuthGameMode());
-			for (auto& CurrTile : GameMode->GField->GetTileArray())
+
+			// prendo puntatori a GameMode e a GField e controllo che siano validi
+			AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
+			AGameField* GField = GameMode->GetGField();
+			if (!GameMode || !GameMode->GField)
 			{
-				if (CurrTile->GetTileStatus() == ETileStatus::EMPTY)
+				UE_LOG(LogTemp, Error, TEXT("GField o GameMode non valido per fare TurnOffHighlightedTiles!"));
+			}
+
+			bool bValidPieceAndMove = false;
+			AChess_Piece* RandomPiece = nullptr;
+			FVector2D RandomNewPosition;
+
+			do
+			{	
+				// prendo il sola lettura l'array dei pezzi
+				const TArray <AChess_Piece*>& PiecesArray = GField->GetPiecesArray();
+				// genero un indice casuale all'interno dei limiti dell'array
+				int32 RandIdx = FMath::RandRange(0, PiecesArray.Num() - 1);
+				// prendo il pezzo corrispondente all'indice casuale
+				RandomPiece = Cast<AChess_Piece>(PiecesArray[RandIdx]);
+				
+				// se il pezzo é bianco estrai di nuovo
+				if (RandomPiece->GetPieceColor() == EPieceColor::WHITE)
 				{
-					FreeCells.Add(CurrTile);
+					continue;
 				}
+
+				// calcola le mosse possibili
+				TArray<FVector2D> PossibleMovesArray = RandomPiece->CalculatePossibleMoves();
+
+				// se il pezzo è nero ma non ci sono mosse possibili, estrai di nuovo
+				if (PossibleMovesArray.Num() == 0)
+				{
+					continue;
+				}
+
+				// prendi una mossa casuale
+				int32 RandomMoveIdx = FMath::RandRange(0, PossibleMovesArray.Num() - 1);
+				RandomNewPosition = PossibleMovesArray[RandomMoveIdx];
+
+				bValidPieceAndMove = true;
+
+
 			}
+			while (!bValidPieceAndMove);
 
-			if (FreeCells.Num() > 0)
-			{
-				int32 RandIdx = FMath::Rand() % FreeCells.Num();
-				FVector Location = GameMode->GField->GetRelativeLocationByXYPosition((FreeCells[RandIdx])->GetGridPosition()[0], (FreeCells[RandIdx])->GetGridPosition()[1]);
-				//FreeCells[RandIdx]->SetTileStatus(PlayerNumber, ETileStatus::OCCUPIED);
+			// quando andrá tutto bene avró una pedina estratta a caso e una relativa mossa estratta a caso
+			// mi salvo la sua posizione attuale della pedina
+			FVector2D BlackCurrentPosition = GField->ReversePiecesMap[RandomPiece];
 
-				//GameMode->SetCellSign(PlayerNumber, Location);
+			// muovo la pedina
+			RandomPiece->MovePieceFromToPosition (BlackCurrentPosition, RandomNewPosition);
 
-			}
+			// Controllo se si verifica scacco									////////////////////////////////////////
+
+			// Controllo se si verifica scacco matto													///////////////////////////////////////
+
+			// Controllo se si verifica patta												///////////////////////////////////////
+
+			GameMode->CheckIfKingIsEaten();
+
+			GameMode->TurnNextPlayer();													///// DA RIMETTEREEEEE
+
+
 		}, 3, false);
+
 }
 
 void AChess_RandomPlayer::OnWin()
@@ -76,6 +131,6 @@ void AChess_RandomPlayer::OnWin()
 void AChess_RandomPlayer::OnLose()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("AI (Random) Loses!"));
-	// GameInstance->SetTurnMessage(TEXT("AI Loses!"));
+	GameInstance->SetTurnMessage(TEXT("AI Loses!"));
 }
 

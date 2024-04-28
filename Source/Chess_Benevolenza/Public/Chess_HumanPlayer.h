@@ -31,7 +31,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	// keeps track of turn
-	bool IsMyTurn = false;
+	bool IsMyTurn;
 
 
 public:
@@ -57,7 +57,7 @@ public:
 	void HighlightGameFieldTiles(const TArray<FVector2D>& TilePositions);						// prima c'era anche un secondo argomento AChess_GameMode* GameMode, AGameField* GField
 
 	// Spegne le tile illuminate dei suggerimenti
-	void TurnOffHighlightedTiles(/*const TArray<FVector2D>& HighlightedPositions*/);
+	void TurnOffHighlightedTiles();
 
 	AChess_Piece* SelectedWhitePiece;
 
@@ -74,9 +74,6 @@ public:
 	//FVector TransformTileToWorld(const FVector2D& TilePosition);
 
 protected:
-	// ottiene le coordinate della casella dalla hit result
-	//FVector2D GetTileCoordinatesFromHit(const FHitResult& Hit);
-
 	// muove il pezzo selezionato alla nuova posizione
 	void MoveSelectedPiece(const FVector2D& OldPosition, const FVector2D& NewPosition);
 

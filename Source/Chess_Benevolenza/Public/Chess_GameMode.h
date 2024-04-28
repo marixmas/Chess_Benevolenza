@@ -40,15 +40,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 FieldSize;
 
-	// reference to a GameField object				NON più spostato in GameField.h!!!!!
+	// reference to a GameField object
 	UPROPERTY(VisibleAnywhere)
 	AGameField* GField;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	//TSubclassOf<AActor> SignXActor;
-
-	//UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	//TSubclassOf<AActor> SignOActor;
 
 	AChess_GameMode();
 

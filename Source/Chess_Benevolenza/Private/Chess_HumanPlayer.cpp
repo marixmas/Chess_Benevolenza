@@ -1,7 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-//DA CONTROLLARE LE FUNZIONI DI ONTURN ONWIN ONLOSE ON CLICK^?^?^^^?**************  V V V V V V V VVVVvvvvvvvv
-
 #include "Chess_HumanPlayer.h"
 #include "GameField.h"
 #include "Tile.h"
@@ -15,16 +13,20 @@
 AChess_HumanPlayer::AChess_HumanPlayer()
 {
 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;																				// tanto la telecamera non si deve muovere	         //era true in 04/27 16:00
 
 	// Set this pawn to be controlled by the lowest-numbered player
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
+
 	// create a camera component
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
+
 	//set the camera as RootComponent
 	SetRootComponent(Camera);
+
 	// get the game instance reference
 	GameInstance = Cast<UChess_GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+
 	// default init values
 	PlayerNumber = -1;
 	ColorOfPieces = EColorOfPieces::NONE;
@@ -82,7 +84,7 @@ void AChess_HumanPlayer::OnClick()
 	// controllo di aver cliccato qualcosa durante il mio turno
 	if (Hit.bBlockingHit && IsMyTurn)
 	{
-		// Verifica se GameMode è valido
+		// Verifica che GameMode ptr sia valido
 		AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
 		if (!GameMode)
 		{
@@ -90,7 +92,7 @@ void AChess_HumanPlayer::OnClick()
 			return;
 		}
 
-		// Verifica se GField è valido
+		// Verifica che GField ptr sia valido
 		AGameField* GField = GameMode->GetGField();
 		if (!GField)
 		{
@@ -98,28 +100,29 @@ void AChess_HumanPlayer::OnClick()
 			return;
 		}
 
-		// se è stato cliccato un Piece
+		// se è stato cliccato un Piece, controllane il colore
 		if (AChess_Piece* CurrPiece = Cast<AChess_Piece>(Hit.GetActor()))
 		{	
 			// il Piece è White
 			if (CurrPiece->GetPieceColor() == EPieceColor::WHITE)
 			{
-				// se era già stato selezionato un altro White Piece nel Click precedente,
-				// deselezionalo e imposta il nuovo pezzo selezionato come Current Piece
+				// Se era già stato selezionato un altro White Piece nel Click precedente,
+				// deselezionalo e imposta questo come Current Piece
 				if (SelectedWhitePiece != nullptr)
 				{
-					// deseleziono il White Piece
+					// deselezione
 					SelectedWhitePiece = nullptr;
 					bPieceSelected = false;
 
-					// Spengo i suggerimenti
+					// "Spengo" i suggerimenti (attivati precedentemente)
 					TurnOffHighlightedTiles();
 				}
 
-				// imposto il pezzo selezionato come pezzo attuale del giocatore umano
+				// Se NON era già stato selezionato un White Piece precedentemente
+				// imposta il pezzo come Current Piece
 				SelectedWhitePiece = CurrPiece;
 
-				// imposto la sua posizione
+				// ottengo la sua posizione sulla scacchiera
 				WhitePieceLocation = SelectedWhitePiece->GetGridPosition();
 
 				// indico che è stato selezionato un pezzo
@@ -131,24 +134,26 @@ void AChess_HumanPlayer::OnClick()
 				// chiedo alla classe del singolo pezzo di calcolarmi le mosse possibili
 				PossibleMoves = CurrPiece->CalculatePossibleMoves();
 
-				// illumino le tile che sono le possibili nuove posizioni del pezzo sulla scacchiera
+				// illumino le tile delle mosse possibili
 				HighlightGameFieldTiles(PossibleMoves);
 			}
 
+			// Se il Click è su un Black Piece
 			else if (CurrPiece->GetPieceColor() == EPieceColor::BLACK)
 			{
+				// me lo memorizzo
 				SelectedBlackPiece = CurrPiece;
 
-				// se è il primo click dello human player ed è su un pezzo nero do il messaggio
+				// se è il primo click dello human player ed è su un Black Piece do il messaggio
 				if (bPieceSelected == false)
 				{
 					GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Blue, TEXT("Queste sono le pedine del tuo avversario!"));
 				}
 
-				// se lo human player aveva selezionato una White Piece
+				// se lo human player aveva selezionato un White Piece
 				else if (bPieceSelected == true)
 				{
-					// prendo la posizione sulla GameField del Black Piece
+					// ottengo la posizione sulla GameField del Black Piece
 					BlackPieceLocation = SelectedBlackPiece->GetGridPosition();
 					
 					// se la Posizione del Black Piece appartiene alla mosse possibili del White Piece
@@ -157,14 +162,21 @@ void AChess_HumanPlayer::OnClick()
 						// mangio il Black Piece
 						SelectedBlackPiece->PieceIsEaten(BlackPieceLocation, SelectedBlackPiece);
 
-
+						// muovo il White Piece
 						MoveSelectedPiece(WhitePieceLocation, BlackPieceLocation);
 						
+						// "spengo" i suggerimenti
 						TurnOffHighlightedTiles();
 						
+						// Controllo se si verifica scacco									////////////////////////////////////////
+
+						// Controllo se si verifica scacco matto													///////////////////////////////////////
+			
+						// Controllo se si verifica patta												///////////////////////////////////////
+	
 						GameMode->CheckIfKingIsEaten();
 
-						//GameMode->TurnNextPlayer();													///// DA RIMETTEREEEEE
+						GameMode->TurnNextPlayer();													///// DA RIMETTEREEEEE
 
 
 					}
@@ -172,25 +184,27 @@ void AChess_HumanPlayer::OnClick()
 			}
 		}
 
+		// se il Click è su una Tile
 		else if (ATile* SelectedTile = Cast<ATile>(Hit.GetActor()))
 		{
-			// se un pezzo era già stato cliccato e la tile è nelle mosse possibili...
+			// se un pezzo era già stato selezionato e la tile cliccata è nelle mosse possibili...
 			if (bPieceSelected == true && PossibleMoves.Contains(SelectedTile->GetGridPosition()))
 			{
 				//....allora muovere pedina nella tile selezionata
 				MoveSelectedPiece(WhitePieceLocation, SelectedTile->GetGridPosition());
 
-				// Resetta lo stato di selezione
+				// Resetta lo stato di selezione della pedina
 				bPieceSelected = false;
 				CurrPiece = nullptr;
 
+				// "spengo" i suggerimenti
 				TurnOffHighlightedTiles();
 
-				//GameMode->TurnNextPlayer();														///// DA RIMETTEREEEEE
+				GameMode->TurnNextPlayer();														///// DA RIMETTEREEEEE
 
 
 			}
-			// se un pezzo era già stato cliccato e la tile NON è nelle mosse possibili, no si può
+			// se un pezzo era già stato cliccato e la tile NON è nelle mosse possibili, non si può e do messaggio
 			else if (bPieceSelected == true && !PossibleMoves.Contains(SelectedTile->GetGridPosition()))
 			{
 				GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Blue, TEXT("La pedina selezionata non può andare in questa casella."));
@@ -199,6 +213,8 @@ void AChess_HumanPlayer::OnClick()
 
 		}
 	}
+
+	// Se clicco su qualcosa di valido ma non è il mio turno
 	else
 	{
 		GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Blue, TEXT("Per favore, aspetta il tuo turno"));
@@ -206,30 +222,26 @@ void AChess_HumanPlayer::OnClick()
 }
 
 
+// Accende le tile dei suggerimenti ovvero le tile delle mosse possibili dei pezzi
  void AChess_HumanPlayer::HighlightGameFieldTiles(const TArray<FVector2D>& TilePositions)				//c'era anche AChess_GameMode* GameMode, AGameField* GField
 {
+	 // prendo puntatori a GameMode e a GField e controllo che siano validi
 	 AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
 	 AGameField* GField = GameMode->GetGField();
-	 // Verifica se GField è valido
-	 if (!GameMode || !GameMode->GField)							//la condizione era !GameMode || !GameMode->GField
+	 if (!GameMode || !GameMode->GField)	
 	 {
 		 UE_LOG(LogTemp, Error, TEXT("GField o GameMode non valido per fare HighlightGameFieldTiles!"));
-		 
 	 }
 
-	// Loop attraverso le posizioni delle caselle
+
+	// Loop attraverso tutte le Tile della GameField
 	for (const FVector2D& TilePosition : TilePositions)
 	{
-		// Trasforma le coordinate della casella in coordinate del mondo
-		//FVector WorldLocation = TransformTileToWorld(TilePosition);											//inutile mi sa??
-
-		// Illumina la casella utilizzando un materiale o un effetto di luce
-		// Ad esempio, puoi cambiare il colore del materiale o aggiungere una luce sopra la casella
-		
+		// prendo i puntatori alle Tile delle mosse possibili
 		ATile* Tile = GField->TileMap.FindRef(TilePosition);
 		if (Tile)
 		{
-			// Applica il materiale di evidenziazione alla casella
+			// cambio il materiale della Tile in giallo
 			Tile->SetTileMaterial(GField->TileHighlightMaterial);
 		}
 		else
@@ -239,36 +251,25 @@ void AChess_HumanPlayer::OnClick()
 	}
 }
 
- void AChess_HumanPlayer::TurnOffHighlightedTiles(/*const TArray<FVector2D>& HighlightedPositions*/)
+ void AChess_HumanPlayer::TurnOffHighlightedTiles()
  {
+	// prendo puntatori a GameMode e a GField e controllo che siano validi
 	AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
 	AGameField* GField = GameMode->GetGField();
-	// Verifica se GField è valido
-	if (!GameMode || !GameMode->GField)							//la condizione era !GameMode || !GameMode->GField
+	if (!GameMode || !GameMode->GField)
 	{
 		UE_LOG(LogTemp, Error, TEXT("GField o GameMode non valido per fare TurnOffHighlightedTiles!"));
 	}
 
-
+	// scorro tutte le tile della gamefield
 	for (int32 x = 0; x < GField->Size; x++)
 	{
 		for (int32 y = 0; y < GField->Size; y++)
 		{
-			// Loop attraverso le posizioni delle caselle
-			//for (const FVector2D& TilePosition : HighlightedPositions)
-			//{
-				// Trasforma le coordinate della casella in coordinate del mondo
-				//FVector WorldLocation = TransformTileToWorld(TilePosition);											//inutile mi sa??
-
-				// Illumina la casella utilizzando un materiale o un effetto di luce
-				// Ad esempio, puoi cambiare il colore del materiale o aggiungere una luce sopra la casella
-
-			ATile* Tile = GField->TileMap.FindRef(FVector2D(x, y)/*TilePosition*/);
+			// prendo un puntatore alla tile per ogni coppia (x,y) corrispondente
+			ATile* Tile = GField->TileMap.FindRef(FVector2D(x, y));
 			if (Tile)
 			{
-				//int32 CurrentX = (Tile->GetGridPosition()).X;
-				//int32 CurrentY = (Tile->GetGridPosition()).Y;
-
 				// Applica il materiale originale alla tile in base alla posizione sulla scacchiera
 				if ((x + y) % 2 == 0)
 				{
@@ -283,28 +284,9 @@ void AChess_HumanPlayer::OnClick()
 			{
 				UE_LOG(LogTemp, Error, TEXT("Materiale di TurnOffHighlight non valido."));
 			}
-			//}
 		}
 	}
 }
-
-
-
-/*
-FVector2D AChess_HumanPlayer::GetTileCoordinatesFromHit(const FHitResult& Hit)
-{
-	// Implementa la logica per ottenere le coordinate della casella dalla hit result
-	// Ad esempio, potresti usare le informazioni della hit result per trovare la casella più vicina
-
-	// Esempio di implementazione di base:
-	FVector HitLocation = Hit.ImpactPoint;
-	// Converti la posizione del colpo in coordinate locali del campo di gioco
-	FVector LocalHitLocation = GField->GetActorTransform().InverseTransformPosition(HitLocation);
-	// Calcola le coordinate della casella (arrotondate)
-	FVector2D TileCoordinates(FMath::RoundToInt(LocalHitLocation.X), FMath::RoundToInt(LocalHitLocation.Y));
-	return TileCoordinates;
-}
-*/
 
 void AChess_HumanPlayer::MoveSelectedPiece(const FVector2D& OldPosition, const FVector2D& NewPosition)
 {
@@ -327,13 +309,13 @@ void AChess_HumanPlayer::MoveSelectedPiece(const FVector2D& OldPosition, const F
 	}
 }
 
-
+// da le info sul pezzo cliccato
 void AChess_HumanPlayer::InfoOfClickedPiece(AChess_Piece* CurrentPiece)
 {
 	EPieceType PieceType = CurrentPiece->GetPieceType();
 
 	FString TypeString = (PieceType == EPieceType::KING) ? TEXT("King") :
-		(PieceType == EPieceType::QUEEN) ? TEXT("Queen") :
+	  	(PieceType == EPieceType::QUEEN) ? TEXT("Queen") :
 		(PieceType == EPieceType::ROOK) ? TEXT("Rook") :
 		(PieceType == EPieceType::BISHOP) ? TEXT("Bishop") :
 		(PieceType == EPieceType::KNIGHT) ? TEXT("Knight") :

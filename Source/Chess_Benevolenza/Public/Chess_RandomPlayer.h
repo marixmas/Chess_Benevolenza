@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-//#include "GameField.h"						//per il famoso spostamento di GField			NON PIù
 #include "GameFramework/Pawn.h"
 #include "Chess_PlayerInterface.h"
 #include "Chess_GameInstance.h"

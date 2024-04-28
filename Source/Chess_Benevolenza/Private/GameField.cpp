@@ -22,6 +22,13 @@ AGameField::AGameField()
 
 	// tile padding dimension
 	CellPadding = 0;
+
+	TileArray.Empty();
+	TileMap.Empty();
+	PiecesArray.Empty();
+	PiecesMap.Empty();
+	ReversePiecesMap.Empty();
+
 }
 
 void AGameField::OnConstruction(const FTransform& Transform)
@@ -182,10 +189,31 @@ void AGameField::ResetField()
 	 AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
     if (GameMode)
     {
+		// TileArray non va svuotata dato che quando faccio reset dal bottone dell'interfaccia non cancello la GameField ma solo i Pieces
+		// TileMap non va svuotata per la stessa ragione
+		// 
+		// svuoto l'array con il puntatore ai pezzi poiché li rigenero
+		PiecesArray.Empty();
+
+		// svuoto la mappa con i puntatori ai pezzi poiché li rigenero
+		PiecesMap.Empty();
+
+		// svuoto la mappa con le posizioni ai pezzi poiché li rigenero
+		ReversePiecesMap.Empty();
+
+		
         GameMode->IsGameOver = false;
         GameMode->MoveCounter = 0;
+
+		GeneratePieces();
+
         GameMode->ChooseHumanPlayerAndStartGame();
+
     }
+	else if (GameMode == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("ptr a GameMode nullo in ResetField"));
+	}
 }
 
 void AGameField::GenerateField()
@@ -194,11 +222,11 @@ void AGameField::GenerateField()
 		UE_LOG(LogTemp, Error, TEXT("è stata chiamata GenerateField"));
 
 		/*
-		// Pulizia dell'array TileArray
-		for (ATile* Tile : TileArray)
-		{
-			Tile->Destroy(); // Oppure un'altra azione per rimuovere l'oggetto dal mondo
-		}
+		// Pulizia dell'array TileArray											messo in ResetField
+		//for (ATile* Tile : TileArray)
+		///{
+		//	Tile->Destroy(); // Oppure un'altra azione per rimuovere l'oggetto dal mondo
+		//}
 		TileArray.Empty();
 
 		// Pulizia della mappa TileMap
@@ -242,8 +270,12 @@ FVector2D AGameField::GetPosition(const FHitResult& Hit)
 
 TArray<ATile*>& AGameField::GetTileArray()
 {
-	// TODO: inserire l'istruzione return qui			DONE
 	return TileArray;
+}
+
+TArray<AChess_Piece*>& AGameField::GetPiecesArray()
+{
+	return PiecesArray;
 }
 
 FVector AGameField::GetRelativeLocationByXYPosition(const int32 InX, const int32 InY) const

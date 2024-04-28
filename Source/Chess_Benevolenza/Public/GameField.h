@@ -39,13 +39,14 @@ public:
 	UPROPERTY(Transient)
 	TArray<AChess_Piece*> PiecesArray;
 
-	//given a position returns a pieces
+	//given a position returns a piece
 	UPROPERTY(Transient)
 	TMap<FVector2D, AChess_Piece*> PiecesMap;
 
 	//given a pieces returns a position									// messo io per trovare la posizione del pezzo nero selezionato in OnClick di HumanPlayer
 	UPROPERTY(Transient)
 	TMap<AChess_Piece*, FVector2D> ReversePiecesMap;
+
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	float NormalizedCellPadding;
@@ -75,7 +76,7 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	UMaterialInterface* TileMaterial2;
 
-	// Materiale per l'evidenziazione delle mosse
+	// Materiale per l'evidenziazione delle mosse (giallo)
 	UPROPERTY(EditDefaultsOnly)
 	UMaterialInterface* TileHighlightMaterial;
 
@@ -151,20 +152,17 @@ public:
 	// spawna il pezzo
 	void SpawnChessPiece(int32 x, int32 y, EPieceColor PieceColor, EPieceType PieceType);
 
-	/*
-	// spawna una tile
-	void SpawnTile(int32 x, int32 y);
-	*/
-
 	// prende il blue print del pezzo
 	UClass* GetChessPieceBP(EPieceColor PieceColor, EPieceType PieceType); 
-
 
 	// return a (x,y) position given a hit (click) on a field tile
 	FVector2D GetPosition(const FHitResult& Hit);
 
 	// return the array of tile pointers
 	TArray<ATile*>& GetTileArray();
+
+	// return the array of pieces pointers
+	TArray<AChess_Piece*>& GetPiecesArray();
 
 	// return a relative position given (x,y) position
 	FVector GetRelativeLocationByXYPosition(const int32 InX, const int32 InY) const;
