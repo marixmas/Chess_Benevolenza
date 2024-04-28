@@ -50,7 +50,6 @@ void AGameField::BeginPlay()
 
 }
 
-
 void AGameField::GeneratePieces()
 {
 
@@ -230,6 +229,7 @@ void AGameField::ResetField()
 	}
 }
 
+/*
 AGameField* AGameField::CloneGameField()
 {
 	AGameField* ClonedNewGameField = GetWorld()->SpawnActor<AGameField>(AGameField::StaticClass());
@@ -288,6 +288,98 @@ AGameField* AGameField::CloneGameField()
 	return ClonedNewGameField;
 
 }
+*/
+
+
+AGameField* AGameField::CloneGameField()
+{
+	AGameField* ClonedNewGameField = CloneEmptyGameField();
+
+	if (ClonedNewGameField)
+	{
+		// Copia l'array dei pezzi del giocatore bianco
+		TArray<AChess_Piece*> ClonedWhitePiecesArray = ClonePiecesArray(EPieceColor::WHITE);
+		ClonedNewGameField->WhitePiecesArray = ClonedWhitePiecesArray;
+		// Aggiungi i pezzi bianchi alla mappa dei pezzi del campo di gioco clonato
+		for (AChess_Piece* Piece : ClonedWhitePiecesArray)
+		{
+			ClonedNewGameField->PiecesMap.Add(Piece->GetGridPosition(), Piece);
+		}
+
+		// Copia l'array dei pezzi del giocatore nero (modifica in base al tuo codice)
+		TArray<AChess_Piece*> ClonedBlackPiecesArray = ClonePiecesArray(EPieceColor::BLACK);
+		ClonedNewGameField->BlackPiecesArray = ClonedBlackPiecesArray;
+		// Aggiungi i pezzi neri alla mappa dei pezzi del campo di gioco clonato
+		for (AChess_Piece* Piece : ClonedBlackPiecesArray)
+		{
+			ClonedNewGameField->PiecesMap.Add(Piece->GetGridPosition(), Piece);
+		}
+	}
+	return ClonedNewGameField;
+}
+
+TArray<AChess_Piece*> AGameField::ClonePiecesArray(EPieceColor Color = EPieceColor::NONE)
+{
+	TArray<AChess_Piece*> CopiedPiecesArray;
+	for (AChess_Piece* Piece : PiecesArray)
+	{
+		if (Color == EPieceColor::NONE || Piece->GetPieceColor() == Color)
+		{
+			// Crea una copia del pezzo e aggiungilo all'array delle copie
+			AChess_Piece* CopiedPiece = Piece->ClonePiece();
+			CopiedPiecesArray.Add(CopiedPiece);
+		}
+	}
+	return CopiedPiecesArray;
+}
+
+AGameField* AGameField::CloneEmptyGameField()
+{
+	AGameField* ClonedNewGameField = GetWorld()->SpawnActor<AGameField>(AGameField::StaticClass());
+	if (ClonedNewGameField)
+	{
+		// Copia l'array delle tessere
+		for (ATile* Tile : TileArray)
+		{
+			// Copia la tessera e aggiungila alla nuova scacchiera
+			ATile* NewTile = Tile->CloneTile();
+			ClonedNewGameField->TileArray.Add(NewTile);
+			ClonedNewGameField->TileMap.Add(NewTile->GetGridPosition(), NewTile);
+		}
+	}
+	return ClonedNewGameField;
+}
+
+void AGameField::CloneAllPiecesToField(AGameField* TargetField)
+{
+	// Clona tutti i pezzi bianchi
+	for (AChess_Piece* OriginalPiece : WhitePiecesArray)
+	{
+		AChess_Piece* ClonedPiece = OriginalPiece->ClonePiece();
+		if (ClonedPiece)
+		{
+			TargetField->WhitePiecesArray.Add(ClonedPiece);
+			TargetField->PiecesArray.Add(ClonedPiece);
+			TargetField->PiecesMap.Add(ClonedPiece->GetGridPosition(), ClonedPiece);
+			// Aggiungi altre operazioni se necessario
+		}
+	}
+
+	// Clona tutti i pezzi neri
+	for (AChess_Piece* OriginalPiece : BlackPiecesArray)
+	{
+		AChess_Piece* ClonedPiece = OriginalPiece->ClonePiece();
+		if (ClonedPiece)
+		{
+			TargetField->BlackPiecesArray.Add(ClonedPiece);
+			TargetField->PiecesArray.Add(ClonedPiece);
+			TargetField->PiecesMap.Add(ClonedPiece->GetGridPosition(), ClonedPiece);
+			// Aggiungi altre operazioni se necessario
+		}
+	}
+}
+
+
 
 TArray<AChess_Piece*> AGameField::ClonePiecesArray()
 {

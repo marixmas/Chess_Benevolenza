@@ -152,7 +152,9 @@ public:
 	void ResetField();
 
 	// crea una copia della scacchiera nello stato attuale
-	AGameField* CloneGameField();
+	//AGameField* CloneGameField();
+
+	void CloneAllPiecesToField(AGameField* TargetField);
 
 	// Crea una copia dell'array dei pezzi
 	TArray<AChess_Piece*> ClonePiecesArray();

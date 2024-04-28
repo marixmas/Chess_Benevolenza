@@ -274,34 +274,42 @@ bool AChess_GameMode::IsCheckmate(int32 Player)
 	// Controlla se il giocatore non ha mosse legali che possono salvare il re dallo scacco
 
 	// creo una copia della scacchiera per i calcoli per lo scacco matto
-	AGameField* ClonedField = GField->CloneGameField();
+	AGameField* ClonedField = GField->CloneEmptyGameField();
 
 	for (AChess_Piece* Piece : CopyOfColorPiecesArray)
 	{
-		// Creazione di una nuova copia della scacchiera all'inizio di ogni iterazione
-		AGameField* ClonedField = GField->CloneGameField();
-
 		TArray<FVector2D> PossibleMoves = (Cast<AChess_Piece>(Piece))->CalculatePossibleMoves();
+
 		for (FVector2D Move : PossibleMoves)
 		{
-			// Simula la mossa
-			FVector2D OriginalPosition = Piece->GetGridPosition();
-			Piece->MoveCloneToPosition(Move);
+			// Creazione di una copia della scacchiera all'inizio di ogni iterazione
+			//AGameField* ClonedField = GField->CloneGameField();
+
+			// creo copia di tutti i pezzi a ogni iterazione
+
+			GField->CloneAllPiecesToField(ClonedField);
+			// Muove il pezzo
+			Piece->MovePieceFromToPosition(Piece->GetGridPosition(), Move);
 
 			// Controlla se il re non è più in scacco dopo la mossa
 			if (!IsKingInCheck(Player))
 			{
-				// Ripristina la posizione originale
-				Piece->MoveCloneToPosition(OriginalPosition);
+				for (AChess_Piece* ClonedPiece : ClonedField->PiecesArray)
+				{
+					ClonedPiece->Destroy();
+				}
+				ClonedField->Destroy();
 				return false; // Il re può evitare lo scacco matto
 			}
-			// Ripristina la posizione originale
-			Piece->MoveCloneToPosition(OriginalPosition);
+
+			for (AChess_Piece* ClonedPiece : ClonedField->PiecesArray)
+			{
+				ClonedPiece->Destroy();
+			}
+			
 		}
 	}
-
 	ClonedField->Destroy();
-	ClonedField = nullptr;
 	// Nessuna mossa legale può salvare il re dallo scacco, quindi è scacco matto
 	return true;
 }
