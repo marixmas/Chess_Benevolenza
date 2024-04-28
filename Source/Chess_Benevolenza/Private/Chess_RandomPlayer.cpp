@@ -103,8 +103,16 @@ void AChess_RandomPlayer::OnTurn()
 			// mi salvo la sua posizione attuale della pedina
 			FVector2D BlackCurrentPosition = GField->ReversePiecesMap[RandomPiece];
 
+			// se dove c'è un'altra pedina (so che già che sarà bianca perché è una mossa possibile) la mangio
+			if ((GField->PiecesMap[RandomNewPosition]) != nullptr)
+			{
+				(GField->PiecesMap[RandomNewPosition])->PieceIsEaten(RandomNewPosition);
+			}
+
 			// muovo la pedina
 			RandomPiece->MovePieceFromToPosition (BlackCurrentPosition, RandomNewPosition);
+
+
 
 			// Controllo se si verifica scacco									////////////////////////////////////////
 
@@ -112,7 +120,7 @@ void AChess_RandomPlayer::OnTurn()
 
 			// Controllo se si verifica patta												///////////////////////////////////////
 
-			GameMode->CheckIfKingIsEaten();
+			//GameMode->CheckIfKingIsEaten();
 
 			GameMode->TurnNextPlayer();													///// DA RIMETTEREEEEE
 

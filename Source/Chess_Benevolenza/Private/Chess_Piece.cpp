@@ -129,9 +129,30 @@ void AChess_Piece::MovePieceFromToPosition(const FVector2D& OldPosition, const F
 
 }
 
+/*
+void AChess_Piece::MoveCloneToPosition(const FVector2D& NewPosition)
+{
+
+}
+
+*/
 
 
-//TArray<FVector2D> AChess_Piece::CalculatePossibleMoves()
+AChess_Piece* AChess_Piece::ClonePiece()
+{
+	AChess_Piece* CopiedPiece = GetWorld()->SpawnActor<AChess_Piece>(AChess_Piece::StaticClass());
+	if (CopiedPiece)
+	{
+		// Copia i dati del pezzo originale nella copia
+		CopiedPiece->SetGridPosition(PieceGridPosition.X, PieceGridPosition.Y);
+		CopiedPiece->SetPieceType(PieceType);
+		CopiedPiece->SetPieceColor(PieceColor);
+	}
+	return CopiedPiece;
+}
+
+
+
 TArray<FVector2D> AChess_Piece::CalculatePossibleMoves()
 
 {
@@ -150,16 +171,7 @@ bool AChess_Piece::IsMoveValid(const FVector2D& Move)
 }
 
 
-// mi sa che deve esistere solo per Pawn
-/*
-bool AChess_Piece::IsAttackValid(const FVector2D& Attack)
-{
-	return true;
-}
-*/
-
-
-void AChess_Piece::PieceIsEaten(FVector2D& EatenPiecePosition, AChess_Piece* EatenPiece)
+void AChess_Piece::PieceIsEaten(FVector2D& EatenPiecePosition)                             
 {
 
 	AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
@@ -182,11 +194,20 @@ void AChess_Piece::PieceIsEaten(FVector2D& EatenPiecePosition, AChess_Piece* Eat
 	// rimuovi la pedina dalla mappa della scacchiera
 	GField->PiecesMap[EatenPiecePosition] = nullptr;
 
-	// rimuovi la pedina dall'array delle pedine
-	GField->PiecesArray.Remove(EatenPiece);
+	// rimuovi la pedina dagli array delle pedine
+	GField->PiecesArray.Remove(this); 
+	EPieceColor EatenPieceColor = this->GetPieceColor();
+	if (EatenPieceColor == EPieceColor::WHITE)
+	{
+		GField->WhitePiecesArray.Remove(this);
+	}
+	else if (EatenPieceColor == EPieceColor::BLACK)
+	{
+		GField->BlackPiecesArray.Remove(this);
+	}
 
 	// rimuovi dalla mappa puntatore-posizione sulla griglia
-	GField->PiecesArray.Remove(EatenPiece);
+	GField->ReversePiecesMap.Remove(this);
 
 	SelfDestroy();
 }
@@ -196,3 +217,10 @@ void  AChess_Piece::SelfDestroy()
 {
 	Destroy();
 }
+
+/*
+AChess_Piece* AChess_Piece::ClonePieces()
+{
+	return nullptr;
+}
+*/

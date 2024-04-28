@@ -139,65 +139,202 @@ void AChess_GameMode::TurnNextPlayer()
 
 }
 
-/*
-void AChess_GameMode::EatenKing(bool IsKingEaten)
-{
-	
-}
-*/
 
-void AChess_GameMode::CheckIfKingIsEaten()
+bool AChess_GameMode::IsKingInCheck(int32 Player)
 {
-	AGameField* GameField = GetGField();
-	if (!GameField)
+	// ottengo l'array dei pezzi del colore del giocatore di cui voglio controllare lo Scacco
+	//AGameField* GField = GetGField();
+	ColorPiecesArray = nullptr;
+
+	if (Player == 0)
 	{
-		UE_LOG(LogTemp, Error, TEXT("GField non valido in CheckIfKingIsEaten"));
-		return;
+		ColorPiecesArray = &(GField->GetWhitePiecesArray());
+	}
+	else if (Player == 1)
+	{
+		ColorPiecesArray = &(GField->GetBlackPiecesArray());
+	}
+     // ritorno false se l'array è nullo
+	if (!ColorPiecesArray)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Array di pezzi nullo!"));
+		return false;
 	}
 
-	bool IsWhiteKingEaten = false;
-	bool IsBlackKingEaten = false;
-
-	// Scansiona la mappa dei pezzi per verificare se il re bianco o nero è stato mangiato
-	for (auto& PieceEntry : GameField->PiecesMap)
+	// cerco il re nel colore corrispondente
+	King = nullptr;
+	for (AChess_Piece* Piece : *ColorPiecesArray)
 	{
-		AChess_Piece* Piece = PieceEntry.Value;
-		if (!Piece)
-		{
-			continue;
-		}
-
 		if (Piece->GetPieceType() == EPieceType::KING)
 		{
-			if (Piece->GetPieceColor() == EPieceColor::WHITE)
-			{
-				IsWhiteKingEaten = true;
-			}
-			else if (Piece->GetPieceColor() == EPieceColor::BLACK)
-			{
-				IsBlackKingEaten = true;
-			}
+			King = Piece;
+			break;
+		}
+	}
+	 // ritorno false se non viene trovato il re
+	if (!King)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Re non trovato tra le pedine del giocatore numero %d"), Player);
+		return false;
+	}
+
+	// Ottieni la posizione del re
+	KingPosition = King->GetGridPosition();
+
+
+	// prendo array dei pezzi dell'avversario 
+	OpponentColorPiecesArray = nullptr;
+
+	if (Player == 0)
+	{
+		OpponentColorPiecesArray = &(GField->GetBlackPiecesArray());
+	}
+	else if (Player == 1)
+	{
+		OpponentColorPiecesArray = &(GField->GetWhitePiecesArray());
+	}
+	// ritorno false se l'array è nullo
+	if (!OpponentColorPiecesArray)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Array di pezzi dell'avversario nullo!"));
+		return false;
+	}
+
+	// scansiono tutti i pezzi dell'avversario per controllare se minacciano il re
+	for (AChess_Piece* OpponentPiece : *OpponentColorPiecesArray)
+	{
+		// cast del pezzo per avere l'opportuna funzione overridata per il calcolo delle mosse
+		AChess_Piece* CastedOpponentPiece = Cast<AChess_Piece>(OpponentPiece);
+
+		// Ottieni le mosse possibili del pezzo avversario
+		TArray<FVector2D> PossibleMoves = CastedOpponentPiece->CalculatePossibleMoves();
+
+		// Controlla se le mosse possibili includono la posizione del re
+		if (PossibleMoves.Contains(KingPosition))
+		{
+			// Il re è sotto scacco
+			return true;
 		}
 	}
 
+	// Il re non è sotto scacco
+	return false;
+
+}
 
 
-	// Esegui le azioni appropriate in base a se il re bianco o nero è stato mangiato
-	if (IsWhiteKingEaten)
+bool AChess_GameMode::IsCheckmate(int32 Player)
+{
+	// ottengo l'array dei pezzi del colore del giocatore di cui voglio controllare lo Scacco Matto
+	//AGameField* GField = GetGField();
+
+	if (Player == 0)
 	{
-		
-		Players[0]->OnLose();
-		Players[1]->OnWin();
-
-
-		
+		CopyOfColorPiecesArray = (GField->GetCopyOfWhitePiecesArray());
+	}
+	else if (Player == 1)
+	{
+		CopyOfColorPiecesArray = (GField->GetCopyOfBlackPiecesArray());
+	}
+	// ritorno false se l'array è nullo
+	if (CopyOfColorPiecesArray.Num() == 0)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Array di pezzi nullo!"));
+		return false;
 	}
 
-	if (IsBlackKingEaten)
+	// cerco il re nel colore corrispondente
+	King = nullptr;
+	for (AChess_Piece* Piece : CopyOfColorPiecesArray)
 	{
-		Players[1]->OnLose();
-		Players[0]->OnWin();
+		if (Piece->GetPieceType() == EPieceType::KING)
+		{
+			King = Piece;
+			break;
+		}
 	}
+	// ritorno false se non viene trovato il re
+	if (!King)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Re non trovato tra le pedine del giocatore numero %d"), Player);
+		return false;
+	}
+
+	// Ottieni la posizione del re
+	KingPosition = King->GetGridPosition();
+
+
+	// Controlla se il re del giocatore è in scacco
+	if (!IsKingInCheck(Player))
+	{
+		return false; // Il re non è in scacco, quindi non può essere scacco matto
+	}
+
+
+	// Controlla se il giocatore non ha mosse legali che possono salvare il re dallo scacco
+
+	// creo una copia della scacchiera per i calcoli per lo scacco matto
+	AGameField* ClonedField = GField->CloneGameField();
+
+	for (AChess_Piece* Piece : CopyOfColorPiecesArray)
+	{
+		// Creazione di una nuova copia della scacchiera all'inizio di ogni iterazione
+		AGameField* ClonedField = GField->CloneGameField();
+
+		TArray<FVector2D> PossibleMoves = (Cast<AChess_Piece>(Piece))->CalculatePossibleMoves();
+		for (FVector2D Move : PossibleMoves)
+		{
+			// Simula la mossa
+			FVector2D OriginalPosition = Piece->GetGridPosition();
+			Piece->MoveCloneToPosition(Move);
+
+			// Controlla se il re non è più in scacco dopo la mossa
+			if (!IsKingInCheck(Player))
+			{
+				// Ripristina la posizione originale
+				Piece->MoveCloneToPosition(OriginalPosition);
+				return false; // Il re può evitare lo scacco matto
+			}
+			// Ripristina la posizione originale
+			Piece->MoveCloneToPosition(OriginalPosition);
+		}
+	}
+
+	ClonedField->Destroy();
+	ClonedField = nullptr;
+	// Nessuna mossa legale può salvare il re dallo scacco, quindi è scacco matto
+	return true;
+}
+
+
+
+bool AChess_GameMode::IsDraw(int32 Player)
+{
+	// Verifica se il giocatore corrente non ha mosse legali disponibili
+	if (!HasLegalMoves(Player))
+	{
+		// Verifica se il re del giocatore corrente non è in scacco
+		if (!IsKingInCheck(Player))
+		{
+			return true; // Patta per stallo
+		}
+	}
+
+	// Verifica se la stessa posizione della scacchiera si ripete per tre volte
+	if (IsThreefoldRepetition())
+	{
+		return true; // Patta per ripetizione della posizione
+	}
+
+	// Verifica se non è stata effettuata alcuna cattura o alcuna mossa di pedone nei precedenti 50 movimenti
+	if (IsFiftyMovesRuleDraw())
+	{
+		return true; // Patta per regola dei 50 movimenti
+	}
+
+	// Altre condizioni di patta possono essere aggiunte qui
+
+	return false; // Nessuna condizione di patta è soddisfatta
 }
 
 

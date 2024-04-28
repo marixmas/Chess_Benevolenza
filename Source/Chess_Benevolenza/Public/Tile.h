@@ -32,17 +32,19 @@ public:
 	// imposta lo stato della tile
 	void SetTileStatus(ETileStatus TileStatus);
 
+	// get the tile status
+	ETileStatus GetTileStatus() const;
+
 	// Returns true if the tile is occupied by a piece
 	bool IsOccupied() const;
 
 	// imposta l'owner della tile
 	void SetTileOwner (int32 TileOwner);
 
-	// get the tile status
-	ETileStatus GetTileStatus() const;
-
 	// get the tile owner
-	int32 GetOwner() const;
+	int32 GetOwner() const;	
+
+
 
 	// set the (x, y) position
 	void SetGridPosition(const double InX, const double InY);
@@ -52,6 +54,9 @@ public:
 
 	// rende vuota una tile
 	void EmptyTile();
+
+	// clona una tile
+	ATile* CloneTile();
 
 protected:
 	// Called when the game starts or when spawned

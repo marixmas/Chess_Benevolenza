@@ -88,6 +88,24 @@ void ATile::EmptyTile()
 	SetTileOwner(-1);
 }
 
+ATile* ATile::CloneTile()
+{
+	// creo una nuova istanza di ATile
+	ATile* ClonedTile = GetWorld()->SpawnActor<ATile>(ATile::StaticClass());
+
+	if (ClonedTile)
+	{
+		// copio le proprietà della tile
+		ClonedTile->SetTileMaterial(StaticMeshComponent->GetMaterial(0)); // assumo un materiale a caso
+		ClonedTile->SetTileStatus(Status);
+		ClonedTile->SetTileOwner(PlayerOwner);
+		ClonedTile->SetGridPosition(TileGridPosition.X, TileGridPosition.Y);
+	}
+
+	return ClonedTile;
+}
+
+
 
 // Called when the game starts or when spawned
 void ATile::BeginPlay()

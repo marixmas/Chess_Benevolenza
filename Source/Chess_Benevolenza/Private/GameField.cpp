@@ -26,6 +26,8 @@ AGameField::AGameField()
 	TileArray.Empty();
 	TileMap.Empty();
 	PiecesArray.Empty();
+	WhitePiecesArray.Empty();
+	BlackPiecesArray.Empty();
 	PiecesMap.Empty();
 	ReversePiecesMap.Empty();
 
@@ -126,8 +128,18 @@ void AGameField::SpawnChessPiece(int32 x, int32 y, EPieceColor PieceColor, EPiec
 	Obj->SetActorScale3D(FVector(TileScale, TileScale, 0.2));
 	Obj->SetGridPosition(x, y);
 	PiecesArray.Add(Obj);
+	if (PlayerOwner == 0)
+	{
+		WhitePiecesArray.Add(Obj);
+	}
+
+	else if (PlayerOwner == 1)
+	{
+		BlackPiecesArray.Add(Obj);
+	}
 	PiecesMap.Add(FVector2D(x, y), Obj);
 	ReversePiecesMap.Add(Obj, FVector2D(x, y));								/// no???? nel dubbio
+
 
 	// ottengo il puntatore alla tile corrispondente
 	ATile* TargetTile = TileMap.FindRef(FVector2D(x, y));
@@ -192,8 +204,10 @@ void AGameField::ResetField()
 		// TileArray non va svuotata dato che quando faccio reset dal bottone dell'interfaccia non cancello la GameField ma solo i Pieces
 		// TileMap non va svuotata per la stessa ragione
 		// 
-		// svuoto l'array con il puntatore ai pezzi poiché li rigenero
+		// svuoto gli array con i puntatori ai pezzi poiché li rigenero
 		PiecesArray.Empty();
+		WhitePiecesArray.Empty();
+		BlackPiecesArray.Empty();
 
 		// svuoto la mappa con i puntatori ai pezzi poiché li rigenero
 		PiecesMap.Empty();
@@ -215,6 +229,80 @@ void AGameField::ResetField()
 		UE_LOG(LogTemp, Error, TEXT("ptr a GameMode nullo in ResetField"));
 	}
 }
+
+AGameField* AGameField::CloneGameField()
+{
+	AGameField* ClonedNewGameField = GetWorld()->SpawnActor<AGameField>(AGameField::StaticClass());
+	if (ClonedNewGameField)
+	{
+		// Copia l'array delle tessere
+		for (ATile* Tile : TileArray)
+		{
+			// Copia la tessera e aggiungila alla nuova scacchiera
+			ATile* NewTile = Tile->CloneTile();
+			ClonedNewGameField->TileArray.Add(NewTile);
+			ClonedNewGameField->TileMap.Add(NewTile->GetGridPosition(), NewTile);
+		}
+
+		// Copia l'array dei pezzi
+		TArray<AChess_Piece*> CopiedPiecesArray = ClonePiecesArray();
+		ClonedNewGameField->PiecesArray = CopiedPiecesArray;
+		// Aggiungi i pezzi alla mappa dei pezzi
+		for (AChess_Piece* Piece : CopiedPiecesArray)
+		{
+			ClonedNewGameField->PiecesMap.Add(Piece->GetGridPosition(), Piece);
+		}
+
+		// copia gli altri due array di pezzi secondo il colore
+		TArray<AChess_Piece*> ClonedWhitePieces;
+		TArray<AChess_Piece*> ClonedBlackPieces;
+
+		// scorre il primo array WhitePiecesArray
+		for (AChess_Piece* OriginalPiece : WhitePiecesArray)
+		{
+			// Clone the piece using the assumed ClonePiece function
+			AChess_Piece* ClonedPiece = OriginalPiece->ClonePiece();
+			if (ClonedPiece)
+			{
+				ClonedWhitePieces.Add(ClonedPiece);
+			}
+		}
+
+		// scorre il secondo array BlackPiecesArray
+		for (AChess_Piece* OriginalPiece : BlackPiecesArray)
+		{
+			// clona il  pezzo 
+			AChess_Piece* ClonedPiece = OriginalPiece->ClonePiece();
+			if (ClonedPiece)
+			{
+				ClonedBlackPieces.Add(ClonedPiece);
+			}
+		}
+
+		// assegna gli array clonati dei pezzi alla nuova gamefield clonata
+		ClonedNewGameField->WhitePiecesArray = ClonedWhitePieces;
+		ClonedNewGameField->BlackPiecesArray = ClonedBlackPieces;
+
+	}
+
+	return ClonedNewGameField;
+
+}
+
+TArray<AChess_Piece*> AGameField::ClonePiecesArray()
+{
+	TArray<AChess_Piece*> CopiedPiecesArray;
+	for (AChess_Piece* Piece : PiecesArray)
+	{
+		// Crea una copia del pezzo e lo aggiunge all'array delle copie
+		AChess_Piece* CopiedPiece = Piece->ClonePiece();
+		CopiedPiecesArray.Add(CopiedPiece);
+	}
+	return CopiedPiecesArray;
+}
+
+
+
 
 void AGameField::GenerateField()
 {
@@ -276,6 +364,31 @@ TArray<ATile*>& AGameField::GetTileArray()
 TArray<AChess_Piece*>& AGameField::GetPiecesArray()
 {
 	return PiecesArray;
+}
+
+TArray<AChess_Piece*>& AGameField::GetWhitePiecesArray()
+{
+	return WhitePiecesArray;
+}
+
+TArray<AChess_Piece*>& AGameField::GetBlackPiecesArray()
+{
+	return BlackPiecesArray;
+}
+
+TArray<AChess_Piece*> AGameField::GetCopyOfPiecesArray()
+{
+	return PiecesArray;
+}
+
+TArray<AChess_Piece*> AGameField::GetCopyOfWhitePiecesArray()
+{
+	return WhitePiecesArray;
+}
+
+TArray<AChess_Piece*> AGameField::GetCopyOfBlackPiecesArray()
+{
+	return BlackPiecesArray;
 }
 
 FVector AGameField::GetRelativeLocationByXYPosition(const int32 InX, const int32 InY) const

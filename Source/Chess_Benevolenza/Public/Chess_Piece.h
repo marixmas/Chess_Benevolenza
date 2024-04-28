@@ -4,8 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Chess_PlayerInterface.h"
-//#include "Tile.h"																				non si puoooooo
+#include "Chess_PlayerInterface.h"														
 #include "Chess_Piece.generated.h"
 
 UENUM()
@@ -46,21 +45,26 @@ public:
 	// get the (x, y) position
 	FVector2D GetGridPosition();					
 
+	// set the type
 	void SetPieceType(EPieceType NewPieceType);
-	//EPieceType GetPieceType();
 
-	void SetPieceColor(EPieceColor NewPieceColor);
-	EPieceColor GetPieceColor();
-
-	// per usare le classi derivate
+	// per usare le classi derivate	//////////////////////////////////////////////////////// 											////???
+	// get the type
 	virtual EPieceType GetPieceType() const;
 
-	virtual void MovePieceFromToPosition(const FVector2D& OldPosition, const FVector2D& NewPosition);
+	// set the color
+	void SetPieceColor(EPieceColor NewPieceColor);
 
-	// Dichiarazione della funzione virtuale pura
-    virtual void SpecialAction() const PURE_VIRTUAL(AChess_Piece::SpecialAction, );
+	// get the color
+	EPieceColor GetPieceColor();
 
+	
 
+	void MovePieceFromToPosition(const FVector2D& OldPosition, const FVector2D& NewPosition);
+
+	
+	// simula il movimento dei pezzi per il controllo dello scacco matto
+	//void MoveCloneToPosition(const FVector2D& NewPosition);
 
 
 protected:
@@ -93,12 +97,14 @@ public:
 	TArray<FVector2D> PossibleMoves;
 
 	// chiamata quando un pezzo viene mangiato
-	void PieceIsEaten(FVector2D& EatenPiecePosition, AChess_Piece* EatenPiece);
+	void PieceIsEaten(FVector2D& EatenPiecePosition);
 
 	// destroy a Chess Piece actor
 	UFUNCTION()
 	void SelfDestroy();
 
+	// clona il pezzo nello stato attuale
+	AChess_Piece* ClonePiece();
 
 
 };

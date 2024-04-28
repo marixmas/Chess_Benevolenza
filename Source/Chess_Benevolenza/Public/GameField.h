@@ -39,6 +39,13 @@ public:
 	UPROPERTY(Transient)
 	TArray<AChess_Piece*> PiecesArray;
 
+	UPROPERTY(Transient)
+	TArray<AChess_Piece*> WhitePiecesArray;
+
+	UPROPERTY(Transient)
+	TArray<AChess_Piece*> BlackPiecesArray;
+
+
 	//given a position returns a piece
 	UPROPERTY(Transient)
 	TMap<FVector2D, AChess_Piece*> PiecesMap;
@@ -46,6 +53,7 @@ public:
 	//given a pieces returns a position									// messo io per trovare la posizione del pezzo nero selezionato in OnClick di HumanPlayer
 	UPROPERTY(Transient)
 	TMap<AChess_Piece*, FVector2D> ReversePiecesMap;
+
 
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
@@ -143,6 +151,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ResetField();
 
+	// crea una copia della scacchiera nello stato attuale
+	AGameField* CloneGameField();
+
+	// Crea una copia dell'array dei pezzi
+	TArray<AChess_Piece*> ClonePiecesArray();
+
 	// generate an empty game field
 	void GenerateField();
 
@@ -164,6 +178,22 @@ public:
 	// return the array of pieces pointers
 	TArray<AChess_Piece*>& GetPiecesArray();
 
+	// return the array of white pieces pointers
+	TArray<AChess_Piece*>& GetWhitePiecesArray();
+
+	// return the array of black pieces pointers
+	TArray<AChess_Piece*>& GetBlackPiecesArray();
+
+	// return copy of the array of pieces pointers
+	TArray<AChess_Piece*> GetCopyOfPiecesArray();
+
+	// return copy of the array of white pieces pointers
+	TArray<AChess_Piece*> GetCopyOfWhitePiecesArray();
+
+	// return copy of the array of black pieces pointers
+	TArray<AChess_Piece*> GetCopyOfBlackPiecesArray();
+
+
 	// return a relative position given (x,y) position
 	FVector GetRelativeLocationByXYPosition(const int32 InX, const int32 InY) const;
 
@@ -176,23 +206,5 @@ public:
 		virtual void Tick(float DeltaTime) override;
 	*/
 	//
-
-	// dichiaro puntatore al GameField con stesso nome che ha in Chess_GameMode
-	//AGameField* GField = .GetGField();
-
-	// metodo get per usare il puntatore GField ovunque nel codice (inizialmente creato per GameField)
-	//AGameField* GetGField() const;
-
-
-	//così si dovrebbe usare un metodo di un'altra classe, prima devo crearne l'istanza
-	/*
-
-	ATTT_GameMode* GameMode = (ATTT_GameMode*)(GetWorld()->GetAuthGameMode());
-
-	FVector Location = GameMode->GField->GetRelativeLocationByXYPosition((FreeCells[RandIdx])->GetGridPosition()[0], (FreeCells[RandIdx])->GetGridPosition()[1]);
-
-
-	GameMode->SetCellSign(PlayerNumber, Location);
-	*/
 };
 

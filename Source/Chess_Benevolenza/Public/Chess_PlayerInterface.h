@@ -34,7 +34,11 @@ class CHESS_BENEVOLENZA_API IChess_PlayerInterface
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	int32 PlayerNumber;
-	EColorOfPieces ColorOfPieces;						// no??
+	EColorOfPieces ColorOfPieces;
+
+	// get the color
+	EColorOfPieces GetColorOfPieces();
+
 
 	virtual void OnTurn() {};
 	virtual void OnWin() {};

@@ -160,7 +160,7 @@ void AChess_HumanPlayer::OnClick()
 					if (PossibleMoves.Contains(BlackPieceLocation))
 					{
 						// mangio il Black Piece
-						SelectedBlackPiece->PieceIsEaten(BlackPieceLocation, SelectedBlackPiece);
+						SelectedBlackPiece->PieceIsEaten(BlackPieceLocation);
 
 						// muovo il White Piece
 						MoveSelectedPiece(WhitePieceLocation, BlackPieceLocation);
@@ -174,7 +174,9 @@ void AChess_HumanPlayer::OnClick()
 			
 						// Controllo se si verifica patta												///////////////////////////////////////
 	
-						GameMode->CheckIfKingIsEaten();
+						//GameMode->CheckIfKingIsEaten();
+
+						IsMyTurn = false;
 
 						GameMode->TurnNextPlayer();													///// DA RIMETTEREEEEE
 
@@ -200,6 +202,7 @@ void AChess_HumanPlayer::OnClick()
 				// "spengo" i suggerimenti
 				TurnOffHighlightedTiles();
 
+				IsMyTurn = false;
 				GameMode->TurnNextPlayer();														///// DA RIMETTEREEEEE
 
 

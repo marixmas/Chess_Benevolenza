@@ -62,14 +62,19 @@ public:
 	// called at the end of the game turn
 	void TurnNextPlayer();
 
-	// controlla se un re e`stato mangiato
-	//bool IsKingEaten;
 
-	// chiamata quando il re viene mangiato
-	//void EatenKing(bool IsKingEaten);
+	
+	// controlla lo scacco di un solo player
+	bool IsKingInCheck(int32 Player);
 
-	// controlla se un re e`stato mangiato
-	void CheckIfKingIsEaten();
+	// controlla lo scacco matto
+	bool IsCheckmate(int32 Player);
+
+	// controlla la patta
+	bool IsDraw(int32 Player);
+
+
+
 
 	// metodo get per usare il puntatore GField ovunque nel codice (inizialmente creato per GameField)
 	AGameField* GetGField() const;
@@ -80,5 +85,18 @@ public:
 	// flag per controllare che la gamefield non venga spawnata più di una volta
 	bool bPiecesGenerated;
 
+	TArray<AChess_Piece*>* ColorPiecesArray;
+
+	AChess_Piece* King;
+
+	FVector2D KingPosition;
+
+	TArray<AChess_Piece*>* OpponentColorPiecesArray;
+
+
+	TArray<AChess_Piece*> CopyOfColorPiecesArray;
+
 
 };
+
+
