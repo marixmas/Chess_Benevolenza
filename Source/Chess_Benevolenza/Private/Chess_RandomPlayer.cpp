@@ -37,11 +37,16 @@ void AChess_RandomPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInput
 
 void AChess_RandomPlayer::OnTurn()
 {
+	AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
+	if (!GameMode->IsGameOver)
+	{
+
+
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("AI (Random) Turn"));
 	GameInstance->SetTurnMessage(TEXT("AI (Random) Turn"));
 
 	// prendo puntatori a GameMode e a GField e controllo che siano validi
-	AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
+	//AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
 	AGameField* GField = GameMode->GetGField();
 	if (!GameMode || !GameMode->GField)
 	{
@@ -139,18 +144,37 @@ void AChess_RandomPlayer::OnTurn()
 			}
 			*/
 
-			if (GameMode->IsCheckmate(GameMode->GetGField(), 0))
+			// controllo: dopo la mia mossa il re avversario (del player 0 é in scacco matto?
+
+			// controllo: dopo la mia mossa il re avversario (del player 1) é in scacco?
+			if (GameMode->IsKingInCheck(GameMode->GetGField(), 0))
 			{
-				this->OnWin();
-				GameMode->Players[0]->OnLose();
-				GameMode->IsGameOver = true;
+				FString Message = FString::Printf(TEXT("White King is in Check!"));
+				GEngine->AddOnScreenDebugMessage(2, 1.f, FColor::Orange, Message);
+				//GameInstance->SetTurnMessage(TEXT("Black is in Check!"));
+				//GameInstance->GetTurnMessage();
 			}
 
-			GameMode->TurnNextPlayer();													///// DA RIMETTEREEEEE
+
+			if (GameMode->IsCheckmate(GameMode->GetGField(), 0))
+			{
+				GameMode->Players[1]->OnWin();
+				GameMode->Players[0]->OnLose();
+				GameMode->IsGameOver = true;
+				GameInstance->SetTurnMessage(TEXT("White King is in Checkmate! GAME OVER"));
+				GameInstance->GetTurnMessage();
+			}
+			else
+			{
+				GameMode->TurnNextPlayer();													///// DA RIMETTEREEEEE
+
+			}
 
 
 		}, 1, false);
 
+
+	}
 }
 
 void AChess_RandomPlayer::OnWin()

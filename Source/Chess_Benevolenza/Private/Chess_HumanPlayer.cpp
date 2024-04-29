@@ -80,12 +80,14 @@ void AChess_HumanPlayer::OnClick()
 	FHitResult Hit = FHitResult(ForceInit);
 	// GetHitResultUnderCursor function sends a ray from the mouse position and gives the corresponding hit results
 	GetWorld()->GetFirstPlayerController()->GetHitResultUnderCursor(ECollisionChannel::ECC_Pawn, true, Hit);
+	AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
+
 
 	// controllo di aver cliccato qualcosa durante il mio turno
-	if (Hit.bBlockingHit && IsMyTurn)
+	if (Hit.bBlockingHit && IsMyTurn && !GameMode->IsGameOver)
 	{
 		// Verifica che GameMode ptr sia valido
-		AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
+		//AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
 		if (!GameMode)
 		{
 			UE_LOG(LogTemp, Error, TEXT("GameMode non valido in HighlightGameFieldTiles!"));
@@ -185,20 +187,38 @@ void AChess_HumanPlayer::OnClick()
 						}
 
 						*/
+
+						// controllo: dopo la mia mossa il re avversario (del player 1) é in scacco?
+
+
+						if (GameMode->IsKingInCheck(GameMode->GetGField(), 1))
+						{
+							IsMyTurn = false;
+							FString Message = FString::Printf(TEXT("Black is in Check!"));
+							GEngine->AddOnScreenDebugMessage(2, 2.f, FColor::Orange, Message);
+							//GameInstance->SetTurnMessage(TEXT("Black is in Check!"));
+							//GameInstance->GetTurnMessage();
+						}
 						
+						// controllo: dopo la mia mossa il re avversario (del player 1) é in scacco matto?
 						if (GameMode->IsCheckmate(GameMode->GetGField(), 1))
 						{
-							this->OnWin();
+							GameMode->Players[0]->OnWin();
 							GameMode->Players[1]->OnLose();
 							GameMode->IsGameOver = true;
 							IsMyTurn = false;
+							GameInstance->SetTurnMessage(TEXT("Black is in Checkmate! GAME OVER"));
+							GameInstance->GetTurnMessage();
 						}
 
+						else
+						{
+							IsMyTurn = false;
+							GameMode->TurnNextPlayer();		        	///// DA RIMETTEREEEEE
+						}
 					
 
-						IsMyTurn = false;
-
-						GameMode->TurnNextPlayer();													///// DA RIMETTEREEEEE
+																
 
 
 					}
@@ -241,12 +261,24 @@ void AChess_HumanPlayer::OnClick()
 				*/
 				
 
+				// controllo: dopo la mia mossa il re avversario (del player 1) é in scacco?
+				if (GameMode->IsKingInCheck(GameMode->GetGField(), 1))
+				{
+					IsMyTurn = false;
+					FString Message = FString::Printf(TEXT("Black King is in Check!"));
+					GEngine->AddOnScreenDebugMessage(1, 3.f, FColor::Orange, Message);
+					//GameInstance->SetTurnMessage(TEXT("Black is in Check!"));
+					//GameInstance->GetTurnMessage();
+				}
+				// controllo: dopo la mia mossa il re avversario (del player 1) é in scacco matto?
 				if (GameMode->IsCheckmate(GameMode->GetGField(), 1))
 				{
-					this->OnWin();
+					GameMode->Players[0]->OnWin();
 					GameMode->Players[1]->OnLose();
 					GameMode->IsGameOver = true;
 					IsMyTurn = false;
+					GameInstance->SetTurnMessage(TEXT("Black King is in Checkmate! GAME OVER"));
+					GameInstance->GetTurnMessage();
 				}
 
 				IsMyTurn = false;
@@ -257,7 +289,7 @@ void AChess_HumanPlayer::OnClick()
 			// se un pezzo era già stato cliccato e la tile NON è nelle mosse possibili, non si può e do messaggio
 			else if (bPieceSelected == true && !PossibleMoves.Contains(SelectedTile->GetGridPosition()))
 			{
-				GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Blue, TEXT("La pedina selezionata non può andare in questa casella."));
+				GEngine->AddOnScreenDebugMessage(1, 3.f, FColor::Blue, TEXT("La pedina selezionata non può andare in questa casella."));
 				// non cambio bSelectedPiece e nemmeno SelectedPiece
 			}
 
@@ -267,7 +299,7 @@ void AChess_HumanPlayer::OnClick()
 	// Se clicco su qualcosa di valido ma non è il mio turno
 	else
 	{
-		GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Blue, TEXT("Per favore, aspetta il tuo turno"));
+		GEngine->AddOnScreenDebugMessage(1, 2.f, FColor::Blue, TEXT("Per favore, aspetta il tuo turno"));
 	}
 }
 

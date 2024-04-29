@@ -184,14 +184,14 @@ void AChess_Piece::MoveClonedPieceFromToPosition(/*AGameField* CloneOfGameField,
 
 	if (ClonedGameField->PiecesMap.Contains(OldPosition))
 	{
-		// Se la vecchia posizione è già presente nella mappa, aggiorna il suo valore
+		// Se la vecchia posizione è già presente nella mappa, aggiorna il suo valore (dovrebbe essere contenuta)
 		ClonedGameField->PiecesMap[OldPosition] = nullptr;
 	}
 	else
 	{
-		// Se la vecchia posizione non è presente nella mappa impossibile teoricamente
-		//GField->PiecesMap.Add(OldPosition, nullptr);
-		UE_LOG(LogTemp, Error, TEXT("OldPosition non esisteva nella PiecesMap, in MovePieceFromToPosition"));
+		// Se la vecchia posizione non è presente nella mappa (impossibile teoricamente, perché sono state tutte inizializzate)
+		ClonedGameField->PiecesMap.Add(OldPosition, nullptr);
+		UE_LOG(LogTemp, Error, TEXT("OldPosition non esisteva nella PiecesMap, in MoveClonedPieceFromToPosition"));
 	}
 
 	if (ClonedGameField->PiecesMap.Contains(NewPosition))
@@ -201,7 +201,7 @@ void AChess_Piece::MoveClonedPieceFromToPosition(/*AGameField* CloneOfGameField,
 	}
 	else
 	{
-		// Se la nuova posizione non è presente nella mappa, aggiungi una nuova voce
+		// Se la nuova posizione non è presente nella mappa, aggiungi una nuova voce (dovrebbe essere persente poiché tutte inizializzate)
 		ClonedGameField->PiecesMap.Add(NewPosition, this);
 	}
 

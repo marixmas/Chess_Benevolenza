@@ -63,9 +63,11 @@ public:
 	void TurnNextPlayer();
 
 	// flag per scacco, scacco matto e patta
-	bool Check;
+	bool WhiteCheck;
+	bool BlackCheck;
 
-	bool Checkmate;
+	bool WhiteCheckmate;
+	bool BlackCheckmate;
 
 	bool Draw;
  

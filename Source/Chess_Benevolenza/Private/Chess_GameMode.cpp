@@ -24,9 +24,12 @@ AChess_GameMode::AChess_GameMode()
 
 	ClonedGameField = nullptr;
 
-	Check = false;
-	Checkmate = false;
-	Draw = false;
+	WhiteCheck = false;/////
+	BlackCheck = false;/////////
+
+	WhiteCheckmate = false;////////////////
+	BlackCheckmate = false;//////////////////////
+	Draw = false;/////////////////////////////////////////////////////////////
 
 }
 
@@ -47,6 +50,7 @@ void AChess_GameMode::BeginPlay()
 		UE_LOG(LogTemp, Error, TEXT("Game Field is NOT NULL    OK"));
 		
 		GField = GetWorld()->SpawnActor<AGameField>(GameFieldClass);
+		GField->GenerateField();
 		GField->Size = FieldSize;	
 
 		bFieldGenerated = true;
@@ -407,26 +411,7 @@ bool AChess_GameMode::IsKingInCheck(AGameField* GenericGameField, int32 Opponent
 	{
 		UE_LOG(LogTemp, Error, TEXT("giocatore su cui controllare lo scacco non valido"));
 	}
-	/*
-	// ritorno false se l'array è nullo
-	if (!ColorPiecesArray)
-	{
-		UE_LOG(LogTemp, Error, TEXT("Array di pezzi nullo!"));
-		return false;
-	}
-	*/
-	/*
-	// cerco il re nel colore corrispondente
-	King = nullptr;
-	for (AChess_Piece* Piece : *ColorPiecesArray)
-	{
-		if (Piece->GetPieceType() == EPieceType::KING)
-		{
-			King = Piece;
-			break;
-		}
-	}
-	*/
+	
 	// ritorno false se non viene trovato il re
 	if (!King)
 	{
@@ -439,14 +424,11 @@ bool AChess_GameMode::IsKingInCheck(AGameField* GenericGameField, int32 Opponent
 
 
 	// prendo array dei pezzi del giocatore principale (quello che ha chiamato la funzione sull'avversario)
-	//PlayerPiecesArray = nullptr;
 
 	if (OpponentPlayer == 0)
 	{
-		//PlayerPiecesArray = &(GField->GetBlackPiecesArray());
-
-		// scansiono tutti i pezzi dell'avversario per controllare se minacciano il re
-		for (AChess_Piece* PlayerPiece : GenericGameField->WhitePiecesArray)
+		// scansiono tutti i pezzi del player 1 per controllare se minacciano il re
+		for (AChess_Piece* PlayerPiece : GenericGameField->BlackPiecesArray)
 		{
 			// cast del pezzo per avere l'opportuna funzione overridata per il calcolo delle mosse
 			AChess_Piece* CastedPlayerPiece = Cast<AChess_Piece>(PlayerPiece);
@@ -465,10 +447,8 @@ bool AChess_GameMode::IsKingInCheck(AGameField* GenericGameField, int32 Opponent
 	}
 	else if (OpponentPlayer == 1)
 	{
-		//PlayerPiecesArray = &(GField->GetWhitePiecesArray());
-
 		// scansiono tutti i pezzi dell'avversario per controllare se minacciano il re
-		for (AChess_Piece* PlayerPiece : GenericGameField->BlackPiecesArray)
+		for (AChess_Piece* PlayerPiece : GenericGameField->WhitePiecesArray)
 		{
 			// cast del pezzo per avere l'opportuna funzione overridata per il calcolo delle mosse
 			AChess_Piece* CastedPlayerPiece = Cast<AChess_Piece>(PlayerPiece);
@@ -489,15 +469,6 @@ bool AChess_GameMode::IsKingInCheck(AGameField* GenericGameField, int32 Opponent
 	{
 		UE_LOG(LogTemp, Error, TEXT("giocatore su cui controllare lo scacco non valido"));
 	}
-
-	/*
-	// ritorno false se l'array è nullo
-	if (!PlayerPiecesArray)
-	{
-		UE_LOG(LogTemp, Error, TEXT("Array di pezzi dell'avversario nullo!"));
-		return false;
-	}
-	*/
 
 	// Il re non è sotto scacco
 	return false;
@@ -599,7 +570,7 @@ bool AChess_GameMode::IsCheckmate(AGameField* GenericGameField, int32 OpponentPl
 						ClonedGameField->ReversePiecesMap.Add(ClonedPiece, ClonedPiece->GetGridPosition());
 					}
 				}
-				else
+				else // nessun pezzo viene mangiato
 				{
 					// Muove il pezzo
 					Piece->MoveClonedPieceFromToPosition(/*ClonedGameField, */ Piece->GetGridPosition(), Move);
@@ -646,7 +617,7 @@ bool AChess_GameMode::IsCheckmate(AGameField* GenericGameField, int32 OpponentPl
 					AChess_Piece* ClonedPiece = (GetGField()->PiecesMap[Move])->ClonePiece();
 					if (ClonedPiece)
 					{
-						ClonedGameField->WhitePiecesArray.Add(ClonedPiece);
+						ClonedGameField->BlackPiecesArray.Add(ClonedPiece);
 						ClonedGameField->PiecesArray.Add(ClonedPiece);
 						ClonedGameField->PiecesMap.Add(ClonedPiece->GetGridPosition(), ClonedPiece);
 						ClonedGameField->ReversePiecesMap.Add(ClonedPiece, ClonedPiece->GetGridPosition());
@@ -678,52 +649,13 @@ bool AChess_GameMode::IsCheckmate(AGameField* GenericGameField, int32 OpponentPl
 
 	else
 	{
-		UE_LOG(LogTemp, Error, TEXT("giocatore su cui gfhfghjdyjdtjdtuyjdrtjkdtu lo scacco non valido"));
+		UE_LOG(LogTemp, Error, TEXT("giocatore su cui viene indagato lo scacco non valido"));
 	}
 
 	ClonedGameField->Destroy();
 
 	// Nessuna mossa legale può salvare il re dallo scacco, quindi è scacco matto
 	return true;
-
-
-	/*
-	for (AChess_Piece* Piece : CopyOfColorPiecesArray)
-	{
-		TArray<FVector2D> PossibleMoves = (Cast<AChess_Piece>(Piece))->CalculatePossibleMoves();
-
-		for (FVector2D Move : PossibleMoves)
-		{
-			// Creazione di una copia della scacchiera all'inizio di ogni iterazione
-			//AGameField* ClonedField = GField->CloneGameField();
-
-			// creo copia di tutti i pezzi a ogni iterazione
-
-			GField->CloneAllPiecesToField(ClonedField);
-			// Muove il pezzo
-			Piece->MovePieceFromToPosition(Piece->GetGridPosition(), Move);
-
-			// Controlla se il re non è più in scacco dopo la mossa
-			if (!IsKingInCheck(OpponentPlayer))
-			{
-				for (AChess_Piece* ClonedPiece : ClonedField->PiecesArray)
-				{
-					ClonedPiece->Destroy();
-				}
-				ClonedField->Destroy();
-				return false; // Il re può evitare lo scacco matto
-			}
-
-			for (AChess_Piece* ClonedPiece : ClonedField->PiecesArray)
-			{
-				ClonedPiece->Destroy();
-			}
-
-		}
-	}
-	*/
-
-
 }
 
 

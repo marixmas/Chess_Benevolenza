@@ -45,7 +45,7 @@ void AGameField::BeginPlay()
 {
 	Super::BeginPlay();
 
-	GenerateField();
+	//GenerateField();												// faccio da gamemode perché mi servirá  per clonare la gamefield nella funzione IsCheckmate di GameMode
 	//GeneratePieces();												// meglio farlo da GameMode () per fare la AddDynamic Destroy dei Chess_Piece
 
 }
@@ -208,17 +208,16 @@ void AGameField::ResetField()
 		// TileArray non va svuotata dato che quando faccio reset dal bottone dell'interfaccia non cancello la GameField ma solo i Pieces
 		// TileMap non va svuotata per la stessa ragione
 		// 
-		// svuoto gli array con i puntatori ai pezzi poiché li rigenero
+		// svuoto gli array con i puntatori ai pezzi poiché rigenero i pezzi
 		PiecesArray.Empty();
 		WhitePiecesArray.Empty();
 		BlackPiecesArray.Empty();
 
-		// svuoto la mappa con i puntatori ai pezzi poiché li rigenero
+		// svuoto la mappa con i puntatori ai pezzi poiché rigenero i pezzi
 		PiecesMap.Empty();
 
-		// svuoto la mappa con le posizioni ai pezzi poiché li rigenero
+		// svuoto la mappa con le posizioni ai pezzi poiché rigenero i pezzi
 		ReversePiecesMap.Empty();
-
 		
         GameMode->IsGameOver = false;
         GameMode->MoveCounter = 0;
@@ -359,11 +358,17 @@ AGameField* AGameField::CloneEmptyGameField()							 														/// HA SENSO
 			ClonedNewGameField->TileMap.Add(NewTile->GetGridPosition(), NewTile);
 		}
 	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Il puntatore ClonedNewGameField è nullo!"));
+	}
+	
 	return ClonedNewGameField;
 }
 
 void AGameField::CloneAllPiecesToField(AGameField* TargetField)																// MESSA PER ULTIMA, HA SENSO
 {
+	/*
 	// pulisco il clone 
 	for (AChess_Piece* OldClonePiece : TargetField->PiecesArray)
 	{
@@ -376,6 +381,8 @@ void AGameField::CloneAllPiecesToField(AGameField* TargetField)																/
 	TargetField->PiecesMap.Empty();
 	TargetField->ReversePiecesMap.Empty();
 
+	*/
+	
 
 	// Clona tutti i pezzi bianchi
 	for (AChess_Piece* OriginalPiece : WhitePiecesArray)
@@ -427,19 +434,6 @@ void AGameField::GenerateField()
 {
 	
 		UE_LOG(LogTemp, Error, TEXT("è stata chiamata GenerateField"));
-
-		/*
-		// Pulizia dell'array TileArray											messo in ResetField
-		//for (ATile* Tile : TileArray)
-		///{
-		//	Tile->Destroy(); // Oppure un'altra azione per rimuovere l'oggetto dal mondo
-		//}
-		TileArray.Empty();
-
-		// Pulizia della mappa TileMap
-		TileMap.Empty();
-		*/
-
 		for (int32 x = 0; x < Size; x++)
 		{
 			for (int32 y = 0; y < Size; y++)
