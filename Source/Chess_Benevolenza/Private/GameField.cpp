@@ -164,6 +164,8 @@ void AGameField::SpawnChessPiece(int32 x, int32 y, EPieceColor PieceColor, EPiec
 	Obj->SetPieceColor(PieceColor);
 	// imposto il tipo della pedina che occupa la tile
 	Obj->SetPieceType(PieceType);
+
+
 }
 
 UClass* AGameField::GetChessPieceBP(EPieceColor PieceColor, EPieceType PieceType) 
@@ -188,6 +190,41 @@ UClass* AGameField::GetChessPieceBP(EPieceColor PieceColor, EPieceType PieceType
 		// Se il tipo di pezzo non è gestito, restituisci nullptr o un blueprint di default
 		return nullptr;
 	}
+}
+
+void AGameField::PromotionToQueen(AChess_Piece* PawnToPromote)
+{
+	// Controlla che il pedone da promuovere non sia già una regina
+	if (PawnToPromote->GetPieceType() != EPieceType::PAWN)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Il pedone selezionato non è un pedone e non può essere promosso."));
+	}
+
+	// Ottieni la posizione del pedone da promuovere
+	FVector2D PawnPosition = PawnToPromote->GetGridPosition();
+
+
+	// Spawni una nuova regina al posto del pedone
+	SpawnChessPiece(PawnPosition.X, PawnPosition.Y, PawnToPromote->GetPieceColor(), EPieceType::QUEEN);
+
+	// Aggiorna le strutture dati
+	// Rimuovi il pedone dalla lista dei pezzi
+	PiecesArray.Remove(PawnToPromote);
+	if (PawnToPromote->GetPieceColor() == EPieceColor::WHITE)
+	{
+		WhitePiecesArray.Remove(PawnToPromote);
+	}
+	else
+	{
+		BlackPiecesArray.Remove(PawnToPromote);
+	}
+	
+	// Aggiorna le mappe dei pezzi
+	PiecesMap.Remove(PawnPosition);
+	ReversePiecesMap.Remove(PawnToPromote);
+
+	// Rimuovi il pedone dal campo di gioco
+	PawnToPromote->Destroy();
 }
 
 
@@ -346,24 +383,29 @@ TArray<AChess_Piece*> AGameField::ClonePiecesArray(EPieceColor Color = EPieceCol
 
 AGameField* AGameField::CloneEmptyGameField()							 														/// HA SENSO
 {
-	AGameField* ClonedNewGameField = GetWorld()->SpawnActor<AGameField>(AGameField::StaticClass());
+	AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
+
+	AGameField* ClonedNewGameField = GetWorld()->SpawnActor<AGameField>(GameMode->GameFieldClass);
 	if (ClonedNewGameField)
-	{
-		// Copia l'array delle tessere
-		for (ATile* Tile : TileArray)
 		{
-			// Copia la tessera e aggiungila alla nuova scacchiera
-			ATile* NewTile = Tile->CloneTile();
-			ClonedNewGameField->TileArray.Add(NewTile);
-			ClonedNewGameField->TileMap.Add(NewTile->GetGridPosition(), NewTile);
+			// Copia l'array delle tessere
+			for (ATile* Tile : TileArray)
+			{
+				// Copia la tessera e aggiungila alla nuova scacchiera
+				ATile* NewTile = Tile->CloneTile();
+				ClonedNewGameField->TileArray.Add(NewTile);
+				ClonedNewGameField->TileMap.Add(NewTile->GetGridPosition(), NewTile);
+			}
 		}
-	}
+
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Il puntatore ClonedNewGameField è nullo!"));
 	}
 	
 	return ClonedNewGameField;
+	
+	
 }
 
 void AGameField::CloneAllPiecesToField(AGameField* TargetField)																// MESSA PER ULTIMA, HA SENSO
@@ -387,7 +429,7 @@ void AGameField::CloneAllPiecesToField(AGameField* TargetField)																/
 	// Clona tutti i pezzi bianchi
 	for (AChess_Piece* OriginalPiece : WhitePiecesArray)
 	{
-		AChess_Piece* ClonedPiece = OriginalPiece->ClonePiece();
+		AChess_Piece* ClonedPiece = ClonePiece(OriginalPiece);
 		if (ClonedPiece)
 		{
 			TargetField->WhitePiecesArray.Add(ClonedPiece);
@@ -400,7 +442,7 @@ void AGameField::CloneAllPiecesToField(AGameField* TargetField)																/
 	// Clona tutti i pezzi neri
 	for (AChess_Piece* OriginalPiece : BlackPiecesArray)
 	{
-		AChess_Piece* ClonedPiece = OriginalPiece->ClonePiece();
+		AChess_Piece* ClonedPiece = ClonePiece(OriginalPiece);
 		if (ClonedPiece)
 		{
 			TargetField->BlackPiecesArray.Add(ClonedPiece);
@@ -427,7 +469,22 @@ TArray<AChess_Piece*> AGameField::ClonePiecesArray()																//CREDO SIA 
 */
 
 
+AChess_Piece* AGameField::ClonePiece(AChess_Piece* PieceToClone)
+{
 
+	FVector Location = (GetRelativeLocationByXYPosition (PieceToClone->GetGridPosition().X, PieceToClone->GetGridPosition().Y) ) + FVector(0, 0, -40);   
+
+
+	AChess_Piece* CopiedPiece = GetWorld()->SpawnActor<AChess_Piece>(GetChessPieceBP(PieceToClone->GetPieceColor(), PieceToClone->GetPieceType()), Location, FRotator::ZeroRotator);
+	if (CopiedPiece)
+	{
+		// Copia i dati del pezzo originale nella copia
+		CopiedPiece->SetGridPosition(PieceToClone->GetGridPosition().X, PieceToClone->GetGridPosition().Y);
+		CopiedPiece->SetPieceType(PieceToClone->GetPieceType()); 
+		CopiedPiece->SetPieceColor(PieceToClone->GetPieceColor()); 
+	}
+	return CopiedPiece;
+}
 
 
 void AGameField::GenerateField()

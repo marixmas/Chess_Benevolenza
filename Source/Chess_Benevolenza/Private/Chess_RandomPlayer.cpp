@@ -118,6 +118,12 @@ void AChess_RandomPlayer::OnTurn()
 			RandomPiece->MovePieceFromToPosition (BlackCurrentPosition, RandomNewPosition);
 
 
+			// Dopo il movimento, controlla se il pezzo è un pedone e se ha raggiunto l'ultima fila
+			if (RandomPiece->GetPieceType() == EPieceType::PAWN && RandomNewPosition.Y == 0)
+			{
+				GField->PromotionToQueen(RandomPiece);
+			}
+
 
 			// Controllo se si verifica scacco									////////////////////////////////////////
 

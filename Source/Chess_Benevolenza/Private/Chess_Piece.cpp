@@ -127,6 +127,7 @@ void AChess_Piece::MovePieceFromToPosition(const FVector2D OldPosition, const FV
 	FVector NewLocation = FVector(GField->AGameField::GetRelativeLocationByXYPosition(NewPosition.X, NewPosition.Y) + FVector(0, 0, 20));
 	SetActorLocation(NewLocation);
 
+
 }
 
 
@@ -274,10 +275,14 @@ void AChess_Piece::ClonedPieceIsEaten(/*AGameField* CloneOfGameField,*/ FVector2
 }
 
 
-
+/*											NON VA QUI VA NEL GAMEFIELD
 AChess_Piece* AChess_Piece::ClonePiece()
 {
-	AChess_Piece* CopiedPiece = GetWorld()->SpawnActor<AChess_Piece>(AChess_Piece::StaticClass());
+
+	FVector Location = (AGameField::GetRelativeLocationByXYPosition(x, y)) + FVector(0, 0, 20);
+
+
+	AChess_Piece* CopiedPiece = GetWorld()->SpawnActor<AChess_Piece>(AGameField::GetChessPieceBP(PieceColor, PieceType), Location, FRotator::ZeroRotator);
 	if (CopiedPiece)
 	{
 		// Copia i dati del pezzo originale nella copia
@@ -287,7 +292,7 @@ AChess_Piece* AChess_Piece::ClonePiece()
 	}
 	return CopiedPiece;
 }
-
+*/
 
 
 TArray<FVector2D> AChess_Piece::CalculatePossibleMoves()

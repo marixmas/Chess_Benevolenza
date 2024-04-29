@@ -170,6 +170,13 @@ void AChess_HumanPlayer::OnClick()
 						// "spengo" i suggerimenti
 						TurnOffHighlightedTiles();
 						
+
+						// Dopo il movimento, controlla se il pezzo è un pedone e se ha raggiunto l'ultima fila
+						if (SelectedWhitePiece->GetPieceType() == EPieceType::PAWN && BlackPieceLocation.Y == 7)
+						{
+							GField->PromotionToQueen(SelectedWhitePiece);
+						}
+
 						// Controllo se si verifica scacco									////////////////////////////////////////
 
 						// Controllo se si verifica scacco matto													///////////////////////////////////////
@@ -241,6 +248,12 @@ void AChess_HumanPlayer::OnClick()
 
 				// "spengo" i suggerimenti
 				TurnOffHighlightedTiles();
+
+				// Dopo il movimento, controlla se il pezzo è un pedone e se ha raggiunto l'ultima fila
+				if (SelectedWhitePiece->GetPieceType() == EPieceType::PAWN && SelectedTile->GetGridPosition().Y == 7)
+				{
+					GField->PromotionToQueen(SelectedWhitePiece);
+				}
 
 				/*
 				if (GField->IsDraw(1))
@@ -406,7 +419,7 @@ void AChess_HumanPlayer::InfoOfClickedPiece(AChess_Piece* CurrentPiece)
 
 	FString Message = FString::Printf(TEXT("Piece Color: White, Piece Type: %s"), *TypeString);
 
-	GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Blue, Message);
+	GEngine->AddOnScreenDebugMessage(1, 2.f, FColor::Blue, Message);
 }
 
 	

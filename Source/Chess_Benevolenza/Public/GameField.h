@@ -196,6 +196,8 @@ public:
 	// Crea una copia dell'array dei pezzi
 	//TArray<AChess_Piece*> ClonePiecesArray();
 
+	AChess_Piece* ClonePiece(AChess_Piece* PieceToClone);
+
 	// generate an empty game field
 	void GenerateField();
 
@@ -206,7 +208,11 @@ public:
 	void SpawnChessPiece(int32 x, int32 y, EPieceColor PieceColor, EPieceType PieceType);
 
 	// prende il blue print del pezzo
-	UClass* GetChessPieceBP(EPieceColor PieceColor, EPieceType PieceType); 
+	UClass* GetChessPieceBP(EPieceColor PieceColor, EPieceType PieceType);
+
+	// promuove il pedone a Regina del suo colore  (quando arrivati dall'altra parte della scacchiera)
+	void PromotionToQueen(AChess_Piece* PawnToPromote);
+
 
 	// return a (x,y) position given a hit (click) on a field tile
 	FVector2D GetPosition(const FHitResult& Hit);

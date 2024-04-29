@@ -561,7 +561,7 @@ bool AChess_GameMode::IsCheckmate(AGameField* GenericGameField, int32 OpponentPl
 
 					// ripristina il pezzo mangiato
 
-					AChess_Piece* ClonedPiece = (GetGField()->PiecesMap[Move])->ClonePiece();
+					AChess_Piece* ClonedPiece = (GetGField()->ClonePiece(GetGField()->PiecesMap[Move]));
 					if (ClonedPiece)
 					{
 						ClonedGameField->WhitePiecesArray.Add(ClonedPiece);
@@ -614,7 +614,7 @@ bool AChess_GameMode::IsCheckmate(AGameField* GenericGameField, int32 OpponentPl
 
 					// ripristina il pezzo mangiato
 
-					AChess_Piece* ClonedPiece = (GetGField()->PiecesMap[Move])->ClonePiece();
+					AChess_Piece* ClonedPiece = (GetGField()->ClonePiece(GetGField()->PiecesMap[Move]));
 					if (ClonedPiece)
 					{
 						ClonedGameField->BlackPiecesArray.Add(ClonedPiece);

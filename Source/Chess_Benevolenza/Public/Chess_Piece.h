@@ -50,7 +50,7 @@ public:
 
 	// per usare le classi derivate	//////////////////////////////////////////////////////// 											////???
 	// get the type
-	virtual EPieceType GetPieceType() const;
+	/*virtual*/ EPieceType GetPieceType() const;
 
 	// set the color
 	void SetPieceColor(EPieceColor NewPieceColor);
@@ -108,7 +108,7 @@ public:
 	void SelfDestroy();
 
 	// clona il pezzo nello stato attuale
-	AChess_Piece* ClonePiece();
+//	AChess_Piece* ClonePiece();													messo in gamefield
 
 
 };
