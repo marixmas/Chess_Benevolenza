@@ -111,6 +111,11 @@ void AGameField::GeneratePieces()
 					SpawnChessPiece(x, y, EPieceColor::BLACK, EPieceType::KING);
 				}
 			}
+			else
+			{
+				PiecesMap.Add(FVector2D(x, y), nullptr);
+				ReversePiecesMap.Add(nullptr, FVector2D(x, y));
+			}
 		}
 	}
 }
@@ -337,7 +342,10 @@ TArray<AChess_Piece*> AGameField::ClonePiecesArray(EPieceColor Color = EPieceCol
 
 */
 
-AGameField* AGameField::CloneEmptyGameField()																					/// HA SENSO
+
+
+
+AGameField* AGameField::CloneEmptyGameField()							 														/// HA SENSO
 {
 	AGameField* ClonedNewGameField = GetWorld()->SpawnActor<AGameField>(AGameField::StaticClass());
 	if (ClonedNewGameField)
@@ -356,6 +364,19 @@ AGameField* AGameField::CloneEmptyGameField()																					/// HA SENSO
 
 void AGameField::CloneAllPiecesToField(AGameField* TargetField)																// MESSA PER ULTIMA, HA SENSO
 {
+	// pulisco il clone 
+	for (AChess_Piece* OldClonePiece : TargetField->PiecesArray)
+	{
+		OldClonePiece->Destroy();
+	}
+
+	TargetField->WhitePiecesArray.Empty();
+	TargetField->BlackPiecesArray.Empty();
+	TargetField->PiecesArray.Empty();
+	TargetField->PiecesMap.Empty();
+	TargetField->ReversePiecesMap.Empty();
+
+
 	// Clona tutti i pezzi bianchi
 	for (AChess_Piece* OriginalPiece : WhitePiecesArray)
 	{

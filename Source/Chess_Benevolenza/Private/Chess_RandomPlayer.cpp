@@ -120,12 +120,36 @@ void AChess_RandomPlayer::OnTurn()
 
 			// Controllo se si verifica patta												///////////////////////////////////////
 
-			//GameMode->CheckIfKingIsEaten();
+			//GameMode->CheckIfKingIsEaten();\
+
+			/*
+			if (GField->IsDraw(0))
+			{
+				GameMode->Players[0]->OnLose();
+				GameMode->Players[1]->OnWin();
+
+				GameMode->IsGameOver = true;
+			}
+
+			if (GField->IsCheckmate(0))
+			{
+				GameMode->Players[0]->OnLose();
+				GameMode->Players[1]->OnWin();
+				GameMode->IsGameOver = true;
+			}
+			*/
+
+			if (GameMode->IsCheckmate(GameMode->GetGField(), 0))
+			{
+				this->OnWin();
+				GameMode->Players[0]->OnLose();
+				GameMode->IsGameOver = true;
+			}
 
 			GameMode->TurnNextPlayer();													///// DA RIMETTEREEEEE
 
 
-		}, 3, false);
+		}, 1, false);
 
 }
 

@@ -22,6 +22,12 @@ AChess_GameMode::AChess_GameMode()
 	// inizializzo il puntatore alla GameField a null
 	GField = nullptr;
 
+	ClonedGameField = nullptr;
+
+	Check = false;
+	Checkmate = false;
+	Draw = false;
+
 }
 
 
@@ -97,6 +103,17 @@ void AChess_GameMode::BeginPlay()
 	this->ChooseHumanPlayerAndStartGame();
 }
 
+AGameField* AChess_GameMode::GetClonedGameField() const
+{
+	return ClonedGameField;
+}
+
+AGameField* AChess_GameMode::GetGField() const
+{
+	return GField;
+}
+
+
 void AChess_GameMode::ChooseHumanPlayerAndStartGame()
 {
 	CurrentPlayer = 0;
@@ -139,6 +156,7 @@ void AChess_GameMode::TurnNextPlayer()
 
 }
 
+/*
 
 bool AChess_GameMode::IsKingInCheck(int32 Player)
 {
@@ -222,10 +240,11 @@ bool AChess_GameMode::IsKingInCheck(int32 Player)
 
 }
 
-
+*/
+/*
 bool AChess_GameMode::IsCheckmate(int32 Player)
 {
-	/*
+	
 
 	// ottengo l'array dei pezzi del colore del giocatore di cui voglio controllare lo Scacco Matto
 	//AGameField* GField = GetGField();
@@ -264,14 +283,13 @@ bool AChess_GameMode::IsCheckmate(int32 Player)
 
 	// Ottieni la posizione del re
 	KingPosition = King->GetGridPosition();
-	*/
+	
 
 	// Controlla se il re del giocatore è in scacco
 	if (!IsKingInCheck(Player))
 	{
 		return false; // Il re non è in scacco, quindi non può essere scacco matto
 	}
-
 
 	// Controlla se il giocatore non ha mosse legali che possono salvare il re dallo scacco
 
@@ -316,8 +334,9 @@ bool AChess_GameMode::IsCheckmate(int32 Player)
 	return true;
 }
 
+*/
 
-
+/*
 bool AChess_GameMode::IsDraw(int32 Player)
 {
 	// Verifica se il giocatore corrente non ha mosse legali disponibili
@@ -346,10 +365,441 @@ bool AChess_GameMode::IsDraw(int32 Player)
 
 	return false; // Nessuna condizione di patta è soddisfatta
 }
+*/
 
 
-AGameField* AChess_GameMode::GetGField() const
+
+
+bool AChess_GameMode::IsKingInCheck(AGameField* GenericGameField, int32 OpponentPlayer)
 {
-	return GField;
+	// ottengo l'array dei pezzi del colore del giocatore di cui voglio controllare lo Scacco
+	if (OpponentPlayer == 0)
+	{
+		//TArray <AChess_Piece*> OpponentPiecesArray = WhitePiecesArray;
+
+		// cerco il re nel colore corrispondente
+		King = nullptr;
+		for (AChess_Piece* Piece : GenericGameField->WhitePiecesArray)
+		{
+			if (Piece->GetPieceType() == EPieceType::KING)
+			{
+				King = Piece;
+				break;
+			}
+		}
+	}
+	else if (OpponentPlayer == 1)
+	{
+		//TArray <AChess_Piece*> OpponentPiecesArray = BlackPiecesArray;
+
+		// cerco il re nel colore corrispondente
+		King = nullptr;
+		for (AChess_Piece* Piece : GenericGameField->BlackPiecesArray)
+		{
+			if (Piece->GetPieceType() == EPieceType::KING)
+			{
+				King = Piece;
+				break;
+			}
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("giocatore su cui controllare lo scacco non valido"));
+	}
+	/*
+	// ritorno false se l'array è nullo
+	if (!ColorPiecesArray)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Array di pezzi nullo!"));
+		return false;
+	}
+	*/
+	/*
+	// cerco il re nel colore corrispondente
+	King = nullptr;
+	for (AChess_Piece* Piece : *ColorPiecesArray)
+	{
+		if (Piece->GetPieceType() == EPieceType::KING)
+		{
+			King = Piece;
+			break;
+		}
+	}
+	*/
+	// ritorno false se non viene trovato il re
+	if (!King)
+	{
+		UE_LOG(LogTemp, Error, TEXT("nella funzione di scacco: Re non trovato tra le pedine del giocatore numero %d"), OpponentPlayer);
+		return false;
+	}
+
+	// Ottieni la posizione del re avversario
+	KingPosition = King->GetGridPosition();
+
+
+	// prendo array dei pezzi del giocatore principale (quello che ha chiamato la funzione sull'avversario)
+	//PlayerPiecesArray = nullptr;
+
+	if (OpponentPlayer == 0)
+	{
+		//PlayerPiecesArray = &(GField->GetBlackPiecesArray());
+
+		// scansiono tutti i pezzi dell'avversario per controllare se minacciano il re
+		for (AChess_Piece* PlayerPiece : GenericGameField->WhitePiecesArray)
+		{
+			// cast del pezzo per avere l'opportuna funzione overridata per il calcolo delle mosse
+			AChess_Piece* CastedPlayerPiece = Cast<AChess_Piece>(PlayerPiece);
+
+			// Ottieni le mosse possibili del pezzo avversario
+			TArray<FVector2D> PossibleMoves = CastedPlayerPiece->CalculatePossibleMoves();
+
+			// Controlla se le mosse possibili includono la posizione del re
+			if (PossibleMoves.Contains(KingPosition))
+			{
+				// Il re è sotto scacco
+				return true;
+			}
+		}
+
+	}
+	else if (OpponentPlayer == 1)
+	{
+		//PlayerPiecesArray = &(GField->GetWhitePiecesArray());
+
+		// scansiono tutti i pezzi dell'avversario per controllare se minacciano il re
+		for (AChess_Piece* PlayerPiece : GenericGameField->BlackPiecesArray)
+		{
+			// cast del pezzo per avere l'opportuna funzione overridata per il calcolo delle mosse
+			AChess_Piece* CastedPlayerPiece = Cast<AChess_Piece>(PlayerPiece);
+
+			// Ottieni le mosse possibili del pezzo avversario
+			TArray<FVector2D> PossibleMoves = CastedPlayerPiece->CalculatePossibleMoves();
+
+			// Controlla se le mosse possibili includono la posizione del re
+			if (PossibleMoves.Contains(KingPosition))
+			{
+				// Il re è sotto scacco
+				return true;
+			}
+		}
+
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("giocatore su cui controllare lo scacco non valido"));
+	}
+
+	/*
+	// ritorno false se l'array è nullo
+	if (!PlayerPiecesArray)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Array di pezzi dell'avversario nullo!"));
+		return false;
+	}
+	*/
+
+	// Il re non è sotto scacco
+	return false;
+
+}
+
+
+
+bool AChess_GameMode::IsCheckmate(AGameField* GenericGameField, int32 OpponentPlayer)
+{
+	// ottengo l'array dei pezzi del colore del giocatore di cui voglio controllare lo Scacco Matto
+	//AGameField* GField = GetGField();
+
+	/*
+	if (Player == 0)
+	{
+		CopyOfColorPiecesArray = (GField->GetCopyOfWhitePiecesArray());
+	}
+	else if (Player == 1)
+	{
+		CopyOfColorPiecesArray = (GField->GetCopyOfBlackPiecesArray());
+	}
+	// ritorno false se l'array è nullo
+	if (CopyOfColorPiecesArray.Num() == 0)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Array di pezzi nullo!"));
+		return false;
+	}
+
+	// cerco il re nel colore corrispondente
+	King = nullptr;
+	for (AChess_Piece* Piece : CopyOfColorPiecesArray)
+	{
+		if (Piece->GetPieceType() == EPieceType::KING)
+		{
+			King = Piece;
+			break;
+		}
+	}
+	// ritorno false se non viene trovato il re
+	if (!King)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Re non trovato tra le pedine del giocatore numero %d"), Player);
+		return false;
+	}
+
+	// Ottieni la posizione del re
+	KingPosition = King->GetGridPosition();
+
+
+	*/
+
+	// Controlla se il re del giocatore è in scacco
+	if (!IsKingInCheck(GenericGameField, OpponentPlayer))
+	{
+		return false; // Il re non è in scacco, quindi non può essere scacco matto
+	}
+
+	// Controlla se il giocatore non ha mosse legali che possono salvare il re dallo scacco
+
+	// creo una copia della scacchiera per i calcoli per lo scacco matto
+	ClonedGameField = GetGField()->CloneEmptyGameField();
+	GetGField()->CloneAllPiecesToField(ClonedGameField);
+
+	// ottengo l'array dei pezzi del colore del giocatore di cui voglio controllare lo Scacco
+	if (OpponentPlayer == 0)
+	{
+		for (AChess_Piece* Piece : ClonedGameField->WhitePiecesArray)
+		{
+			TArray<FVector2D> PossibleMoves = (Cast<AChess_Piece>(Piece))->CalculatePossibleMoves();
+
+			for (FVector2D Move : PossibleMoves)
+			{
+				// Un pezzo viene mangiato?
+				if ((ClonedGameField->PiecesMap[Move]) != nullptr)
+				{
+					(ClonedGameField->PiecesMap[Move])->ClonedPieceIsEaten(/*ClonedGameField, */ Move);
+
+					// Muove il pezzo
+					Piece->MoveClonedPieceFromToPosition(/*ClonedGameField, */ Piece->GetGridPosition(), Move);
+
+					// Controlla se il re non è più in scacco dopo la mossa
+					if (!IsKingInCheck(ClonedGameField, OpponentPlayer))
+					{
+						return false; // Il re può evitare lo scacco matto
+					}
+
+					// Riporta indietro il pezzo 
+					Piece->MoveClonedPieceFromToPosition(/*ClonedGameField, */  Move, Piece->GetGridPosition());
+
+					// ripristina il pezzo mangiato
+
+					AChess_Piece* ClonedPiece = (GetGField()->PiecesMap[Move])->ClonePiece();
+					if (ClonedPiece)
+					{
+						ClonedGameField->WhitePiecesArray.Add(ClonedPiece);
+						ClonedGameField->PiecesArray.Add(ClonedPiece);
+						ClonedGameField->PiecesMap.Add(ClonedPiece->GetGridPosition(), ClonedPiece);
+						ClonedGameField->ReversePiecesMap.Add(ClonedPiece, ClonedPiece->GetGridPosition());
+					}
+				}
+				else
+				{
+					// Muove il pezzo
+					Piece->MoveClonedPieceFromToPosition(/*ClonedGameField, */ Piece->GetGridPosition(), Move);
+
+					// Controlla se il re non è più in scacco dopo la mossa
+					if (!IsKingInCheck(ClonedGameField, OpponentPlayer))
+					{
+						return false; // Il re può evitare lo scacco matto
+					}
+
+					// Riporta indietro il pezzo 
+					Piece->MoveClonedPieceFromToPosition(/*ClonedGameField, */  Move, Piece->GetGridPosition());
+				}
+			}
+		}
+	}
+	else if (OpponentPlayer == 1)
+	{
+		for (AChess_Piece* Piece : ClonedGameField->BlackPiecesArray)
+		{
+			TArray<FVector2D> PossibleMoves = (Cast<AChess_Piece>(Piece))->CalculatePossibleMoves();
+
+			for (FVector2D Move : PossibleMoves)
+			{
+				// Un pezzo viene mangiato?
+				if ((ClonedGameField->PiecesMap[Move]) != nullptr)
+				{
+					(ClonedGameField->PiecesMap[Move])->ClonedPieceIsEaten(/*ClonedGameField, */  Move);
+
+					// Muove il pezzo
+					Piece->MoveClonedPieceFromToPosition(/*ClonedGameField, */  Piece->GetGridPosition(), Move);
+
+					// Controlla se il re non è più in scacco dopo la mossa
+					if (!IsKingInCheck(ClonedGameField, OpponentPlayer))
+					{
+						return false; // Il re può evitare lo scacco matto
+					}
+
+					// Riporta indietro il pezzo
+					Piece->MoveClonedPieceFromToPosition(/*ClonedGameField, */  Move, Piece->GetGridPosition());
+
+					// ripristina il pezzo mangiato
+
+					AChess_Piece* ClonedPiece = (GetGField()->PiecesMap[Move])->ClonePiece();
+					if (ClonedPiece)
+					{
+						ClonedGameField->WhitePiecesArray.Add(ClonedPiece);
+						ClonedGameField->PiecesArray.Add(ClonedPiece);
+						ClonedGameField->PiecesMap.Add(ClonedPiece->GetGridPosition(), ClonedPiece);
+						ClonedGameField->ReversePiecesMap.Add(ClonedPiece, ClonedPiece->GetGridPosition());
+					}
+				}
+				else // se nel movimento non viene mangiato nessun pezzo
+				{
+					// Muove il pezzo
+					Piece->MoveClonedPieceFromToPosition(/*ClonedGameField, */  Piece->GetGridPosition(), Move);
+
+					// Controlla se il re non è più in scacco dopo la mossa
+					if (!IsKingInCheck(ClonedGameField, OpponentPlayer))
+					{
+						return false; // Il re può evitare lo scacco matto
+					}
+
+					// Riporta indietro il pezzo
+					Piece->MoveClonedPieceFromToPosition(/*ClonedGameField, */  Move, Piece->GetGridPosition());
+
+
+				}
+
+			}
+		}
+	}
+
+
+
+
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("giocatore su cui gfhfghjdyjdtjdtuyjdrtjkdtu lo scacco non valido"));
+	}
+
+	ClonedGameField->Destroy();
+
+	// Nessuna mossa legale può salvare il re dallo scacco, quindi è scacco matto
+	return true;
+
+
+	/*
+	for (AChess_Piece* Piece : CopyOfColorPiecesArray)
+	{
+		TArray<FVector2D> PossibleMoves = (Cast<AChess_Piece>(Piece))->CalculatePossibleMoves();
+
+		for (FVector2D Move : PossibleMoves)
+		{
+			// Creazione di una copia della scacchiera all'inizio di ogni iterazione
+			//AGameField* ClonedField = GField->CloneGameField();
+
+			// creo copia di tutti i pezzi a ogni iterazione
+
+			GField->CloneAllPiecesToField(ClonedField);
+			// Muove il pezzo
+			Piece->MovePieceFromToPosition(Piece->GetGridPosition(), Move);
+
+			// Controlla se il re non è più in scacco dopo la mossa
+			if (!IsKingInCheck(OpponentPlayer))
+			{
+				for (AChess_Piece* ClonedPiece : ClonedField->PiecesArray)
+				{
+					ClonedPiece->Destroy();
+				}
+				ClonedField->Destroy();
+				return false; // Il re può evitare lo scacco matto
+			}
+
+			for (AChess_Piece* ClonedPiece : ClonedField->PiecesArray)
+			{
+				ClonedPiece->Destroy();
+			}
+
+		}
+	}
+	*/
+
+
+}
+
+
+
+bool AChess_GameMode::IsDraw(int32 Player)
+{
+	// Verifica se il giocatore corrente non ha mosse legali disponibili
+	if (!HasLegalMoves(Player))
+	{
+		// Verifica se il re del giocatore corrente non è in scacco
+		if (!IsKingInCheck(GField, Player))
+		{
+			return true; // Patta per stallo
+		}
+	}
+
+	return false; // Nessuna condizione di patta è soddisfatta
+}
+
+
+bool AChess_GameMode::HasLegalMoves(int32 Player)
+{
+
+	/*
+	// Ottieni l'array dei pezzi del giocatore corrente
+	TArray<AChess_Piece*> PlayerPieces;
+	if (Player == 0)
+	{
+		PlayerPieces = WhitePiecesArray;
+	}
+	else if (Player == 1)
+	{
+		PlayerPieces = BlackPiecesArray;
+	}
+
+	// Scansiona tutti i pezzi del giocatore corrente
+	for (AChess_Piece* Piece : PlayerPieces)
+	{
+		// Ottieni le mosse possibili del pezzo
+		TArray<FVector2D> PossibleMoves = (Cast<AChess_Piece>(Piece))->CalculatePossibleMoves();
+
+		// Controlla se ci sono mosse legali disponibili per questo pezzo
+		for (FVector2D Move : PossibleMoves)
+		{
+			// Simula la mossa e controlla se il re è in scacco dopo la mossa
+			AChess_Piece* PieceAtDestination = this->PiecesMap[Move];
+			if (!PieceAtDestination || PieceAtDestination->GetPieceColor() != Piece->GetPieceColor())
+			{
+				// Simula la mossa
+				FVector2D OriginalPosition = Piece->GetGridPosition();
+				Piece->SetGridPosition(Move);
+
+				// Controlla se il re è in scacco dopo la mossa
+				if (!IsKingInCheck(Player))
+				{
+					// Reverti la mossa
+					Piece->SetGridPosition(OriginalPosition);
+					return true; // Ci sono mosse legali disponibili
+				}
+
+				// Reverti la mossa
+				Piece->SetGridPosition(OriginalPosition);
+			}
+		}
+	}
+
+	// Non ci sono mosse legali disponibili
+	return false;
+	*/
+	// Verifica se il giocatore corrente è in scacco matto
+	if (IsCheckmate(GField, Player))
+	{
+		return false; // Il giocatore è in scacco matto, quindi non ci sono mosse legali disponibili
+	}
+
+	// Il giocatore non è in scacco matto, quindi ci sono mosse legali disponibili
+	return true;
 }
 

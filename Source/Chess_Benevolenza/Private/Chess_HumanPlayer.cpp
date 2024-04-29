@@ -176,6 +176,26 @@ void AChess_HumanPlayer::OnClick()
 	
 						//GameMode->CheckIfKingIsEaten();
 
+						/*
+						if (GField->IsCheckmate(1))
+						{
+							this->OnWin();
+							GameMode->IsGameOver = true;
+							IsMyTurn = false;
+						}
+
+						*/
+						
+						if (GameMode->IsCheckmate(GameMode->GetGField(), 1))
+						{
+							this->OnWin();
+							GameMode->Players[1]->OnLose();
+							GameMode->IsGameOver = true;
+							IsMyTurn = false;
+						}
+
+					
+
 						IsMyTurn = false;
 
 						GameMode->TurnNextPlayer();													///// DA RIMETTEREEEEE
@@ -201,6 +221,33 @@ void AChess_HumanPlayer::OnClick()
 
 				// "spengo" i suggerimenti
 				TurnOffHighlightedTiles();
+
+				/*
+				if (GField->IsDraw(1))
+				{
+					GameMode->Players[1]->OnLose();
+					GameMode->Players[0]->OnWin();
+
+					GameMode->IsGameOver = true;
+				}
+
+				if (GField->IsCheckmate(0))
+				{
+					GameMode->Players[1]->OnLose();
+					GameMode->Players[0]->OnWin();
+					GameMode->IsGameOver = true;
+				}
+
+				*/
+				
+
+				if (GameMode->IsCheckmate(GameMode->GetGField(), 1))
+				{
+					this->OnWin();
+					GameMode->Players[1]->OnLose();
+					GameMode->IsGameOver = true;
+					IsMyTurn = false;
+				}
 
 				IsMyTurn = false;
 				GameMode->TurnNextPlayer();														///// DA RIMETTEREEEEE

@@ -151,6 +151,39 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ResetField();
 
+	/*
+		bool IsKingInCheck(int32 OpponentPlayer);
+
+	bool IsCheckmate(int32 OpponentPlayer);
+
+	bool IsDraw(int32 noPlayercredoo);
+
+	bool HasLegalMoves(int32 Player);
+	*/
+
+
+		
+	//TArray<AChess_Piece*>* ColorPiecesArray;
+
+
+	/*
+		AChess_Piece* King;
+
+	FVector2D KingPosition;
+
+	TArray<AChess_Piece*>* OpponentColorPiecesArray;
+
+
+	TArray<AChess_Piece*> CopyOfColorPiecesArray;
+
+
+	AGameField* ClonedGameField;
+	
+	*/
+
+
+
+
 	// crea una copia della scacchiera nello stato attuale
 	//AGameField* CloneGameField();
 
@@ -185,7 +218,7 @@ public:
 	TArray<AChess_Piece*>& GetPiecesArray();
 
 	// return the array of white pieces pointers
-	TArray<AChess_Piece*>& GetWhitePiecesArray();
+	TArray<AChess_Piece*>& GetWhitePiecesArray(); 
 
 	// return the array of black pieces pointers
 	TArray<AChess_Piece*>& GetBlackPiecesArray();

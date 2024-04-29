@@ -66,10 +66,24 @@ bool AChess_Piece_King::IsMoveValid(const FVector2D& Move)
         {
             ATile* DestinationTile = GField->TileMap.FindRef(FVector2D(Move.X, Move.Y));
 
-            if (!DestinationTile || DestinationTile->IsOccupied())
+            if (!DestinationTile)
             {
                 return false;
             }
+
+            else if (DestinationTile->IsOccupied())
+            {
+                if ((PieceColor == EPieceColor::WHITE && DestinationTile->GetOwner() == 0) || (PieceColor == EPieceColor::BLACK && DestinationTile->GetOwner() == 1))
+                {
+                    return false;
+                }
+
+                else if ((PieceColor == EPieceColor::WHITE && DestinationTile->GetOwner() == 1) || (PieceColor == EPieceColor::BLACK && DestinationTile->GetOwner() == 0))
+                {
+                    return true;
+                }
+            }
+           
         }
     }
 
