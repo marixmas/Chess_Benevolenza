@@ -172,9 +172,10 @@ void AChess_HumanPlayer::OnClick()
 						
 
 						// Dopo il movimento, controlla se il pezzo è un pedone e se ha raggiunto l'ultima fila
-						if (SelectedWhitePiece->GetPieceType() == EPieceType::PAWN && BlackPieceLocation.X == 7)
+						AChess_Piece* RecentlyMovedPiece = GField->PiecesMap.FindRef(BlackPieceLocation);
+						if (RecentlyMovedPiece->GetPieceType() == EPieceType::PAWN && BlackPieceLocation.X == 7)
 						{
-							GField->PromotionToQueen(SelectedWhitePiece);
+							GField->PromotionToQueen(RecentlyMovedPiece);
 						}
 
 						// Controllo se si verifica scacco									////////////////////////////////////////

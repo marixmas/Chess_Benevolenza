@@ -142,8 +142,7 @@ void AGameField::SpawnChessPiece(int32 x, int32 y, EPieceColor PieceColor, EPiec
 		BlackPiecesArray.Add(Obj);
 	}
 	PiecesMap.Add(FVector2D(x, y), Obj);
-	ReversePiecesMap.Add(Obj, FVector2D(x, y));								/// no???? nel dubbio
-
+	ReversePiecesMap.Add(Obj, FVector2D(x, y));								
 
 	// ottengo il puntatore alla tile corrispondente
 	ATile* TargetTile = TileMap.FindRef(FVector2D(x, y));
@@ -425,6 +424,17 @@ void AGameField::CloneAllPiecesToField(AGameField* TargetField)																/
 
 	*/
 	
+	// Inizializza le mappe per tutte le caselle
+	for (int32 x = 0; x < Size; x++)
+	{
+		for (int32 y = 0; y < Size; y++)
+		{
+			FVector2D GridPosition(x, y);
+			TargetField->PiecesMap.Add(GridPosition, nullptr);
+			TargetField->ReversePiecesMap.Add(nullptr, GridPosition);
+
+		}
+	}
 
 	// Clona tutti i pezzi bianchi
 	for (AChess_Piece* OriginalPiece : WhitePiecesArray)
@@ -434,8 +444,9 @@ void AGameField::CloneAllPiecesToField(AGameField* TargetField)																/
 		{
 			TargetField->WhitePiecesArray.Add(ClonedPiece);
 			TargetField->PiecesArray.Add(ClonedPiece);
-			TargetField->PiecesMap.Add(ClonedPiece->GetGridPosition(), ClonedPiece);
-			TargetField->ReversePiecesMap.Add(ClonedPiece, ClonedPiece->GetGridPosition());
+			TargetField->PiecesMap[ClonedPiece->GetGridPosition()] = ClonedPiece;
+			TargetField->ReversePiecesMap[ClonedPiece] = ClonedPiece->GetGridPosition();
+		
 		}
 	}
 
@@ -447,10 +458,13 @@ void AGameField::CloneAllPiecesToField(AGameField* TargetField)																/
 		{
 			TargetField->BlackPiecesArray.Add(ClonedPiece);
 			TargetField->PiecesArray.Add(ClonedPiece);
-			TargetField->PiecesMap.Add(ClonedPiece->GetGridPosition(), ClonedPiece);
-			TargetField->ReversePiecesMap.Add(ClonedPiece, ClonedPiece->GetGridPosition()); 
+			TargetField->PiecesMap[ClonedPiece->GetGridPosition()] = ClonedPiece;
+			TargetField->ReversePiecesMap[ClonedPiece] = ClonedPiece->GetGridPosition();
 		}
 	}
+
+	
+
 }
 
 /*
