@@ -172,7 +172,7 @@ void AChess_HumanPlayer::OnClick()
 						
 
 						// Dopo il movimento, controlla se il pezzo è un pedone e se ha raggiunto l'ultima fila
-						if (SelectedWhitePiece->GetPieceType() == EPieceType::PAWN && BlackPieceLocation.Y == 7)
+						if (SelectedWhitePiece->GetPieceType() == EPieceType::PAWN && BlackPieceLocation.X == 7)
 						{
 							GField->PromotionToQueen(SelectedWhitePiece);
 						}
@@ -251,7 +251,7 @@ void AChess_HumanPlayer::OnClick()
 
 				// Dopo il movimento, controlla se il pezzo è un pedone e se ha raggiunto l'ultima fila
 				AChess_Piece* RecentlyMovedPiece = GField->PiecesMap.FindRef(SelectedTile->GetGridPosition());
-				if (RecentlyMovedPiece->GetPieceType() == EPieceType::PAWN && SelectedTile->GetGridPosition().Y == 7)
+				if (RecentlyMovedPiece->GetPieceType() == EPieceType::PAWN && SelectedTile->GetGridPosition().X == 7)
 				{
 					GField->PromotionToQueen(CurrPiece);
 				}
