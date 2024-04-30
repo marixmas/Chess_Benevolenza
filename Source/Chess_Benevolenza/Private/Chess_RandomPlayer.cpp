@@ -119,7 +119,7 @@ void AChess_RandomPlayer::OnTurn()
 
 
 			// Dopo il movimento, controlla se il pezzo è un pedone e se ha raggiunto l'ultima fila
-			if (RandomPiece->GetPieceType() == EPieceType::PAWN && RandomNewPosition.Y == 0)
+			if (RandomPiece->GetPieceType() == EPieceType::PAWN && RandomNewPosition.X == 0)
 			{
 				GField->PromotionToQueen(RandomPiece);
 			}

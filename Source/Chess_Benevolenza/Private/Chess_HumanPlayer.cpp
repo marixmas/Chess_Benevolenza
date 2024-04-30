@@ -244,17 +244,19 @@ void AChess_HumanPlayer::OnClick()
 
 				// Resetta lo stato di selezione della pedina
 				bPieceSelected = false;
-				CurrPiece = nullptr;
+				
 
 				// "spengo" i suggerimenti
 				TurnOffHighlightedTiles();
 
 				// Dopo il movimento, controlla se il pezzo è un pedone e se ha raggiunto l'ultima fila
-				if (SelectedWhitePiece->GetPieceType() == EPieceType::PAWN && SelectedTile->GetGridPosition().Y == 7)
+				AChess_Piece* RecentlyMovedPiece = GField->PiecesMap.FindRef(SelectedTile->GetGridPosition());
+				if (RecentlyMovedPiece->GetPieceType() == EPieceType::PAWN && SelectedTile->GetGridPosition().Y == 7)
 				{
-					GField->PromotionToQueen(SelectedWhitePiece);
+					GField->PromotionToQueen(CurrPiece);
 				}
 
+				CurrPiece = nullptr;
 				/*
 				if (GField->IsDraw(1))
 				{
