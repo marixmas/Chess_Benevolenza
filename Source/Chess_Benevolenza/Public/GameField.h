@@ -51,8 +51,8 @@ public:
 	TMap<FVector2D, AChess_Piece*> PiecesMap;
 
 	//given a pieces returns a position									// messo io per trovare la posizione del pezzo nero selezionato in OnClick di HumanPlayer
-	UPROPERTY(Transient)
-	TMap<AChess_Piece*, FVector2D> ReversePiecesMap;
+	//UPROPERTY(Transient)
+	//TMap<AChess_Piece*, FVector2D> ReversePiecesMap;
 
 
 
@@ -201,6 +201,12 @@ public:
 
 	AChess_Piece* ClonePiece(AChess_Piece* PieceToClone);
 
+	bool SimulateMoveAndCheck(AChess_Piece* PieceToSimulate, FVector2D PositionToMoveTo);
+
+
+
+
+
 	// generate an empty game field
 	void GenerateField();
 
@@ -210,11 +216,19 @@ public:
 	// spawna il pezzo
 	void SpawnChessPiece(int32 x, int32 y, EPieceColor PieceColor, EPieceType PieceType);
 
+
+
+
+
 	// prende il blue print del pezzo
 	UClass* GetChessPieceBP(EPieceColor PieceColor, EPieceType PieceType);
 
 	// promuove il pedone a Regina del suo colore  (quando arrivati dall'altra parte della scacchiera)
 	void PromotionToQueen(AChess_Piece* PawnToPromote);
+
+
+
+
 
 
 	// return a (x,y) position given a hit (click) on a field tile

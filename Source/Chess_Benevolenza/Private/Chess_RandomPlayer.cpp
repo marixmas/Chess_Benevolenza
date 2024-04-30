@@ -100,7 +100,7 @@ void AChess_RandomPlayer::OnTurn()
 
 					// quando andrá tutto bene avró una pedina estratta a caso e una relativa mossa estratta a caso
 					// mi salvo la posizione attuale della pedina
-					FVector2D BlackCurrentPosition = GField->ReversePiecesMap[RandomPiece];
+					FVector2D BlackCurrentPosition = RandomPiece->GetGridPosition();										// = GField->ReversePiecesMap[RandomPiece];
 
 					// se dove c'è un'altra pedina (so che già che sarà bianca perché è una mossa possibile) la mangio
 					if ((GField->PiecesMap[RandomNewPosition]) != nullptr)
@@ -146,7 +146,7 @@ void AChess_RandomPlayer::OnTurn()
 					}
 
 					// controllo: dopo la mia mossa il re avversario (del player 0 é in scacco matto?
-					if (GameMode->IsCheckmate(GField, 0))
+					if (GameMode->IsCheckmate(/*GField, */0))
 					{
 						GameMode->Players[1]->OnWin();
 						GameMode->Players[0]->OnLose();
@@ -240,7 +240,7 @@ void AChess_RandomPlayer::OnTurn()
 					}
 
 					// controllo: dopo la mia mossa il re avversario (del player 0 é in scacco matto?
-					if (GameMode->IsCheckmate(GField, 0))
+					if (GameMode->IsCheckmate(/*GField, */0))
 					{
 						GameMode->Players[1]->OnWin();
 						GameMode->Players[0]->OnLose();

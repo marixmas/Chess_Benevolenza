@@ -29,7 +29,7 @@ AGameField::AGameField()
 	WhitePiecesArray.Empty();
 	BlackPiecesArray.Empty();
 	PiecesMap.Empty();
-	ReversePiecesMap.Empty();
+	//ReversePiecesMap.Empty();
 
 }
 
@@ -114,7 +114,7 @@ void AGameField::GeneratePieces()
 			else
 			{
 				PiecesMap.Add(FVector2D(x, y), nullptr);
-				ReversePiecesMap.Add(nullptr, FVector2D(x, y));
+				//ReversePiecesMap.Add(nullptr, FVector2D(x, y));
 			}
 		}
 	}
@@ -142,7 +142,7 @@ void AGameField::SpawnChessPiece(int32 x, int32 y, EPieceColor PieceColor, EPiec
 		BlackPiecesArray.Add(Obj);
 	}
 	PiecesMap.Add(FVector2D(x, y), Obj);
-	ReversePiecesMap.Add(Obj, FVector2D(x, y));								
+	//ReversePiecesMap.Add(Obj, FVector2D(x, y));								
 
 	// ottengo il puntatore alla tile corrispondente
 	ATile* TargetTile = TileMap.FindRef(FVector2D(x, y));
@@ -220,7 +220,7 @@ void AGameField::PromotionToQueen(AChess_Piece* PawnToPromote)
 	
 	// Aggiorna le mappe dei pezzi
 	PiecesMap.Remove(PawnPosition);
-	ReversePiecesMap.Remove(PawnToPromote);
+	//ReversePiecesMap.Remove(PawnToPromote);
 
 	// Rimuovi il pedone dal campo di gioco
 	PawnToPromote->Destroy();
@@ -253,7 +253,7 @@ void AGameField::ResetField()
 		PiecesMap.Empty();
 
 		// svuoto la mappa con le posizioni ai pezzi poiché rigenero i pezzi
-		ReversePiecesMap.Empty();
+		//ReversePiecesMap.Empty();
 		
         GameMode->IsGameOver = false;
         GameMode->MoveCounter = 0;
@@ -446,7 +446,7 @@ void AGameField::CloneAllPiecesToField(AGameField* TargetField)																/
 			TargetField->PiecesArray.Add(ClonedPiece);
 			TargetField->PiecesMap[ClonedPiece->GetGridPosition()] = ClonedPiece;
 			//TargetField->ReversePiecesMap[ClonedPiece] = ClonedPiece->GetGridPosition();						// mi sa di noo    		
-			TargetField->ReversePiecesMap.Add(ClonedPiece) = ClonedPiece->GetGridPosition();
+			///////TargetField->ReversePiecesMap.Add(ClonedPiece) = ClonedPiece->GetGridPosition();										voglio togliere da ovunque reversepiecemap
 		}
 	}
 
@@ -460,7 +460,7 @@ void AGameField::CloneAllPiecesToField(AGameField* TargetField)																/
 			TargetField->PiecesArray.Add(ClonedPiece);
 			TargetField->PiecesMap[ClonedPiece->GetGridPosition()] = ClonedPiece;
 			//TargetField->ReversePiecesMap[ClonedPiece] = ClonedPiece->GetGridPosition();	
-			TargetField->ReversePiecesMap.Add(ClonedPiece) = ClonedPiece->GetGridPosition();
+			/////////TargetField->ReversePiecesMap.Add(ClonedPiece) = ClonedPiece->GetGridPosition();
 
 		}
 	}
@@ -501,6 +501,128 @@ AChess_Piece* AGameField::ClonePiece(AChess_Piece* PieceToClone)
 	}
 	return CopiedPiece;
 }
+
+
+
+
+
+/*
+//
+//
+//
+//
+//
+*/
+
+
+
+bool AGameField::SimulateMoveAndCheck(AChess_Piece* PieceToSimulate, FVector2D PositionToMoveTo)
+{
+	AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
+	AGameField* GField = GameMode->GetGField();
+
+
+	// clono scacchiera e pezzi
+	AGameField* ClonedGameField = GField->CloneEmptyGameField();
+	GField->CloneAllPiecesToField(ClonedGameField);
+
+	// risalgo dalla pedina dell'originale alla pedina del clone
+	AChess_Piece* ClonedPieceToSimulate = ClonedGameField->PiecesMap.FindRef(PieceToSimulate->GetGridPosition()); 
+	
+
+	// faccio la mossa sul clone
+	ClonedPieceToSimulate->MovePieceFromToPosition(ClonedPieceToSimulate->GetGridPosition(), PositionToMoveTo);
+
+	// se nella position finale c'é una pedina la mangio  (non controllo se sia del colore giusto perché le mosse passate qui dentro sono giá state controllate prima altrove)
+	if (ClonedGameField->PiecesMap.FindRef(PositionToMoveTo))
+	{
+		(ClonedGameField->PiecesMap.FindRef(PositionToMoveTo))->PieceIsEaten(PositionToMoveTo);
+	}
+	else {}
+
+	// é scacco?
+	if (PieceToSimulate->GetPieceColor() == EPieceColor::WHITE)
+	{
+		if (GameMode->IsKingInCheck(ClonedGameField, 0))
+		{
+			// é scacco
+			return true;
+		}
+		else
+		{
+			// non è scacco
+			return false;
+		}
+
+	}
+
+	else if (PieceToSimulate->GetPieceColor() == EPieceColor::BLACK)
+	{
+		if (GameMode->IsKingInCheck(ClonedGameField, 1))
+		{
+			// é scacco
+			return true;
+		}
+		else
+		{
+			// non è scacco
+			return false;
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("SimulateMoveAndCheck su un pezzo non Bianco e non Nero"));
+		
+		return false;
+	}
+
+
+
+
+
+for (AChess_Piece* piece : ClonedGameField->PiecesArray)
+	{
+		piece->Destroy();
+	}
+
+	for (ATile* tile : ClonedGameField->TileArray)
+	{
+		tile->Destroy();
+	}
+
+	ClonedGameField->Destroy();
+
+}
+
+
+
+
+
+
+/*
+//
+//
+//
+//
+//
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 void AGameField::GenerateField()

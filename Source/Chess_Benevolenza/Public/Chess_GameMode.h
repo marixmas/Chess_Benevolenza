@@ -79,12 +79,15 @@ public:
 	bool IsKingInCheck(AGameField* GenericGameField, int32 OpponentPlayer);
 
 	// controlla lo scacco matto
-	bool IsCheckmate(AGameField* GenericGameField, int32 OpponentPlayer);
+	bool IsCheckmate(/*AGameField* GenericGameField,*/ int32 OpponentPlayer);
+
+	// simula lo spostamento di una pedina su una scacchiera clonata									// ultima roba messa         ORA E IN GAMEFIELD
+	//bool SimulateMoveAndCheckmate(AChess_Piece* PieceToSimulate, FVector2D PositionToMoveTo);
 
 	// controlla la patta
-	bool IsDraw(int32 Player);
+	//bool IsDraw(int32 Player);
 
-	bool HasLegalMoves(int32 Player);
+	// bool HasLegalMoves(int32 Player);
 
 
 	AChess_Piece* King;

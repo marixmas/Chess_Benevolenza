@@ -121,7 +121,7 @@ void AChess_Piece::MovePieceFromToPosition(const FVector2D OldPosition, const FV
 
 	
 	// aggiorno ReversePiecesMap 
-	GField->ReversePiecesMap[this] = FVector2D(NewPosition.X, NewPosition.Y);
+	//GField->ReversePiecesMap[this] = FVector2D(NewPosition.X, NewPosition.Y);
 
 	// sposto il blueprint del Piece
 	FVector NewLocation = FVector(GField->AGameField::GetRelativeLocationByXYPosition(NewPosition.X, NewPosition.Y) + FVector(0, 0, 20));
@@ -208,7 +208,7 @@ void AChess_Piece::MoveClonedPieceFromToPosition(/*AGameField* CloneOfGameField,
 
 
 	// aggiorno ReversePiecesMap 
-	ClonedGameField->ReversePiecesMap[this] = FVector2D(NewPosition.X, NewPosition.Y);
+	//ClonedGameField->ReversePiecesMap[this] = FVector2D(NewPosition.X, NewPosition.Y);
 
 	// sposto il blueprint del Piece
 	FVector NewLocation = FVector(ClonedGameField->AGameField::GetRelativeLocationByXYPosition(NewPosition.X, NewPosition.Y) + FVector(0, 0, 20));
@@ -268,7 +268,7 @@ void AChess_Piece::ClonedPieceIsEaten(/*AGameField* CloneOfGameField,*/ FVector2
 	}
 
 	// rimuovi dalla mappa puntatore-posizione sulla griglia
-	ClonedGameField->ReversePiecesMap.Remove(this);
+	//ClonedGameField->ReversePiecesMap.Remove(this);
 
 	// distruggo
 	SelfDestroy();
@@ -317,41 +317,42 @@ void AChess_Piece::PieceIsEaten(FVector2D& EatenPiecePosition)
 {
 
 	AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
-	if (!GameMode)
-	{
-		UE_LOG(LogTemp, Error, TEXT("GameMode non valido per fare IsAttackValid"));
-		return;
-	}
 	AGameField* GField = GameMode->GetGField();
-
-	if (!GField)
+	if (GameMode && GField)
 	{
-		UE_LOG(LogTemp, Error, TEXT("GField non valido per fare IsAttackValid"));
+		
+
+		ATile* Tile = GField->TileMap.FindRef(EatenPiecePosition);
+		Tile->EmptyTile();
+
+		// rimuovi la pedina dalla mappa della scacchiera
+		GField->PiecesMap[EatenPiecePosition] = nullptr;
+
+		// rimuovi la pedina dagli array delle pedine
+		GField->PiecesArray.Remove(this); 
+		EPieceColor EatenPieceColor = this->GetPieceColor();
+		if (EatenPieceColor == EPieceColor::WHITE)
+		{
+			GField->WhitePiecesArray.Remove(this);
+		}
+		else if (EatenPieceColor == EPieceColor::BLACK)
+		{
+			GField->BlackPiecesArray.Remove(this);
+		}
+
+		// rimuovi dalla mappa puntatore-posizione sulla griglia
+		//GField->ReversePiecesMap.Remove(this);
+
+		SelfDestroy();
+	
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("GameMode o GField non valido per fare PieceIsEaten"));
 		return;
+
 	}
 
-	ATile* Tile = GField->TileMap.FindRef(EatenPiecePosition);
-	Tile->EmptyTile();
-
-	// rimuovi la pedina dalla mappa della scacchiera
-	GField->PiecesMap[EatenPiecePosition] = nullptr;
-
-	// rimuovi la pedina dagli array delle pedine
-	GField->PiecesArray.Remove(this); 
-	EPieceColor EatenPieceColor = this->GetPieceColor();
-	if (EatenPieceColor == EPieceColor::WHITE)
-	{
-		GField->WhitePiecesArray.Remove(this);
-	}
-	else if (EatenPieceColor == EPieceColor::BLACK)
-	{
-		GField->BlackPiecesArray.Remove(this);
-	}
-
-	// rimuovi dalla mappa puntatore-posizione sulla griglia
-	GField->ReversePiecesMap.Remove(this);
-
-	SelfDestroy();
 }
 
 
