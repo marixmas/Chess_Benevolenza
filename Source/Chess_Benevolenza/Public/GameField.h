@@ -88,6 +88,9 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	UMaterialInterface* TileHighlightMaterial;
 
+	// Materiale per l'evidenziazione dello scacco (rosso)
+	UPROPERTY(EditDefaultsOnly)
+	UMaterialInterface* TileRedHighlightMaterial;
 
 
 	// tile padding dimension

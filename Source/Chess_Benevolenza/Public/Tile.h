@@ -29,6 +29,9 @@ public:
 	// imposta il materiale della tile
 	void SetTileMaterial(UMaterialInterface* Material);
 
+	// ottiene il materiale della tile
+	UMaterialInterface* GetTileMaterial();
+
 	// imposta lo stato della tile
 	void SetTileStatus(ETileStatus TileStatus);
 

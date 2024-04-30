@@ -40,6 +40,9 @@ public:
 	EColorOfPieces GetColorOfPieces();
 
 
+	// flag per scacco
+	bool IsInCheck;
+
 	virtual void OnTurn() {};
 	virtual void OnWin() {};
 	virtual void OnLose() {};

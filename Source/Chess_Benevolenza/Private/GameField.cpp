@@ -431,7 +431,7 @@ void AGameField::CloneAllPiecesToField(AGameField* TargetField)																/
 		{
 			FVector2D GridPosition(x, y);
 			TargetField->PiecesMap.Add(GridPosition, nullptr);
-			TargetField->ReversePiecesMap.Add(nullptr, GridPosition);
+			//TargetField->ReversePiecesMap.Add(nullptr, GridPosition);							 mi sa di nooo
 
 		}
 	}
@@ -445,8 +445,8 @@ void AGameField::CloneAllPiecesToField(AGameField* TargetField)																/
 			TargetField->WhitePiecesArray.Add(ClonedPiece);
 			TargetField->PiecesArray.Add(ClonedPiece);
 			TargetField->PiecesMap[ClonedPiece->GetGridPosition()] = ClonedPiece;
-			TargetField->ReversePiecesMap[ClonedPiece] = ClonedPiece->GetGridPosition();
-		
+			//TargetField->ReversePiecesMap[ClonedPiece] = ClonedPiece->GetGridPosition();						// mi sa di noo    		
+			TargetField->ReversePiecesMap.Add(ClonedPiece) = ClonedPiece->GetGridPosition();
 		}
 	}
 
@@ -459,7 +459,9 @@ void AGameField::CloneAllPiecesToField(AGameField* TargetField)																/
 			TargetField->BlackPiecesArray.Add(ClonedPiece);
 			TargetField->PiecesArray.Add(ClonedPiece);
 			TargetField->PiecesMap[ClonedPiece->GetGridPosition()] = ClonedPiece;
-			TargetField->ReversePiecesMap[ClonedPiece] = ClonedPiece->GetGridPosition();
+			//TargetField->ReversePiecesMap[ClonedPiece] = ClonedPiece->GetGridPosition();	
+			TargetField->ReversePiecesMap.Add(ClonedPiece) = ClonedPiece->GetGridPosition();
+
 		}
 	}
 

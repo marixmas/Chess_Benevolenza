@@ -53,11 +53,17 @@ public:
 	// stampa a screen un debug message con le info del pezzo selezionato
 	void InfoOfClickedPiece (AChess_Piece* CurrentPiece);
 
-	// Accende le tile dei suggerimenti
+	// Accende le tile dei suggerimenti in giallo
 	void HighlightGameFieldTiles(const TArray<FVector2D>& TilePositions);						// prima c'era anche un secondo argomento AChess_GameMode* GameMode, AGameField* GField
+
+	// Accende la tile dello scacco in rosso
+	void HighlightInRedGameFieldTiles(const TArray<FVector2D>& TilePositions);
 
 	// Spegne le tile illuminate dei suggerimenti
 	void TurnOffHighlightedTiles();
+
+	// Spegne le tile illuminate in rosso dello scacco
+	void TurnOffRedHighlightedTiles();
 
 	AChess_Piece* SelectedWhitePiece;
 
@@ -72,6 +78,8 @@ public:
 	TArray<FVector2D> PossibleMoves;
 
 	//FVector TransformTileToWorld(const FVector2D& TilePosition);
+
+	//bool HumanPlayerIsInCheck;
 
 protected:
 	// muove il pezzo selezionato alla nuova posizione

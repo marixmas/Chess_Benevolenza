@@ -37,6 +37,21 @@ void ATile::SetTileMaterial(UMaterialInterface* Material)
 	}
 }
 
+UMaterialInterface* ATile::GetTileMaterial()
+{
+	if (StaticMeshComponent)
+	{
+		return StaticMeshComponent->GetMaterial(0);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Componente StaticMeshComponent non valido per ottenere il materiale della tile."));
+		return nullptr;
+	}
+}
+
+
+
 void ATile::SetTileStatus(ETileStatus TileStatus)
 {
 	Status = TileStatus;
