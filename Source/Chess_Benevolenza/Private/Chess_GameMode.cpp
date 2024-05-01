@@ -519,6 +519,127 @@ bool AChess_GameMode::IsKingInCheck(AGameField* GenericGameField, int32 Opponent
 
 }
 
+/*
+void AChess_GameMode::HighlightInRedGameFieldTiles(int32 PlayerKing)                             //const TArray<FVector2D>& TilePositions)				//c'era anche AChess_GameMode* GameMode, AGameField* GField
+{
+	FVector2D TilePosition = FVector2D(-1, -1);
+	AChess_Piece* King = nullptr;
+	if (PlayerKing == 0)
+	{
+		for (AChess_Piece* Piece : GField->WhitePiecesArray)
+		{
+			if (Piece->GetPieceType() == EPieceType::KING)
+			{
+				King = Piece;
+				TilePosition = Piece->GetGridPosition();
+				break;
+			}
+			else
+			{
+
+			}
+		}
+		// il re non è stato trovato
+		if (TilePosition == FVector2D(-1, -1) || King == nullptr) 
+		{
+			return;
+		}
+
+		// ricavo il puntatore alla tile
+		ATile* Tile = GField->TileMap.FindRef(TilePosition);
+		if (Tile)
+		{
+			// cambio il materiale della Tile in rosso
+			Tile->SetTileMaterial(GField->TileRedHighlightMaterial);
+
+			return; 
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("Materiale di Highlight non valido."));
+		}
+	}
+	else if (PlayerKing == 1)
+	{
+		for (AChess_Piece* Piece : GField->BlackPiecesArray)
+		{
+			if (Piece->GetPieceType() == EPieceType::KING)
+			{
+				King = Piece;
+				TilePosition = Piece->GetGridPosition();
+				break;
+			}
+		}
+
+		// ricavo il puntatore alla tile
+		ATile* Tile = GField->TileMap.FindRef(TilePosition);
+		if (Tile)
+		{
+			// cambio il materiale della Tile in rosso
+			Tile->SetTileMaterial(GField->TileRedHighlightMaterial);
+
+			return;
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("Materiale di Highlight non valido."));
+		}
+	}
+
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Player non valido in HighlightInRedGameFieldTiles"));
+	}
+}
+
+void AChess_GameMode::TurnOffRedHighlightedTiles(int32 PlayerKing)
+{
+	// prendo puntatori a GameMode e a GField e controllo che siano validi
+	AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
+	AGameField* GField = GameMode->GetGField();
+	if (!GameMode || !GameMode->GField)
+	{
+		UE_LOG(LogTemp, Error, TEXT("GField o GameMode non valido per fare TurnOffHighlightedTiles!"));
+	}
+
+	// scorro tutte le tile della gamefield
+	for (int32 x = 0; x < GField->Size; x++)
+	{
+		for (int32 y = 0; y < GField->Size; y++)
+		{
+			// prendo un puntatore alla tile per ogni coppia (x,y) corrispondente
+			ATile* Tile = GField->TileMap.FindRef(FVector2D(x, y));
+			if (Tile)
+			{
+				if (Tile->GetTileMaterial() == GField->TileRedHighlightMaterial)
+				{
+					// Applica il materiale originale alla tile in base alla posizione sulla scacchiera
+					if ((x + y) % 2 == 0)
+					{
+						Tile->SetTileMaterial(GField->TileMaterial1);
+					}
+					else
+					{
+						Tile->SetTileMaterial(GField->TileMaterial2);
+					}
+				}
+				else
+				{
+
+				}
+
+			}
+			else
+			{
+				UE_LOG(LogTemp, Error, TEXT("Materiale di TurnOffHighlight non valido."));
+			}
+		}
+	}
+}
+
+
+
+*/
 
 
 

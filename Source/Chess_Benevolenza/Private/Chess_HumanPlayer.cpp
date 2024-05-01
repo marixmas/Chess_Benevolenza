@@ -409,33 +409,7 @@ void AChess_HumanPlayer::OnClick()
 	}
 }
 
- void AChess_HumanPlayer::HighlightInRedGameFieldTiles(const TArray<FVector2D>& TilePositions)				//c'era anche AChess_GameMode* GameMode, AGameField* GField
- {
-	 // prendo puntatori a GameMode e a GField e controllo che siano validi
-	 AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
-	 AGameField* GField = GameMode->GetGField();
-	 if (!GameMode || !GameMode->GField)
-	 {
-		 UE_LOG(LogTemp, Error, TEXT("GField o GameMode non valido per fare HighlightGameFieldTiles!"));
-	 }
 
-
-	 // Loop attraverso tutte le Tile della GameField
-	 for (const FVector2D& TilePosition : TilePositions)
-	 {
-		 // prendo i puntatori alle Tile delle mosse possibili
-		 ATile* Tile = GField->TileMap.FindRef(TilePosition);
-		 if (Tile)
-		 {
-			 // cambio il materiale della Tile in giallo
-			 Tile->SetTileMaterial(GField->TileRedHighlightMaterial);
-		 }
-		 else
-		 {
-			 UE_LOG(LogTemp, Error, TEXT("Materiale di Highlight non valido."));
-		 }
-	 }
- }
 
 
  void AChess_HumanPlayer::TurnOffHighlightedTiles()
@@ -483,50 +457,7 @@ void AChess_HumanPlayer::OnClick()
 	}
 }
 
- void AChess_HumanPlayer::TurnOffRedHighlightedTiles()
- {
-	 // prendo puntatori a GameMode e a GField e controllo che siano validi
-	 AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
-	 AGameField* GField = GameMode->GetGField();
-	 if (!GameMode || !GameMode->GField)
-	 {
-		 UE_LOG(LogTemp, Error, TEXT("GField o GameMode non valido per fare TurnOffHighlightedTiles!"));
-	 }
 
-	 // scorro tutte le tile della gamefield
-	 for (int32 x = 0; x < GField->Size; x++)
-	 {
-		 for (int32 y = 0; y < GField->Size; y++)
-		 {
-			 // prendo un puntatore alla tile per ogni coppia (x,y) corrispondente
-			 ATile* Tile = GField->TileMap.FindRef(FVector2D(x, y));
-			 if (Tile)
-			 {
-				 if (Tile->GetTileMaterial() == GField->TileRedHighlightMaterial)
-				 {
-					// Applica il materiale originale alla tile in base alla posizione sulla scacchiera
-					 if ((x + y) % 2 == 0)
-					 {
-						 Tile->SetTileMaterial(GField->TileMaterial1);
-					 }
-					 else
-					 {
-						 Tile->SetTileMaterial(GField->TileMaterial2);
-					 }
-				 }
-				 else
-				 {
-
-				 }
-
-			 }
-			 else
-			 {
-				 UE_LOG(LogTemp, Error, TEXT("Materiale di TurnOffHighlight non valido."));
-			 }
-		 }
-	 }
- }
 
 void AChess_HumanPlayer::MoveSelectedPiece(const FVector2D& OldPosition, const FVector2D& NewPosition)
 {

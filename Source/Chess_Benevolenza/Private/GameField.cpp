@@ -521,19 +521,6 @@ AChess_Piece* AGameField::ClonePiece(AChess_Piece* PieceToClone)
 
 */
 
-
-
-
-
-/*
-//
-//
-//
-//
-//
-*/
-
-
 /*
 bool AGameField::SimulateMoveAndCheck(AChess_Piece* PieceToSimulate, FVector2D PositionToMoveTo)
 {
@@ -653,17 +640,6 @@ bool AGameField::SimulateMoveAndCheck(AChess_Piece* PieceToSimulate, FVector2D P
 
 
 */
-
-
-
-/*
-//
-//
-//
-//
-//
-*/
-
 
 
 

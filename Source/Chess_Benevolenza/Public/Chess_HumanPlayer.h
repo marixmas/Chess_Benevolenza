@@ -57,7 +57,7 @@ public:
 	void HighlightGameFieldTiles(const TArray<FVector2D>& TilePositions);						// prima c'era anche un secondo argomento AChess_GameMode* GameMode, AGameField* GField
 
 	// Accende la tile dello scacco in rosso
-	void HighlightInRedGameFieldTiles(const TArray<FVector2D>& TilePositions);
+	void HighlightInRedGameFieldTiles(int32 PlayerKing); 
 
 	// Spegne le tile illuminate dei suggerimenti
 	void TurnOffHighlightedTiles();

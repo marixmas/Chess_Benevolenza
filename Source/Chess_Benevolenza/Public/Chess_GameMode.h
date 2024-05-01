@@ -93,6 +93,10 @@ public:
 	// controlla lo scacco di un solo player
 	bool IsKingInCheck(AGameField* GenericGameField, int32 OpponentPlayer);
 
+	//void HighlightInRedGameFieldTiles(int32 PlayerKing);
+
+	//void TurnOffRedHighlightedTiles(int32 PlayerKing);
+
 	// controlla lo scacco matto
 	/*bool IsCheckmate(/*AGameField* GenericGameField,*/ /*int32 OpponentPlayer);*/
 

@@ -22,7 +22,6 @@ public:
 
 	UChess_GameInstance* GameInstance;
 
-	//bool RandomPlayerIsInCheck;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
