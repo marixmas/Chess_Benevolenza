@@ -543,8 +543,8 @@ bool AChess_GameMode::IsCheckmate(/*AGameField* GenericGameField, */ int32 Oppon
 
 				if (!GField->SimulateMoveAndCheck(Piece, Move))
 				{
-					MoveToExitTheCheck = Move;						// tengo da parte per il random player
-					PieceToMoveToExitTheCheck = Piece;
+					//MoveToExitTheCheck = Move;						// tengo da parte per il random player        noo mi sa che é sbagliato
+					//PieceToMoveToExitTheCheck = Piece;
 					return false;
 				}
 			}

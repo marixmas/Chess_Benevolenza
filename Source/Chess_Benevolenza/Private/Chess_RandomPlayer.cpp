@@ -72,6 +72,7 @@ void AChess_RandomPlayer::OnTurn()
 
 					do
 					{	
+
 						// prendo il sola lettura l'array dei pezzi neri
 						const TArray <AChess_Piece*>& BlackPiecesArray = GField->GetBlackPiecesArray();
 						// genero un indice casuale all'interno dei limiti dell'array
@@ -198,9 +199,18 @@ void AChess_RandomPlayer::OnTurn()
 				
 				if (GameMode && GField)
 				{
-
+					
 					FVector2D Move = GameMode->GetMoveToExitTheCheck(); 
 					AChess_Piece* Piece = GameMode->GetPieceToMoveToExitTheCheck();
+					
+					if (Move == FVector2D(100, 100))
+					{
+						GameMode->Players[0]->OnWin();
+						GameMode->Players[1]->OnLose();
+						GameMode->IsGameOver = true;
+						GameInstance->SetTurnMessage(TEXT("Black King is in Checkmate! GAME OVER"));
+						GameInstance->GetTurnMessage();
+					}
 					// muovo la pedina
 					Piece->MovePieceFromToPosition(Piece->GetGridPosition(), Move);
 

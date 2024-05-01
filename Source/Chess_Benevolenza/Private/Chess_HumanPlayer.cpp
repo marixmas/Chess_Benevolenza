@@ -192,6 +192,7 @@ void AChess_HumanPlayer::OnClick()
 								GEngine->AddOnScreenDebugMessage(2, 2.f, FColor::Orange, Message);
 								//GameInstance->SetTurnMessage(TEXT("Black is in Check!"));
 								//GameInstance->GetTurnMessage();
+								GameMode->Players[1]->IsInCheck = true;
 							}
 
 							// controllo: dopo la mia mossa il re avversario (del player 1) é in scacco matto?

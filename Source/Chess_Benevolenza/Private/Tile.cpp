@@ -57,6 +57,7 @@ void ATile::SetTileStatus(ETileStatus TileStatus)
 	Status = TileStatus;
 }
 
+
 bool ATile::IsOccupied() const
 {
 	if (Status == ETileStatus::OCCUPIED)

@@ -14,6 +14,7 @@ AChess_Piece::AChess_Piece()
 	PrimaryActorTick.bCanEverTick = false;
 	PieceColor = EPieceColor::NOCOLOR;
 	PieceType = EPieceType::NOTYPE;
+
 }
 
 // Called when the game starts or when spawned
@@ -320,8 +321,6 @@ void AChess_Piece::PieceIsEaten(FVector2D& EatenPiecePosition)
 	AGameField* GField = GameMode->GetGField();
 	if (GameMode && GField)
 	{
-		
-
 		ATile* Tile = GField->TileMap.FindRef(EatenPiecePosition);
 		Tile->EmptyTile();
 

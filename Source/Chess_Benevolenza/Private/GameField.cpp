@@ -243,7 +243,12 @@ void AGameField::ResetField()
     {
 		// TileArray non va svuotata dato che quando faccio reset dal bottone dell'interfaccia non cancello la GameField ma solo i Pieces
 		// TileMap non va svuotata per la stessa ragione
-		// 
+		
+		for (AChess_Piece* piece : GameMode->GetGField()->PiecesArray)
+		{
+			piece->Destroy();
+		}
+
 		// svuoto gli array con i puntatori ai pezzi poiché rigenero i pezzi
 		PiecesArray.Empty();
 		WhitePiecesArray.Empty();
@@ -546,11 +551,38 @@ bool AGameField::SimulateMoveAndCheck(AChess_Piece* PieceToSimulate, FVector2D P
 		if (GameMode->IsKingInCheck(ClonedGameField, 0))
 		{
 			// é scacco
+
+			for (AChess_Piece* piece : ClonedGameField->PiecesArray)
+			{
+				piece->Destroy();
+			}
+
+			for (ATile* tile : ClonedGameField->TileArray)
+			{
+				tile->Destroy();
+			}
+
+			ClonedGameField->Destroy();
+
+
 			return true;
 		}
 		else
 		{
 			// non è scacco
+
+			for (AChess_Piece* piece : ClonedGameField->PiecesArray)
+			{
+				piece->Destroy();
+			}
+
+			for (ATile* tile : ClonedGameField->TileArray)
+			{
+				tile->Destroy();
+			}
+
+			ClonedGameField->Destroy();
+
 			return false;
 		}
 
@@ -561,11 +593,37 @@ bool AGameField::SimulateMoveAndCheck(AChess_Piece* PieceToSimulate, FVector2D P
 		if (GameMode->IsKingInCheck(ClonedGameField, 1))
 		{
 			// é scacco
+
+			for (AChess_Piece* piece : ClonedGameField->PiecesArray)
+			{
+				piece->Destroy();
+			}
+
+			for (ATile* tile : ClonedGameField->TileArray)
+			{
+				tile->Destroy();
+			}
+
+			ClonedGameField->Destroy();
+
 			return true;
 		}
 		else
 		{
 			// non è scacco
+
+			for (AChess_Piece* piece : ClonedGameField->PiecesArray)
+			{
+				piece->Destroy();
+			}
+
+			for (ATile* tile : ClonedGameField->TileArray)
+			{
+				tile->Destroy();
+			}
+
+			ClonedGameField->Destroy();
+
 			return false;
 		}
 	}
@@ -575,23 +633,6 @@ bool AGameField::SimulateMoveAndCheck(AChess_Piece* PieceToSimulate, FVector2D P
 		
 		return false;
 	}
-
-
-
-
-
-for (AChess_Piece* piece : ClonedGameField->PiecesArray)
-	{
-		piece->Destroy();
-	}
-
-	for (ATile* tile : ClonedGameField->TileArray)
-	{
-		tile->Destroy();
-	}
-
-	ClonedGameField->Destroy();
-
 }
 
 

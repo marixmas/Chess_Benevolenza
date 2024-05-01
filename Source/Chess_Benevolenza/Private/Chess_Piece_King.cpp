@@ -71,17 +71,21 @@ bool AChess_Piece_King::IsMoveValid(const FVector2D& Move)
                 return false;
             }
 
-            else if (DestinationTile->IsOccupied())
+            else if (DestinationTile->GetOwner() == -1)
             {
-                if ((PieceColor == EPieceColor::WHITE && DestinationTile->GetOwner() == 0) || (PieceColor == EPieceColor::BLACK && DestinationTile->GetOwner() == 1))
-                {
-                    return false;
-                }
-
-                else if ((PieceColor == EPieceColor::WHITE && DestinationTile->GetOwner() == 1) || (PieceColor == EPieceColor::BLACK && DestinationTile->GetOwner() == 0))
-                {
-                    return true;
-                }
+                return true;
+            }
+            else if (DestinationTile->GetOwner() == 0 && PieceColor == EPieceColor::WHITE)
+            {
+                return false;
+            }
+            else if (DestinationTile->GetOwner() == 1 && PieceColor == EPieceColor::BLACK)
+            {
+                return false;
+            }
+            else 
+            { 
+                return false;
             }
            
         }
