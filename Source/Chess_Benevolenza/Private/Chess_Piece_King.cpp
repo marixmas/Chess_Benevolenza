@@ -24,8 +24,6 @@ TArray<FVector2D> AChess_Piece_King::CalculatePossibleMoves()
 
     // Ottieni la posizione attuale del re
     FVector2D CurrentPosition = GetGridPosition();
-    // int32 CurrentX = CurrentPosition.X;
-    // int32 CurrentY = CurrentPosition.Y;
 
     // Definisci le direzioni possibili in cui il re può muoversi
     const TArray<FVector2D> Directions = {
@@ -70,11 +68,12 @@ bool AChess_Piece_King::IsMoveValid(const FVector2D& Move)
             {
                 return false;
             }
-
+            // tile vuota
             else if (DestinationTile->GetOwner() == -1)
             {
                 return true;
             }
+            // non posso mangiare un pezzo dello stesso colore
             else if (DestinationTile->GetOwner() == 0 && PieceColor == EPieceColor::WHITE)
             {
                 return false;
@@ -83,7 +82,7 @@ bool AChess_Piece_King::IsMoveValid(const FVector2D& Move)
             {
                 return false;
             }
-            else 
+            else
             { 
                 return false;
             }

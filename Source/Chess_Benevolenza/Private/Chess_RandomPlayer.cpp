@@ -121,7 +121,7 @@ void AChess_RandomPlayer::OnTurn()
 
 				bool WhiteInCheck = GameMode->IsKingInCheck(GameMode->GetGField(), 0);
 				bool BlackInCheck = GameMode->IsKingInCheck(GameMode->GetGField(), 1);
-
+				bool WhiteWasInCheck = GameMode->Players[0]->IsInCheck;
 				// se prima della mossa il nero era in scacco
 				if (IsInCheck)
 				{
@@ -163,7 +163,7 @@ void AChess_RandomPlayer::OnTurn()
 				}
 
 				// controllo se dopo la mia mossa il re nero è in scacco
-				if (WhiteInCheck)
+				if (!WhiteWasInCheck && WhiteInCheck)
 				{
 					FString Message = FString::Printf(TEXT("White King is in Check!"));
 					GEngine->AddOnScreenDebugMessage(2, 2.f, FColor::Orange, Message);
@@ -171,10 +171,64 @@ void AChess_RandomPlayer::OnTurn()
 					GameMode->TurnNextPlayer();
 				}
 
+				if (WhiteWasInCheck && WhiteInCheck)
+				{
+					GameMode->Players[1]->OnWin();
+					GameMode->Players[0]->OnLose();
+					GameMode->IsGameOver = true;
+					GameInstance->SetTurnMessage(TEXT("White King is in Checkmate! GAME OVER"));
+					GameInstance->GetTurnMessage();
+				}
+				
+				// cerco il re bianco
+				AChess_Piece* WhiteKing = nullptr;
+
+				for (AChess_Piece* Piece : GameMode->GField->WhitePiecesArray)
+				{
+					if (Piece->GetPieceType() != EPieceType::KING)
+					{
+						WhiteKing = Piece;
+						break;
+					}
+				}
+				
+				// cerco il re nero
+				AChess_Piece* BlackKing = nullptr;
+				for (AChess_Piece* Piece : GameMode->GField->BlackPiecesArray)
+				{
+					if (Piece->GetPieceType() != EPieceType::KING)
+					{
+						BlackKing = Piece;
+						break;
+					}
+				}
+
+				// se non ne trovo uno vuol dire che é stato mangiato e quindi é game over
+				if (!WhiteKing)
+				{
+					GameMode->Players[1]->OnWin();
+					GameMode->Players[0]->OnLose();
+					GameMode->IsGameOver = true;
+					GameInstance->SetTurnMessage(TEXT("White King was Eaten! GAME OVER"));
+					GameInstance->GetTurnMessage();
+				}
+				
+				if (!BlackKing)
+				{
+					GameMode->Players[0]->OnWin();
+					GameMode->Players[1]->OnLose();
+					GameMode->IsGameOver = true;
+					GameInstance->SetTurnMessage(TEXT("Black King was Eaten! GAME OVER"));
+					GameInstance->GetTurnMessage();
+				}
+
 				else
 				{
+				
 
 				}
+
+
 
 			}
 			

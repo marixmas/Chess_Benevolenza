@@ -189,6 +189,7 @@ void AChess_HumanPlayer::OnClick()
 
 						bool WhiteInCheck = GameMode->IsKingInCheck(GameMode->GetGField(), 0);
 						bool BlackInCheck = GameMode->IsKingInCheck(GameMode->GetGField(), 1);
+						bool BlackWasInCheck = GameMode->Players[1]->IsInCheck;
 
 						// se prima della mossa il bianco era in scacco
 						if (IsInCheck)
@@ -237,7 +238,7 @@ void AChess_HumanPlayer::OnClick()
 
 
 						// controllo se dopo la mia mossa il re nero è in scacco
-						if (BlackInCheck)
+						if (!BlackWasInCheck && BlackInCheck)
 						{
 							IsMyTurn = false;
 							FString Message = FString::Printf(TEXT("Black King is in Check!"));
@@ -246,7 +247,57 @@ void AChess_HumanPlayer::OnClick()
 							GameMode->TurnNextPlayer();
 						}
 
-							
+						if (BlackWasInCheck && BlackInCheck)
+						{
+							GameMode->Players[0]->OnWin();
+							GameMode->Players[1]->OnLose();
+							GameMode->IsGameOver = true;
+							IsMyTurn = false;
+							GameInstance->SetTurnMessage(TEXT("Black King is in Checkmate! GAME OVER"));
+							GameInstance->GetTurnMessage();
+						}
+						
+						// cerco il re bianco
+						AChess_Piece* WhiteKing = nullptr;
+
+						for (AChess_Piece* Piece : GameMode->GField->WhitePiecesArray)
+						{
+							if (Piece->GetPieceType() != EPieceType::KING)
+							{
+								WhiteKing = Piece;
+								break;
+							}
+						}
+
+						// cerco il re nero
+						AChess_Piece* BlackKing = nullptr;
+						for (AChess_Piece* Piece : GameMode->GField->BlackPiecesArray)
+						{
+							if (Piece->GetPieceType() != EPieceType::KING)
+							{
+								BlackKing = Piece;
+								break;
+							}
+						}
+
+						// se non li trovo vuol dire che é stato mangiato e quindi é game over
+						if (!WhiteKing)
+						{
+							GameMode->Players[1]->OnWin();
+							GameMode->Players[0]->OnLose();
+							GameMode->IsGameOver = true;
+							GameInstance->SetTurnMessage(TEXT("White King was Eaten! GAME OVER"));
+							GameInstance->GetTurnMessage();
+						}
+
+						if (!BlackKing)
+						{
+							GameMode->Players[0]->OnWin();
+							GameMode->Players[1]->OnLose();
+							GameMode->IsGameOver = true;
+							GameInstance->SetTurnMessage(TEXT("Black King was Eaten! GAME OVER"));
+							GameInstance->GetTurnMessage();
+						}
 
 						else
 						{
@@ -288,12 +339,14 @@ void AChess_HumanPlayer::OnClick()
 				CurrPiece = nullptr;
 
 				// prendo il booleano che mi dice se questo giocatore é in scacco a seguito della mossa dell'avversario
-						// IsInCheck           //  non lo modifico ora
+				// IsInCheck           //  non lo modifico ora
 
-						// controllo se i giocatori sono in scacco
+				// controllo se i giocatori sono in scacco
 
 				bool WhiteInCheck = GameMode->IsKingInCheck(GameMode->GetGField(), 0);
 				bool BlackInCheck = GameMode->IsKingInCheck(GameMode->GetGField(), 1);
+				bool BlackWasInCheck = GameMode->Players[1]->IsInCheck;
+
 
 				// se prima della mossa il bianco era in scacco
 				if (IsInCheck)
@@ -341,8 +394,9 @@ void AChess_HumanPlayer::OnClick()
 
 
 
+
 				// controllo se dopo la mia mossa il re nero è in scacco
-				if (BlackInCheck)
+				if (!BlackWasInCheck && BlackInCheck)
 				{
 					IsMyTurn = false;
 					FString Message = FString::Printf(TEXT("Black King is in Check!"));
@@ -351,12 +405,62 @@ void AChess_HumanPlayer::OnClick()
 					GameMode->TurnNextPlayer();
 				}
 
+				if (BlackWasInCheck && BlackInCheck)
+				{
+					GameMode->Players[0]->OnWin();
+					GameMode->Players[1]->OnLose();
+					GameMode->IsGameOver = true;
+					IsMyTurn = false;
+					GameInstance->SetTurnMessage(TEXT("Black King is in Checkmate! GAME OVER"));
+					GameInstance->GetTurnMessage();
+				}
+
+				// cerco il re bianco
+				AChess_Piece* WhiteKing = nullptr;
+
+				for (AChess_Piece* Piece : GameMode->GField->WhitePiecesArray)
+				{
+					if (Piece->GetPieceType() != EPieceType::KING)
+					{
+						WhiteKing = Piece;
+						break;
+					}
+				}
+
+				// cerco il re nero
+				AChess_Piece* BlackKing = nullptr;
+				for (AChess_Piece* Piece : GameMode->GField->BlackPiecesArray)
+				{
+					if (Piece->GetPieceType() != EPieceType::KING)
+					{
+						BlackKing = Piece;
+						break;
+					}
+				}
+
+				// se non ne trovo uno vuol dire che é stato mangiato e quindi é game over
+				if (!WhiteKing)
+				{
+					GameMode->Players[1]->OnWin();
+					GameMode->Players[0]->OnLose();
+					GameMode->IsGameOver = true;
+					GameInstance->SetTurnMessage(TEXT("White King was Eaten! GAME OVER"));
+					GameInstance->GetTurnMessage();
+				}
+
+				if (!BlackKing)
+				{
+					GameMode->Players[0]->OnWin();
+					GameMode->Players[1]->OnLose();
+					GameMode->IsGameOver = true;
+					GameInstance->SetTurnMessage(TEXT("Black King was Eaten! GAME OVER"));
+					GameInstance->GetTurnMessage();
+				}
 
 
 				else
 				{
-					//IsMyTurn = false;
-					//GameMode->TurnNextPlayer();
+
 				}
 
 					
@@ -381,7 +485,7 @@ void AChess_HumanPlayer::OnClick()
 
 
 // Accende le tile dei suggerimenti ovvero le tile delle mosse possibili dei pezzi
- void AChess_HumanPlayer::HighlightGameFieldTiles(const TArray<FVector2D>& TilePositions)				//c'era anche AChess_GameMode* GameMode, AGameField* GField
+ void AChess_HumanPlayer::HighlightGameFieldTiles(const TArray<FVector2D>& TilePositions)	
 {
 	 // prendo puntatori a GameMode e a GField e controllo che siano validi
 	 AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
@@ -408,9 +512,6 @@ void AChess_HumanPlayer::OnClick()
 		}
 	}
 }
-
-
-
 
  void AChess_HumanPlayer::TurnOffHighlightedTiles()
  {
@@ -457,11 +558,8 @@ void AChess_HumanPlayer::OnClick()
 	}
 }
 
-
-
 void AChess_HumanPlayer::MoveSelectedPiece(const FVector2D& OldPosition, const FVector2D& NewPosition)
 {
-
 	// Assicurati che ci sia un pezzo selezionato
 	if (SelectedWhitePiece)
 	{

@@ -6,9 +6,9 @@
 #include "GameFramework/Pawn.h"
 #include "Chess_GameInstance.h"
 #include "Chess_PlayerInterface.h"
-#include "Chess_Piece.h"						// mi serve per InfoOfClickedPiece 
+#include "Chess_Piece.h"
 #include "Camera/CameraComponent.h"
-#include "Kismet/GameplayStatics.h"				// mi serve nel corrispettivo file cpp e forse anche in questo stesso file... vediamo
+#include "Kismet/GameplayStatics.h"
 #include "Chess_HumanPlayer.generated.h"
 
 UCLASS()
@@ -54,16 +54,10 @@ public:
 	void InfoOfClickedPiece (AChess_Piece* CurrentPiece);
 
 	// Accende le tile dei suggerimenti in giallo
-	void HighlightGameFieldTiles(const TArray<FVector2D>& TilePositions);						// prima c'era anche un secondo argomento AChess_GameMode* GameMode, AGameField* GField
-
-	// Accende la tile dello scacco in rosso
-	void HighlightInRedGameFieldTiles(int32 PlayerKing); 
+	void HighlightGameFieldTiles(const TArray<FVector2D>& TilePositions);
 
 	// Spegne le tile illuminate dei suggerimenti
 	void TurnOffHighlightedTiles();
-
-	// Spegne le tile illuminate in rosso dello scacco
-	void TurnOffRedHighlightedTiles();
 
 	AChess_Piece* SelectedWhitePiece;
 
@@ -76,10 +70,6 @@ public:
 	FVector2D BlackPieceLocation;
 
 	TArray<FVector2D> PossibleMoves;
-
-	//FVector TransformTileToWorld(const FVector2D& TilePosition);
-
-	//bool HumanPlayerIsInCheck;
 
 protected:
 	// muove il pezzo selezionato alla nuova posizione

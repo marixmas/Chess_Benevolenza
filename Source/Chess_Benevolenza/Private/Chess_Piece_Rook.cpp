@@ -42,8 +42,6 @@ TArray<FVector2D> AChess_Piece_Rook::CalculatePossibleMoves()
 
     // Ottieni la posizione attuale della torre
     FVector2D CurrentPosition = GetGridPosition();
-   // int32 CurrentX = CurrentPosition.X;
-   // int32 CurrentY = CurrentPosition.Y;
 
 
     // Definisci le direzioni possibili in cui la torre può muoversi: sopra, sotto, sinistra e destra
@@ -90,8 +88,10 @@ TArray<FVector2D> AChess_Piece_Rook::CalculatePossibleMoves()
 
     return PossibleMoves;
 }
+
+
 /*
-bool AChess_Piece_Rook::IsMoveValid(const FVector2D& Move)
+bool AChess_Piece_Rook::IsMoveValid(const FVector2D& Move)                      // uso quella della classe base
 {
     // Verifica se il movimento è all'interno della scacchiera
     if (Move.X < 0 || Move.X >= 8 || Move.Y < 0 || Move.Y >= 8)

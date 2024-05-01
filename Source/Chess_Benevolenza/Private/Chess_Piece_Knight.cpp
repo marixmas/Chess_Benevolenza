@@ -54,7 +54,7 @@ TArray<FVector2D> AChess_Piece_Knight::CalculatePossibleMoves()
 }
 
 /*
-bool AChess_Piece_Knight::IsMoveValid(const FVector2D& Move)
+bool AChess_Piece_Knight::IsMoveValid(const FVector2D& Move)                // uso quella della classe base
 {
     return false;
 }

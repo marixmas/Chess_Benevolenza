@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Chess_Piece.h"						// messo per  fare settilestatus() nella chess_piece
+#include "Chess_Piece.h"
 #include "Components/StaticMeshComponent.h"		// per cambiare materiale alla tile nella highlight
 #include "Tile.generated.h"
 
@@ -85,19 +85,10 @@ protected:
 	FVector2D TileGridPosition;
 
 
-	// Tipo di Pezzo occupante
-	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	//TSubclassOf<AChess_Piece> OccupyingPieceType;
-
-	// Colore di Pezzo occupante
-	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	//EChessPieceColor OccupyingPieceColor;
-
-
 	//public:	
-		// qui commento la tick perché non serve che aggiorni la tile poiché è ferma durante il gioco
+	// qui commento la tick perché non serve che aggiorni la tile poiché è ferma durante il gioco
 
-		// Called every frame
-		//virtual void Tick(float DeltaTime) override;
+	// Called every frame
+	//virtual void Tick(float DeltaTime) override;
 
 };

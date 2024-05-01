@@ -48,7 +48,6 @@ public:
 	// set the type
 	void SetPieceType(EPieceType NewPieceType);
 
-	// per usare le classi derivate	//////////////////////////////////////////////////////// 											////???
 	// get the type
 	/*virtual*/ EPieceType GetPieceType() const;
 
@@ -58,21 +57,7 @@ public:
 	// get the color
 	EPieceColor GetPieceColor();
 
-	
-	
 	void MovePieceFromToPosition(const FVector2D OldPosition, const FVector2D NewPosition);
-
-
-	/*
-		void MoveClonedPieceFromToPosition(/*AGameField::AGameField* CloneOfGameField, *//*FVector2D OldPosition, FVector2D NewPosition);
-
-	void ClonedPieceIsEaten(/*AGameField* CloneOfGameField, */ /*FVector2D& EatenPiecePosition);										*/
-
-	
-	// simula il movimento dei pezzi per il controllo dello scacco matto
-	//void MoveCloneToPosition(const FVector2D& NewPosition);
-
-	
 
 protected:
 	// Called when the game starts or when spawned
@@ -110,8 +95,6 @@ public:
 	UFUNCTION()
 	void SelfDestroy();
 
-	// clona il pezzo nello stato attuale
-//	AChess_Piece* ClonePiece();													messo in gamefield
 
 
 };

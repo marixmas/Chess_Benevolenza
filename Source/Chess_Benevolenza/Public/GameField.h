@@ -50,11 +50,6 @@ public:
 	UPROPERTY(Transient)
 	TMap<FVector2D, AChess_Piece*> PiecesMap;
 
-	//given a pieces returns a position									// messo io per trovare la posizione del pezzo nero selezionato in OnClick di HumanPlayer
-	//UPROPERTY(Transient)
-	//TMap<AChess_Piece*, FVector2D> ReversePiecesMap;
-
-
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	float NormalizedCellPadding;
@@ -88,11 +83,7 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	UMaterialInterface* TileHighlightMaterial;
 
-	// Materiale per l'evidenziazione dello scacco (rosso)
-	UPROPERTY(EditDefaultsOnly)																// forse da tenere?
-	UMaterialInterface* TileRedHighlightMaterial;
-
-
+	
 	// tile padding dimension
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float CellPadding;
@@ -100,6 +91,7 @@ public:
 	// tile size
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float TileSize;
+
 
 	//identificatori per lo spawn delle pedine
 	UPROPERTY(EditDefaultsOnly)
@@ -142,19 +134,16 @@ public:
 
 
 	// generate an empty game field
-		void GenerateField();
+	void GenerateField();
 
-		//genera le pedine sulla scacchiera
-		void GeneratePieces();
+	//genera le pedine sulla scacchiera
+	void GeneratePieces();
 
-		// spawna il pezzo
-		void SpawnChessPiece(int32 x, int32 y, EPieceColor PieceColor, EPieceType PieceType);
+	// spawna il pezzo
+	void SpawnChessPiece(int32 x, int32 y, EPieceColor PieceColor, EPieceType PieceType);
 
-
-
-		// prende il blue print del pezzo
-		UClass* GetChessPieceBP(EPieceColor PieceColor, EPieceType PieceType);
-
+	// prende il blue print del pezzo
+	UClass* GetChessPieceBP(EPieceColor PieceColor, EPieceType PieceType);
 
 	// Called when an instance of this class is placed (in editor) or spawned
 	virtual void OnConstruction(const FTransform& Transform) override;
@@ -165,64 +154,10 @@ public:
 	// remove all signs from the field
 	UFUNCTION(BlueprintCallable)
 	void ResetField();
-
-	/*
-		bool IsKingInCheck(int32 OpponentPlayer);
-
-	bool IsCheckmate(int32 OpponentPlayer);
-
-	bool IsDraw(int32 noPlayercredoo);
-
-	bool HasLegalMoves(int32 Player);
-	*/
-
-
-		
-	//TArray<AChess_Piece*>* ColorPiecesArray;
-
-
-	/*
-		AChess_Piece* King;
-
-	FVector2D KingPosition;
-
-	TArray<AChess_Piece*>* OpponentColorPiecesArray;
-
-
-	TArray<AChess_Piece*> CopyOfColorPiecesArray;
-
-
-	AGameField* ClonedGameField;
 	
-	*/
-
-
-	/*
-
-	// crea una copia della scacchiera nello stato attuale
-	//AGameField* CloneGameField();
-
-	// clona il Game Field originale
-	AGameField* CloneEmptyGameField();
-
-	// clona i pezzi sul game field clonato
-	void CloneAllPiecesToField(AGameField* TargetField);
-
-	// Crea una copia dell'array dei pezzi
-	//TArray<AChess_Piece*> ClonePiecesArray();
-
-	AChess_Piece* ClonePiece(AChess_Piece* PieceToClone);
-
-	bool SimulateMoveAndCheck(AChess_Piece* PieceToSimulate, FVector2D PositionToMoveTo);
-
-
-	*/
 
 	// promuove il pedone a Regina del suo colore  (quando arrivati dall'altra parte della scacchiera)
 	void PromotionToQueen(AChess_Piece* PawnToPromote);
-
-
-
 
 
 	// return a (x,y) position given a hit (click) on a field tile

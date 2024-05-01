@@ -26,7 +26,6 @@ TArray<FVector2D> AChess_Piece_Pawn::CalculatePossibleMoves()
     // Prima mossa speciale di avanzamento di due caselle per il pedone
     if ((PieceColor == EPieceColor::WHITE && CurrentX == 1) || (PieceColor == EPieceColor::BLACK && CurrentX == 6))
     {
-
         FVector2D DoubleForwardMove = FVector2D(CurrentX + 2 * Direction, CurrentY);
         if (IsMoveValid(DoubleForwardMove))
         {

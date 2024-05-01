@@ -74,39 +74,8 @@ public:
 	bool bPiecesGenerated;
 
 
-
-
-	/*
-
-
-
-	// mossa che passo al giocatore per uscire dallo scacco
-	//TArray <FVector2D> MoveToExitTheCheck;												// da rimettereee direi
-	FVector2D MoveToExitTheCheck;
-	AChess_Piece* PieceToMoveToExitTheCheck;
-
-	AChess_Piece* GetPieceToMoveToExitTheCheck();
-	FVector2D GetMoveToExitTheCheck();
-
-	*/
-
 	// controlla lo scacco di un solo player
 	bool IsKingInCheck(AGameField* GenericGameField, int32 OpponentPlayer);
-
-	//void HighlightInRedGameFieldTiles(int32 PlayerKing);
-
-	//void TurnOffRedHighlightedTiles(int32 PlayerKing);
-
-	// controlla lo scacco matto
-	/*bool IsCheckmate(/*AGameField* GenericGameField,*/ /*int32 OpponentPlayer);*/
-
-	// simula lo spostamento di una pedina su una scacchiera clonata									// ultima roba messa         ORA E IN GAMEFIELD
-	//bool SimulateMoveAndCheckmate(AChess_Piece* PieceToSimulate, FVector2D PositionToMoveTo);
-
-	// controlla la patta
-	//bool IsDraw(int32 Player);
-
-	// bool HasLegalMoves(int32 Player);
 
 	
 	AChess_Piece* King;
@@ -116,21 +85,6 @@ public:
 	TArray<AChess_Piece*>* OpponentColorPiecesArray;
 
 	TArray<AChess_Piece*> CopyOfColorPiecesArray;
-
-
-	/*
-	AGameField* ClonedGameField;							// forse ci vuole per forza   se no la metto nei due player
-
-	// metodo get per usare il puntatore ClonedGameField ovunque nel codice (inizialmente creato per GameField)
-	AGameField* GetClonedGameField() const;
-
-
-
-	//	TArray<AChess_Piece*>* ColorPiecesArray;								
-
-	bool Draw;
-
-	*/
 
 	
 };
