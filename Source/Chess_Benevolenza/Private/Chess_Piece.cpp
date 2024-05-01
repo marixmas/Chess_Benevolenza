@@ -133,7 +133,12 @@ void AChess_Piece::MovePieceFromToPosition(const FVector2D OldPosition, const FV
 
 
 
-void AChess_Piece::MoveClonedPieceFromToPosition(/*AGameField* CloneOfGameField, */ FVector2D OldPosition, FVector2D NewPosition)					///aaaaaaaaaaaaaaaaaaaAAAAAAAAAAAAAAAAAAAAAAAA
+
+
+
+/*
+
+void AChess_Piece::MoveClonedPieceFromToPosition(/*AGameField* CloneOfGameField, */ /* FVector2D OldPosition, FVector2D NewPosition)					///aaaaaaaaaaaaaaaaaaaAAAAAAAAAAAAAAAAAAAAAAAA
 {
 	SetGridPosition(NewPosition.X, NewPosition.Y);
 	/*
@@ -152,7 +157,7 @@ void AChess_Piece::MoveClonedPieceFromToPosition(/*AGameField* CloneOfGameField,
 	}
 	*/
 
-
+/*
 	AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
 	if (!GameMode)
 	{
@@ -216,9 +221,12 @@ void AChess_Piece::MoveClonedPieceFromToPosition(/*AGameField* CloneOfGameField,
 	this->SetActorLocation(NewLocation);
 
 }
+*/
 
 
-void AChess_Piece::ClonedPieceIsEaten(/*AGameField* CloneOfGameField,*/ FVector2D& EatenPiecePosition)
+/*
+
+void AChess_Piece::ClonedPieceIsEaten(/*AGameField* CloneOfGameField,*/ /* FVector2D& EatenPiecePosition)
 {
 	/*
 		AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
@@ -235,8 +243,8 @@ void AChess_Piece::ClonedPieceIsEaten(/*AGameField* CloneOfGameField,*/ FVector2
 		return;
 	}
 	*/
-
-	AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
+/*
+AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
 	if (!GameMode)
 	{
 		UE_LOG(LogTemp, Error, TEXT("GameMode non valido per fare IsAttackValid"));

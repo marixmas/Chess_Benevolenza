@@ -191,6 +191,7 @@ UClass* AGameField::GetChessPieceBP(EPieceColor PieceColor, EPieceType PieceType
 	}
 }
 
+
 void AGameField::PromotionToQueen(AChess_Piece* PawnToPromote)
 {
 	// Controlla che il pedone da promuovere non sia già una regina
@@ -225,6 +226,8 @@ void AGameField::PromotionToQueen(AChess_Piece* PawnToPromote)
 	// Rimuovi il pedone dal campo di gioco
 	PawnToPromote->Destroy();
 }
+
+
 
 
 void AGameField::ResetField()
@@ -384,7 +387,7 @@ TArray<AChess_Piece*> AGameField::ClonePiecesArray(EPieceColor Color = EPieceCol
 
 
 
-
+/*
 AGameField* AGameField::CloneEmptyGameField()							 														/// HA SENSO
 {
 	AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
@@ -411,7 +414,9 @@ AGameField* AGameField::CloneEmptyGameField()							 														/// HA SENSO
 	
 	
 }
+*/
 
+/*
 void AGameField::CloneAllPiecesToField(AGameField* TargetField)																// MESSA PER ULTIMA, HA SENSO
 {
 	/*
@@ -428,8 +433,9 @@ void AGameField::CloneAllPiecesToField(AGameField* TargetField)																/
 	TargetField->ReversePiecesMap.Empty();
 
 	*/
-	
-	// Inizializza le mappe per tutte le caselle
+
+/*
+// Inizializza le mappe per tutte le caselle
 	for (int32 x = 0; x < Size; x++)
 	{
 		for (int32 y = 0; y < Size; y++)
@@ -473,6 +479,9 @@ void AGameField::CloneAllPiecesToField(AGameField* TargetField)																/
 	
 
 }
+*/
+	
+
 
 /*
 
@@ -490,6 +499,9 @@ TArray<AChess_Piece*> AGameField::ClonePiecesArray()																//CREDO SIA 
 */
 
 
+
+
+/*
 AChess_Piece* AGameField::ClonePiece(AChess_Piece* PieceToClone)
 {
 
@@ -507,6 +519,8 @@ AChess_Piece* AGameField::ClonePiece(AChess_Piece* PieceToClone)
 	return CopiedPiece;
 }
 
+*/
+
 
 
 
@@ -520,7 +534,7 @@ AChess_Piece* AGameField::ClonePiece(AChess_Piece* PieceToClone)
 */
 
 
-
+/*
 bool AGameField::SimulateMoveAndCheck(AChess_Piece* PieceToSimulate, FVector2D PositionToMoveTo)
 {
 	AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
@@ -637,6 +651,8 @@ bool AGameField::SimulateMoveAndCheck(AChess_Piece* PieceToSimulate, FVector2D P
 
 
 
+
+*/
 
 
 

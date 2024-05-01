@@ -59,17 +59,20 @@ public:
 	EPieceColor GetPieceColor();
 
 	
-
+	
 	void MovePieceFromToPosition(const FVector2D OldPosition, const FVector2D NewPosition);
 
-	void MoveClonedPieceFromToPosition(/*AGameField::AGameField* CloneOfGameField, */FVector2D OldPosition, FVector2D NewPosition);
 
-	void ClonedPieceIsEaten(/*AGameField* CloneOfGameField, */ FVector2D& EatenPiecePosition);
+	/*
+		void MoveClonedPieceFromToPosition(/*AGameField::AGameField* CloneOfGameField, *//*FVector2D OldPosition, FVector2D NewPosition);
+
+	void ClonedPieceIsEaten(/*AGameField* CloneOfGameField, */ /*FVector2D& EatenPiecePosition);										*/
 
 	
 	// simula il movimento dei pezzi per il controllo dello scacco matto
 	//void MoveCloneToPosition(const FVector2D& NewPosition);
 
+	
 
 protected:
 	// Called when the game starts or when spawned

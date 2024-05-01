@@ -86,444 +86,296 @@ void AChess_HumanPlayer::OnClick()
 	GetWorld()->GetFirstPlayerController()->GetHitResultUnderCursor(ECollisionChannel::ECC_Pawn, true, Hit);
 	AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
 
-	if (IsInCheck == false)
+	// controllo di aver cliccato qualcosa durante il mio turno
+	if (Hit.bBlockingHit && IsMyTurn && !GameMode->IsGameOver)
 	{
-		// controllo di aver cliccato qualcosa durante il mio turno
-		if (Hit.bBlockingHit && IsMyTurn && !GameMode->IsGameOver)
+		// Verifica che GameMode ptr sia valido
+		//AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
+		if (!GameMode)
 		{
-			// Verifica che GameMode ptr sia valido
-			//AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
-			if (!GameMode)
-			{
-				UE_LOG(LogTemp, Error, TEXT("GameMode non valido in HighlightGameFieldTiles!"));
-				return;
-			}
+			UE_LOG(LogTemp, Error, TEXT("GameMode non valido in HighlightGameFieldTiles!"));
+			return;
+		}
 
-			// Verifica che GField ptr sia valido
-			AGameField* GField = GameMode->GetGField();
-			if (!GField)
-			{
-				UE_LOG(LogTemp, Error, TEXT("GField non valido in HighlightGameFieldTiles!"));
-				return;
-			}
+		// Verifica che GField ptr sia valido
+		AGameField* GField = GameMode->GetGField();
+		if (!GField)
+		{
+			UE_LOG(LogTemp, Error, TEXT("GField non valido in HighlightGameFieldTiles!"));
+			return;
+		}
 
-			// se è stato cliccato un Piece, controllane il colore
-			if (AChess_Piece* CurrPiece = Cast<AChess_Piece>(Hit.GetActor()))
+		// se è stato cliccato un Piece, controllane il colore
+		if (AChess_Piece* CurrPiece = Cast<AChess_Piece>(Hit.GetActor()))
+		{
+			// il Piece è White
+			if (CurrPiece->GetPieceColor() == EPieceColor::WHITE)
 			{
-				// il Piece è White
-				if (CurrPiece->GetPieceColor() == EPieceColor::WHITE)
+				// Se era già stato selezionato un altro White Piece nel Click precedente,
+				// deselezionalo e imposta questo come Current Piece
+				if (SelectedWhitePiece != nullptr)
 				{
-					// Se era già stato selezionato un altro White Piece nel Click precedente,
-					// deselezionalo e imposta questo come Current Piece
-					if (SelectedWhitePiece != nullptr)
-					{
-						// deselezione
-						SelectedWhitePiece = nullptr;
-						bPieceSelected = false;
+					// deselezione
+					SelectedWhitePiece = nullptr;
+					bPieceSelected = false;
 
-						// "Spengo" i suggerimenti (attivati precedentemente)
-						TurnOffHighlightedTiles();
-					}
-
-					// Se NON era già stato selezionato un White Piece precedentemente
-					// imposta il pezzo come Current Piece
-					SelectedWhitePiece = CurrPiece;
-
-					// ottengo la sua posizione sulla scacchiera
-					WhitePieceLocation = SelectedWhitePiece->GetGridPosition();
-
-					// indico che è stato selezionato un pezzo
-					bPieceSelected = true;
-
-					// mostro in screen le info del pezzo cliccato
-					InfoOfClickedPiece(CurrPiece);
-
-					// chiedo alla classe del singolo pezzo di calcolarmi le mosse possibili
-					PossibleMoves = CurrPiece->CalculatePossibleMoves();
-
-					// illumino le tile delle mosse possibili
-					HighlightGameFieldTiles(PossibleMoves);
+					// "Spengo" i suggerimenti (attivati precedentemente)
+					TurnOffHighlightedTiles();
 				}
 
+				// Se NON era già stato selezionato un White Piece precedentemente
+				// imposta il pezzo come Current Piece
+				SelectedWhitePiece = CurrPiece;
 
-				// Se il Click è su un Black Piece
-				else if (CurrPiece->GetPieceColor() == EPieceColor::BLACK)
+				// ottengo la sua posizione sulla scacchiera
+				WhitePieceLocation = SelectedWhitePiece->GetGridPosition();
+
+				// indico che è stato selezionato un pezzo
+				bPieceSelected = true;
+
+				// mostro in screen le info del pezzo cliccato
+				InfoOfClickedPiece(CurrPiece);
+
+				// chiedo alla classe del singolo pezzo di calcolarmi le mosse possibili
+				PossibleMoves = CurrPiece->CalculatePossibleMoves();
+
+				// illumino le tile delle mosse possibili
+				HighlightGameFieldTiles(PossibleMoves);
+			}
+
+
+			// Se il Click è su un Black Piece
+			else if (CurrPiece->GetPieceColor() == EPieceColor::BLACK)
+			{
+				// me lo memorizzo
+				SelectedBlackPiece = CurrPiece;
+
+				// se è il primo click dello human player ed è su un Black Piece do il messaggio
+				if (bPieceSelected == false)
 				{
-					// me lo memorizzo
-					SelectedBlackPiece = CurrPiece;
+					GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Blue, TEXT("Queste sono le pedine del tuo avversario!"));
+				}
 
-					// se è il primo click dello human player ed è su un Black Piece do il messaggio
-					if (bPieceSelected == false)
+				// se lo human player aveva selezionato un White Piece
+				else if (bPieceSelected == true)
+				{
+					// ottengo la posizione sulla GameField del Black Piece
+					BlackPieceLocation = SelectedBlackPiece->GetGridPosition();
+
+					// se la Posizione del Black Piece appartiene alla mosse possibili del White Piece
+					if (PossibleMoves.Contains(BlackPieceLocation))
 					{
-						GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Blue, TEXT("Queste sono le pedine del tuo avversario!"));
-					}
+						// mangio il Black Piece
+						SelectedBlackPiece->PieceIsEaten(BlackPieceLocation);
 
-					// se lo human player aveva selezionato un White Piece
-					else if (bPieceSelected == true)
-					{
-						// ottengo la posizione sulla GameField del Black Piece
-						BlackPieceLocation = SelectedBlackPiece->GetGridPosition();
+						// muovo il White Piece
+						MoveSelectedPiece(WhitePieceLocation, BlackPieceLocation);
 
-						// se la Posizione del Black Piece appartiene alla mosse possibili del White Piece
-						if (PossibleMoves.Contains(BlackPieceLocation))
+						// "spengo" i suggerimenti
+						TurnOffHighlightedTiles();
+
+
+						// Dopo il movimento, controlla se il pezzo è un pedone e se ha raggiunto l'ultima fila
+						AChess_Piece* RecentlyMovedPiece = GField->PiecesMap.FindRef(BlackPieceLocation);
+						if (RecentlyMovedPiece->GetPieceType() == EPieceType::PAWN && BlackPieceLocation.X == 7)
 						{
-							// mangio il Black Piece
-							SelectedBlackPiece->PieceIsEaten(BlackPieceLocation);
+							GField->PromotionToQueen(RecentlyMovedPiece);
+						}
+							
+						// prendo il booleano che mi dice se questo giocatore é in scacco a seguito della mossa dell'avversario
+						// IsInCheck           //  non lo modifico ora
 
-							// muovo il White Piece
-							MoveSelectedPiece(WhitePieceLocation, BlackPieceLocation);
+						// controllo se i giocatori sono in scacco
 
-							// "spengo" i suggerimenti
-							TurnOffHighlightedTiles();
+						bool WhiteInCheck = GameMode->IsKingInCheck(GameMode->GetGField(), 0);
+						bool BlackInCheck = GameMode->IsKingInCheck(GameMode->GetGField(), 1);
 
-
-							// Dopo il movimento, controlla se il pezzo è un pedone e se ha raggiunto l'ultima fila
-							AChess_Piece* RecentlyMovedPiece = GField->PiecesMap.FindRef(BlackPieceLocation);
-							if (RecentlyMovedPiece->GetPieceType() == EPieceType::PAWN && BlackPieceLocation.X == 7)
+						// se prima della mossa il bianco era in scacco
+						if (IsInCheck)
+						{
+							// se é ancora in scacco diventa scacco matto per il bianco e finisce il gioco
+							if (WhiteInCheck)
 							{
-								GField->PromotionToQueen(RecentlyMovedPiece);
-							}
-
-							// controllo: dopo la mia mossa il re avversario (del player 1) é in scacco?
-							if (GameMode->IsKingInCheck(GameMode->GetGField(), 1))
-							{
-								IsMyTurn = false;
-								FString Message = FString::Printf(TEXT("Black King is in Check!"));
-								GEngine->AddOnScreenDebugMessage(2, 2.f, FColor::Orange, Message);
-								//GameInstance->SetTurnMessage(TEXT("Black is in Check!"));
-								//GameInstance->GetTurnMessage();
-								GameMode->Players[1]->IsInCheck = true;
-							}
-
-							// controllo: dopo la mia mossa il re avversario (del player 1) é in scacco matto?
-							if (GameMode->IsCheckmate(/*GameMode->GetGField(), */1))
-							{
-								GameMode->Players[0]->OnWin();
-								GameMode->Players[1]->OnLose();
+								GameMode->Players[1]->OnWin();
+								GameMode->Players[0]->OnLose();
 								GameMode->IsGameOver = true;
 								IsMyTurn = false;
-								GameInstance->SetTurnMessage(TEXT("Black King is in Checkmate! GAME OVER"));
+								GameInstance->SetTurnMessage(TEXT("White King is in Checkmate! GAME OVER"));
 								GameInstance->GetTurnMessage();
 							}
-
-							else
+								
+							// se è uscito dallo scacco con la mossa appena fatta
+							else if (!WhiteInCheck)
 							{
+								IsMyTurn = false;
+								GameMode->Players[0]->IsInCheck = false;
+								GameMode->TurnNextPlayer();
+							}
+						}
+
+						// se prima della mossa il bianco NON era in scacco
+						else if (!IsInCheck)
+						{
+							// se dopo la mossa appena fatta è in scacco
+							if (WhiteInCheck)
+							{
+								FString Message = FString::Printf(TEXT("White King is in Check!"));
+								GEngine->AddOnScreenDebugMessage(2, 2.f, FColor::Orange, Message);
+								GameMode->Players[0]->IsInCheck = true;
+								IsMyTurn = false;
+								GameMode->TurnNextPlayer();
+							}
+							// continua ad essere non in scacco
+							else if (!WhiteInCheck)
+							{
+								GameMode->Players[0]->IsInCheck = false;
 								IsMyTurn = false;
 								GameMode->TurnNextPlayer();
 							}
 						}
-					}
-				}
-			}
-
-			// se il Click è su una Tile
-			else if (ATile* SelectedTile = Cast<ATile>(Hit.GetActor()))
-			{
-				// se un pezzo era già stato selezionato e la tile cliccata è nelle mosse possibili...
-				if (bPieceSelected == true && PossibleMoves.Contains(SelectedTile->GetGridPosition()))
-				{
-					//....allora muovere pedina nella tile selezionata
-					MoveSelectedPiece(WhitePieceLocation, SelectedTile->GetGridPosition());
-
-					// Resetta lo stato di selezione della pedina
-					bPieceSelected = false;
+							
 
 
-					// "spengo" i suggerimenti
-					TurnOffHighlightedTiles();
-
-					// Dopo il movimento, controlla se il pezzo è un pedone e se ha raggiunto l'ultima fila
-					AChess_Piece* RecentlyMovedPiece = GField->PiecesMap.FindRef(SelectedTile->GetGridPosition());
-					if (RecentlyMovedPiece->GetPieceType() == EPieceType::PAWN && SelectedTile->GetGridPosition().X == 7)
-					{
-						(GameMode->GetGField())->PromotionToQueen(RecentlyMovedPiece);
-					}
-
-					CurrPiece = nullptr;
-
-					// controllo: dopo la mia mossa il re avversario (del player 1) é in scacco?
-					if (GameMode->IsKingInCheck(GameMode->GetGField(), 1))
-					{
-						IsMyTurn = false;
-						FString Message = FString::Printf(TEXT("Black King is in Check!"));
-						GEngine->AddOnScreenDebugMessage(1, 3.f, FColor::Orange, Message);
-						//GameInstance->SetTurnMessage(TEXT("Black is in Check!"));
-						//GameInstance->GetTurnMessage();
-						GameMode->Players[1]->IsInCheck = true;
-					}
-
-					// controllo: dopo la mia mossa il re avversario (del player 1) é in scacco matto?
-					if (GameMode->IsCheckmate(/*GameMode->GetGField(), */1))
-					{
-						GameMode->Players[0]->OnWin();
-						GameMode->Players[1]->OnLose();
-						GameMode->IsGameOver = true;
-						IsMyTurn = false;
-						GameInstance->SetTurnMessage(TEXT("Black King is in Checkmate! GAME OVER"));
-						GameInstance->GetTurnMessage();
-					}
-
-					IsMyTurn = false;
-					GameMode->TurnNextPlayer();
-
-
-				}
-				// se un pezzo era già stato cliccato e la tile NON è nelle mosse possibili, non si può e do messaggio
-				else if (bPieceSelected == true && !PossibleMoves.Contains(SelectedTile->GetGridPosition()))
-				{
-					GEngine->AddOnScreenDebugMessage(1, 3.f, FColor::Blue, TEXT("La pedina selezionata non può andare in questa casella."));
-					// non cambio bSelectedPiece e nemmeno SelectedPiece
-				}
-			}
-		}
-
-		// Se clicco su qualcosa di valido ma non è il mio turno
-		else
-		{
-			GEngine->AddOnScreenDebugMessage(1, 2.f, FColor::Blue, TEXT("Per favore, aspetta il tuo turno"));
-		}
-	}
-
-	if (IsInCheck == true)
-	{
-		bool IsMoveValid = false;    // lo human player ripeterà la mossa finché non uscirà dallo scacco
-
-		while (!IsMoveValid)
-		{
-
-
-			// controllo di aver cliccato qualcosa durante il mio turno
-			if (Hit.bBlockingHit && IsMyTurn && !GameMode->IsGameOver)
-			{
-				// Verifica che GameMode ptr sia valido
-				//AChess_GameMode* GameMode = Cast<AChess_GameMode>(GetWorld()->GetAuthGameMode());
-				if (!GameMode)
-				{
-					UE_LOG(LogTemp, Error, TEXT("GameMode non valido in Onclick di human player!"));
-					return;
-				}
-
-				// Verifica che GField ptr sia valido
-				AGameField* GField = GameMode->GetGField();
-				if (!GField)
-				{
-					UE_LOG(LogTemp, Error, TEXT("GField non valido in Onclick di human player!"));
-					return;
-				}
-
-				// se è stato cliccato un Piece, controllane il colore
-				if (AChess_Piece* CurrPiece = Cast<AChess_Piece>(Hit.GetActor()))
-				{
-					// il Piece è White
-					if (CurrPiece->GetPieceColor() == EPieceColor::WHITE)
-					{
-						// Se era già stato selezionato un altro White Piece nel Click precedente,
-						// deselezionalo e imposta questo come Current Piece
-						if (SelectedWhitePiece != nullptr)
+						// controllo se dopo la mia mossa il re nero è in scacco
+						if (BlackInCheck)
 						{
-							// deselezione
-							SelectedWhitePiece = nullptr;
-							bPieceSelected = false;
-
-							// "Spengo" i suggerimenti (attivati precedentemente)
-							TurnOffHighlightedTiles();
-						}
-
-						// Se NON era già stato selezionato un White Piece precedentemente
-						// imposta il pezzo come Current Piece
-						SelectedWhitePiece = CurrPiece;
-
-						// ottengo la sua posizione sulla scacchiera
-						WhitePieceLocation = SelectedWhitePiece->GetGridPosition();
-
-						// indico che è stato selezionato un pezzo
-						bPieceSelected = true;
-
-						// mostro in screen le info del pezzo cliccato
-						InfoOfClickedPiece(CurrPiece);
-
-						// chiedo alla classe del singolo pezzo di calcolarmi le mosse possibili
-						PossibleMoves = CurrPiece->CalculatePossibleMoves();
-
-						// illumino le tile delle mosse possibili
-						HighlightGameFieldTiles(PossibleMoves);
-					}
-
-
-					// Se il Click è su un Black Piece
-					else if (CurrPiece->GetPieceColor() == EPieceColor::BLACK)
-					{
-						// me lo memorizzo
-						SelectedBlackPiece = CurrPiece;
-
-						// se è il primo click dello human player ed è su un Black Piece do il messaggio
-						if (bPieceSelected == false)
-						{
-							GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Blue, TEXT("Queste sono le pedine del tuo avversario!"));
-						}
-
-						// se lo human player aveva selezionato un White Piece
-						else if (bPieceSelected == true)
-						{
-							// ottengo la posizione sulla GameField del Black Piece
-							BlackPieceLocation = SelectedBlackPiece->GetGridPosition();
-
-							// se la Posizione del Black Piece appartiene alla mosse possibili del White Piece
-							if (PossibleMoves.Contains(BlackPieceLocation))
-							{
-
-								
-								if (GField->SimulateMoveAndCheck(SelectedWhitePiece, SelectedBlackPiece->GetGridPosition()))
-								{
-									IsMoveValid = true;
-
-
-									// mangio il Black Piece
-									SelectedBlackPiece->PieceIsEaten(BlackPieceLocation);
-
-									// muovo il White Piece
-									MoveSelectedPiece(WhitePieceLocation, BlackPieceLocation);
-
-									// "spengo" i suggerimenti
-									TurnOffHighlightedTiles();
-
-									// Dopo il movimento, controlla se il pezzo è un pedone e se ha raggiunto l'ultima fila
-									AChess_Piece* RecentlyMovedPiece = GField->PiecesMap.FindRef(BlackPieceLocation);
-									if (RecentlyMovedPiece->GetPieceType() == EPieceType::PAWN && BlackPieceLocation.X == 7)
-									{
-										GField->PromotionToQueen(RecentlyMovedPiece);
-									}
-
-									// controllo: dopo la mia mossa il re avversario (del player 1) é in scacco?
-									if (GameMode->IsKingInCheck(GameMode->GetGField(), 1))
-									{
-										IsMyTurn = false;
-										FString Message = FString::Printf(TEXT("Black King is in Check!"));
-										GEngine->AddOnScreenDebugMessage(2, 2.f, FColor::Orange, Message);
-										//GameInstance->SetTurnMessage(TEXT("Black is in Check!"));
-										//GameInstance->GetTurnMessage();
-									}
-
-									// controllo: dopo la mia mossa il re avversario (del player 1) é in scacco matto?
-									if (GameMode->IsCheckmate(/*GameMode->GetGField(), */1))
-									{
-										GameMode->Players[0]->OnWin();
-										GameMode->Players[1]->OnLose();
-										GameMode->IsGameOver = true;
-										IsMyTurn = false;
-										GameInstance->SetTurnMessage(TEXT("Black King is in Checkmate! GAME OVER"));
-										GameInstance->GetTurnMessage();
-									}
-
-									else
-									{
-										IsMyTurn = false;
-										GameMode->TurnNextPlayer();
-									}
-								}
-								else 
-								{
-
-								}
-							}
-						}
-					}
-				}
-
-				// se il Click è su una Tile
-				else if (ATile* SelectedTile = Cast<ATile>(Hit.GetActor()))
-				{
-					// se un pezzo era già stato selezionato e la tile cliccata è nelle mosse possibili...
-					if (bPieceSelected == true && PossibleMoves.Contains(SelectedTile->GetGridPosition()))
-					{
-
-						
-
-						if (GField->SimulateMoveAndCheck(SelectedWhitePiece, SelectedTile->GetGridPosition()))
-						{
-							IsMoveValid = true;
-
-
-							// sono qui
-
-
-
-
-							//....allora muovere pedina nella tile selezionata
-							MoveSelectedPiece(WhitePieceLocation, SelectedTile->GetGridPosition());
-
-							// Resetta lo stato di selezione della pedina
-							bPieceSelected = false;
-
-
-							// "spengo" i suggerimenti
-							TurnOffHighlightedTiles();
-
-							// Dopo il movimento, controlla se il pezzo è un pedone e se ha raggiunto l'ultima fila
-							AChess_Piece* RecentlyMovedPiece = GField->PiecesMap.FindRef(SelectedTile->GetGridPosition());
-							if (RecentlyMovedPiece->GetPieceType() == EPieceType::PAWN && SelectedTile->GetGridPosition().X == 7)
-							{
-								(GameMode->GetGField())->PromotionToQueen(RecentlyMovedPiece);
-							}
-
-							CurrPiece = nullptr;
-
-							// controllo: dopo la mia mossa il re avversario (del player 1) é in scacco?
-							if (GameMode->IsKingInCheck(GameMode->GetGField(), 1))
-							{
-								IsMyTurn = false;
-								FString Message = FString::Printf(TEXT("Black King is in Check!"));
-								GEngine->AddOnScreenDebugMessage(1, 3.f, FColor::Orange, Message);
-								//GameInstance->SetTurnMessage(TEXT("Black is in Check!"));
-								//GameInstance->GetTurnMessage();
-								GameMode->Players[1]->IsInCheck = true;
-							}
-
-							// controllo: dopo la mia mossa il re avversario (del player 1) é in scacco matto?
-							if (GameMode->IsCheckmate(/*GameMode->GetGField(), */1))
-							{
-								GameMode->Players[0]->OnWin();
-								GameMode->Players[1]->OnLose();
-								GameMode->IsGameOver = true;
-								IsMyTurn = false;
-								GameInstance->SetTurnMessage(TEXT("Black King is in Checkmate! GAME OVER"));
-								GameInstance->GetTurnMessage();
-							}
-
 							IsMyTurn = false;
+							FString Message = FString::Printf(TEXT("Black King is in Check!"));
+							GEngine->AddOnScreenDebugMessage(2, 2.f, FColor::Orange, Message);
+							GameMode->Players[1]->IsInCheck = true;
 							GameMode->TurnNextPlayer();
-
 						}
+
+							
 
 						else
 						{
-
+							//IsMyTurn = false;
+							//GameMode->TurnNextPlayer();
 						}
 
-					}
-					// se un pezzo era già stato cliccato e la tile NON è nelle mosse possibili, non si può e do messaggio
-					else if (bPieceSelected == true && !PossibleMoves.Contains(SelectedTile->GetGridPosition()))
-					{
-						GEngine->AddOnScreenDebugMessage(1, 3.f, FColor::Blue, TEXT("La pedina selezionata non può andare in questa casella."));
-						// non cambio bSelectedPiece e nemmeno SelectedPiece
+
 					}
 				}
 			}
-
-			// Se clicco su qualcosa di valido ma non è il mio turno
-			else
-			{
-				GEngine->AddOnScreenDebugMessage(1, 2.f, FColor::Blue, TEXT("Per favore, aspetta il tuo turno"));
-			}
-
-
-
-		//  IsMoveValid  =     quadno la metto vera per uscire?????
 		}
-		//la mossa dello human player era valida quindi esce
+
+		// se il Click è su una Tile
+		else if (ATile* SelectedTile = Cast<ATile>(Hit.GetActor()))
+		{
+			// se un pezzo era già stato selezionato e la tile cliccata è nelle mosse possibili...
+			if (bPieceSelected == true && PossibleMoves.Contains(SelectedTile->GetGridPosition()))
+			{
+				//....allora muovere pedina nella tile selezionata
+				MoveSelectedPiece(WhitePieceLocation, SelectedTile->GetGridPosition());
+
+				// Resetta lo stato di selezione della pedina
+				bPieceSelected = false;
+
+
+				// "spengo" i suggerimenti
+				TurnOffHighlightedTiles();
+
+
+					
+				// Dopo il movimento, controlla se il pezzo è un pedone e se ha raggiunto l'ultima fila
+				AChess_Piece* RecentlyMovedPiece = GField->PiecesMap.FindRef(SelectedTile->GetGridPosition());
+				if (RecentlyMovedPiece->GetPieceType() == EPieceType::PAWN && SelectedTile->GetGridPosition().X == 7)
+				{
+					(GameMode->GetGField())->PromotionToQueen(RecentlyMovedPiece);
+				}
+										
+				CurrPiece = nullptr;
+
+				// prendo il booleano che mi dice se questo giocatore é in scacco a seguito della mossa dell'avversario
+						// IsInCheck           //  non lo modifico ora
+
+						// controllo se i giocatori sono in scacco
+
+				bool WhiteInCheck = GameMode->IsKingInCheck(GameMode->GetGField(), 0);
+				bool BlackInCheck = GameMode->IsKingInCheck(GameMode->GetGField(), 1);
+
+				// se prima della mossa il bianco era in scacco
+				if (IsInCheck)
+				{
+					// se é ancora in scacco diventa scacco matto per il bianco e finisce il gioco
+					if (WhiteInCheck)
+					{
+						GameMode->Players[1]->OnWin();
+						GameMode->Players[0]->OnLose();
+						GameMode->IsGameOver = true;
+						IsMyTurn = false;
+						GameInstance->SetTurnMessage(TEXT("White King is in Checkmate! GAME OVER"));
+						GameInstance->GetTurnMessage();
+					}
+
+					// se è uscito dallo scacco con la mossa appena fatta
+					else if (!WhiteInCheck)
+					{
+						IsMyTurn = false;
+						GameMode->Players[0]->IsInCheck = false;
+						GameMode->TurnNextPlayer();
+					}
+				}
+
+				// se prima della mossa il bianco NON era in scacco
+				else if (!IsInCheck)
+				{
+					// se dopo la mossa appena fatta è in scacco
+					if (WhiteInCheck)
+					{
+						FString Message = FString::Printf(TEXT("White King is in Check!"));
+						GEngine->AddOnScreenDebugMessage(2, 2.f, FColor::Orange, Message);
+						GameMode->Players[0]->IsInCheck = true;
+						IsMyTurn = false;
+						GameMode->TurnNextPlayer();
+					}
+					// continua ad essere non in scacco
+					else if (!WhiteInCheck)
+					{
+						GameMode->Players[0]->IsInCheck = false;
+						IsMyTurn = false;
+						GameMode->TurnNextPlayer();
+					}
+				}
+
+
+
+				// controllo se dopo la mia mossa il re nero è in scacco
+				if (BlackInCheck)
+				{
+					IsMyTurn = false;
+					FString Message = FString::Printf(TEXT("Black King is in Check!"));
+					GEngine->AddOnScreenDebugMessage(2, 2.f, FColor::Orange, Message);
+					GameMode->Players[1]->IsInCheck = true;
+					GameMode->TurnNextPlayer();
+				}
+
+
+
+				else
+				{
+					//IsMyTurn = false;
+					//GameMode->TurnNextPlayer();
+				}
+
+					
+
+			}
+			// se un pezzo era già stato cliccato e la tile NON è nelle mosse possibili, non si può e do messaggio
+			else if (bPieceSelected == true && !PossibleMoves.Contains(SelectedTile->GetGridPosition())) 
+			{ 
+				GEngine->AddOnScreenDebugMessage(1, 3.f, FColor::Blue, TEXT("La pedina selezionata non può andare in questa casella.")); 
+				// non cambio bSelectedPiece e nemmeno SelectedPiece 
+			} 
+		}
 	}
 
-
+	// Se clicco su qualcosa di valido ma non è il mio turno
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(1, 2.f, FColor::Blue, TEXT("Per favore, aspetta il tuo turno"));
+	}
 
 }
 

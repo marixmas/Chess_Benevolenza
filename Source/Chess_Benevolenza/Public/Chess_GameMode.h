@@ -6,7 +6,6 @@
 #include "GameField.h"
 #include "Chess_PlayerInterface.h"
 #include "GameFramework/GameModeBase.h"								  //prima era /GameModeBase.h
-//#include "FEscapeMoveInfo.h"
 #include "Chess_GameMode.generated.h"
 
 
@@ -64,22 +63,38 @@ public:
 	void TurnNextPlayer();
 
 	
-	bool Draw;
- 
+	// metodo get per usare il puntatore GField ovunque nel codice (inizialmente creato per GameField)
+	AGameField* GetGField() const;
+
+
+	// flag per controllare che la gamefield non venga spawnata più di una volta
+	bool bFieldGenerated;
+
+	// flag per controllare che la gamefield non venga spawnata più di una volta
+	bool bPiecesGenerated;
+
+
+
+
+	/*
+
+
+
 	// mossa che passo al giocatore per uscire dallo scacco
-	/*TArray <FVector2D> MoveToExitTheCheck;*/													// da rimettereee direi
+	//TArray <FVector2D> MoveToExitTheCheck;												// da rimettereee direi
 	FVector2D MoveToExitTheCheck;
 	AChess_Piece* PieceToMoveToExitTheCheck;
 
 	AChess_Piece* GetPieceToMoveToExitTheCheck();
 	FVector2D GetMoveToExitTheCheck();
 
-	
+	*/
+
 	// controlla lo scacco di un solo player
 	bool IsKingInCheck(AGameField* GenericGameField, int32 OpponentPlayer);
 
 	// controlla lo scacco matto
-	bool IsCheckmate(/*AGameField* GenericGameField,*/ int32 OpponentPlayer);
+	/*bool IsCheckmate(/*AGameField* GenericGameField,*/ /*int32 OpponentPlayer);*/
 
 	// simula lo spostamento di una pedina su una scacchiera clonata									// ultima roba messa         ORA E IN GAMEFIELD
 	//bool SimulateMoveAndCheckmate(AChess_Piece* PieceToSimulate, FVector2D PositionToMoveTo);
@@ -89,7 +104,7 @@ public:
 
 	// bool HasLegalMoves(int32 Player);
 
-
+	
 	AChess_Piece* King;
 
 	FVector2D KingPosition;
@@ -98,22 +113,22 @@ public:
 
 	TArray<AChess_Piece*> CopyOfColorPiecesArray;
 
+
+	/*
 	AGameField* ClonedGameField;							// forse ci vuole per forza   se no la metto nei due player
 
 	// metodo get per usare il puntatore ClonedGameField ovunque nel codice (inizialmente creato per GameField)
 	AGameField* GetClonedGameField() const;
 
 
-	// metodo get per usare il puntatore GField ovunque nel codice (inizialmente creato per GameField)
-	AGameField* GetGField() const;
 
-	// flag per controllare che la gamefield non venga spawnata più di una volta
-	bool bFieldGenerated;
+	//	TArray<AChess_Piece*>* ColorPiecesArray;								
 
-	// flag per controllare che la gamefield non venga spawnata più di una volta
-	bool bPiecesGenerated;
+	bool Draw;
 
-//	TArray<AChess_Piece*>* ColorPiecesArray;								
+	*/
+
+	
 };
 
 

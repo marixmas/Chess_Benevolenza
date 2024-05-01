@@ -91,13 +91,6 @@ bool AChess_Piece_King::IsMoveValid(const FVector2D& Move)
         }
     }
 
-    /*
-    // Il movimento è valido se la distanza tra le coordinate è <= 1
-    FVector2D CurrentPosition = GetGridPosition();                                  //  mi sa che e una ca.volata
-    float Distance = FVector2D::Distance(Move, CurrentPosition);
-    return Distance <= 1;
-    */
-
     return true;
 }
 

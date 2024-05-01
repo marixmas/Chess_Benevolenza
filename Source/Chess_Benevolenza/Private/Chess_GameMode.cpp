@@ -22,10 +22,10 @@ AChess_GameMode::AChess_GameMode()
 	// inizializzo il puntatore alla GameField a null
 	GField = nullptr;
 
-	ClonedGameField = nullptr;
+	//ClonedGameField = nullptr;
 
 
-	Draw = false;/////////////////////////////////////////////////////////////
+	///Draw = false;/////////////////////////////////////////////////////////////
 
 }
 
@@ -103,10 +103,6 @@ void AChess_GameMode::BeginPlay()
 	this->ChooseHumanPlayerAndStartGame();
 }
 
-AGameField* AChess_GameMode::GetClonedGameField() const
-{
-	return ClonedGameField;
-}
 
 AGameField* AChess_GameMode::GetGField() const
 {
@@ -367,20 +363,31 @@ bool AChess_GameMode::IsDraw(int32 Player)
 }
 */
 
+/*
+AGameField* AChess_GameMode::GetClonedGameField() const
+{
+	return ClonedGameField;
+}
+*/
 
 
 
+/*
 AChess_Piece* AChess_GameMode::GetPieceToMoveToExitTheCheck()										///////////////////////
 {
 	return PieceToMoveToExitTheCheck;
 }
+*/
 
+/*
 FVector2D AChess_GameMode::GetMoveToExitTheCheck()																	////////////////////////////////////////////
 {
 	return MoveToExitTheCheck;;
 }
 
 
+
+*/
 
 
 
@@ -414,7 +421,6 @@ TArray<FEscapeMoveInfo> CalculateEscapesMoves(AGameField* GameField, int32 Playe
 */
 
 
-// quella vecchia che per ora va bene
 bool AChess_GameMode::IsKingInCheck(AGameField* GenericGameField, int32 OpponentPlayer)
 {
 	// ottengo l'array dei pezzi del colore del giocatore di cui voglio controllare lo Scacco
@@ -515,8 +521,14 @@ bool AChess_GameMode::IsKingInCheck(AGameField* GenericGameField, int32 Opponent
 
 
 
-// vecchia sostituita probab (sopra)
-bool AChess_GameMode::IsCheckmate(/*AGameField* GenericGameField, */ int32 OpponentPlayer)
+
+
+// quella vecchia che per ora va bene
+
+
+
+/*
+bool AChess_GameMode::IsCheckmate(/AGameField* GenericGameField, */ /*int32 OpponentPlayer)
 {
 	// Controlla se il re del giocatore è in scacco
 	if (!IsKingInCheck(GField, OpponentPlayer))
@@ -584,6 +596,9 @@ bool AChess_GameMode::IsCheckmate(/*AGameField* GenericGameField, */ int32 Oppon
 	PieceToMoveToExitTheCheck = nullptr;
 	return true;
 }
+
+*/
+// vecchia sostituita probab (sopra)
 
 /*
 bool AChess_GameMode::IsDraw(int32 Player)

@@ -89,7 +89,7 @@ public:
 	UMaterialInterface* TileHighlightMaterial;
 
 	// Materiale per l'evidenziazione dello scacco (rosso)
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly)																// forse da tenere?
 	UMaterialInterface* TileRedHighlightMaterial;
 
 
@@ -141,7 +141,19 @@ public:
 
 
 
+	// generate an empty game field
+		void GenerateField();
 
+		//genera le pedine sulla scacchiera
+		void GeneratePieces();
+
+		// spawna il pezzo
+		void SpawnChessPiece(int32 x, int32 y, EPieceColor PieceColor, EPieceType PieceType);
+
+
+
+		// prende il blue print del pezzo
+		UClass* GetChessPieceBP(EPieceColor PieceColor, EPieceType PieceType);
 
 
 	// Called when an instance of this class is placed (in editor) or spawned
@@ -185,7 +197,7 @@ public:
 	*/
 
 
-
+	/*
 
 	// crea una copia della scacchiera nello stato attuale
 	//AGameField* CloneGameField();
@@ -204,28 +216,10 @@ public:
 	bool SimulateMoveAndCheck(AChess_Piece* PieceToSimulate, FVector2D PositionToMoveTo);
 
 
-
-
-
-	// generate an empty game field
-	void GenerateField();
-
-	//genera le pedine sulla scacchiera
-	void GeneratePieces();
-
-	// spawna il pezzo
-	void SpawnChessPiece(int32 x, int32 y, EPieceColor PieceColor, EPieceType PieceType);
-
-
-
-
-
-	// prende il blue print del pezzo
-	UClass* GetChessPieceBP(EPieceColor PieceColor, EPieceType PieceType);
+	*/
 
 	// promuove il pedone a Regina del suo colore  (quando arrivati dall'altra parte della scacchiera)
 	void PromotionToQueen(AChess_Piece* PawnToPromote);
-
 
 
 
